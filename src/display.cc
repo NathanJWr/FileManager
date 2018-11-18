@@ -6,9 +6,13 @@
 Display::Display(unsigned int width, unsigned int height) :
   SCREEN_W(width),
   SCREEN_H(height) {
+    window = nullptr;
+    renderer = nullptr;
+    font = nullptr;
 }
 
 Display::~Display() {
+  std::cout << "Display being destroyed\n";
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	TTF_CloseFont(font);
@@ -18,7 +22,7 @@ Display::~Display() {
 
 void Display::update() {
 	SDL_RenderPresent(renderer);
-	SDL_SetRenderDrawColor(renderer, 0,0,0,0);
+	//SDL_SetRenderDrawColor(renderer, 0,0,0,0);
 	SDL_RenderClear(renderer);
 }
 void Display::renderTexture(SDL_Texture* texture,
@@ -83,17 +87,14 @@ void Display::init() {
     success = false;
   }
   else {
-    renderer = SDL_CreateRenderer(window,
-        -1,
-        SDL_RENDERER_ACCELERATED);
-    if(renderer == NULL) {
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+    if(renderer == nullptr) {
       success = false;
     }
     else {
       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     }
   }
-
   if(TTF_Init() == -1) {
 		std::cerr << "Failed to initialize TTF: " <<  SDL_GetError() << std::endl;
 

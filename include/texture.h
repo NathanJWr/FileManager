@@ -6,6 +6,7 @@ class Texture {
 	Texture(SDL_Texture*);
 	~Texture();
 	SDL_Texture* get();
+  Texture(const Texture&) = delete; // Deletes the copy constructor
  private:
 	SDL_Texture* texture;
 };
