@@ -6,6 +6,56 @@ Display::Display(unsigned int width, unsigned int height) :
   SCREEN_W(width),
   SCREEN_H(height) {
 }
+
+void Display::update() {
+	SDL_RenderPresent(renderer);
+	SDL_SetRenderDrawColor(renderer, 0,0,0,0);
+	SDL_RenderClear(renderer);
+}
+void Display::renderTexture(SDL_Texture* texture,
+    												SDL_Rect* source,
+    												SDL_Rect* destination) {
+  SDL_RenderCopy(renderer, texture, source, destination);
+}
+
+SDL_Texture* Display::surfaceToTexture(SDL_Surface* surf) {
+  SDL_Texture* text = nullptr;
+  text = SDL_CreateTextureFromSurface(renderer, surf);
+  SDL_FreeSurface(surf);
+
+  if (!text) {
+		std::cerr << "Texture Creation Error: " <<  SDL_GetError() << std::endl;
+  }
+  return text;
+}
+
+SDL_Texture* Display::surfaceToTextureSafe(SDL_Surface* surf) {
+  SDL_Texture* text = nullptr;
+  text = SDL_CreateTextureFromSurface(renderer, surf);
+
+  if (!text) {
+		std::cerr << "Texture Creation Error: " << SDL_GetError() << std::endl;
+    return nullptr;
+  }
+  return text;
+}
+
+SDL_Texture* Display::createTextTexture(std::string text,
+    																		SDL_Color color) {
+  
+  SDL_Surface* surface = nullptr;
+  SDL_Texture* texture = nullptr;
+  surface = TTF_RenderText_Solid(font, text.c_str(), color);
+
+  if (!surface) {
+		std::cerr << "Text Render Error: " << TTF_GetError() << std::endl;
+    return nullptr;
+  }
+
+  texture = surfaceToTexture(surface);
+  return texture;
+}
+
 void Display::init() {
   bool success = true;
   if(SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -14,7 +64,7 @@ void Display::init() {
   else if(!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
     std::cerr << "Linear filtering not enabled!" << std::endl;
   }
-  window = SDL_CreateWindow("Game",
+  window = SDL_CreateWindow("FileManager",
       SDL_WINDOWPOS_UNDEFINED,
       SDL_WINDOWPOS_UNDEFINED,
       SCREEN_W,
@@ -36,13 +86,18 @@ void Display::init() {
   }
 
   if(TTF_Init() == -1) {
-    printf("Failed to initialize TTF: %s\n", SDL_GetError());
+		std::cerr << "Failed to initialize TTF: " <<  SDL_GetError() << std::endl;
+
     success = false;
   }
-  font = TTF_OpenFont("assets/fonts/Ubuntu.ttf", 90);
+  font = TTF_OpenFont("assets/Ubuntu.ttf", 90);
 
   if(font == NULL) {
-    printf("Failed to load font: %s\n", SDL_GetError());
+		std::cerr << "Failed to load font: " <<  SDL_GetError() << std::endl;
     success = false;
   }
+	if (!success) {
+		std::cerr << "Unable to initialize SDL" << std::endl;
+		exit(1);
+	}
 }

@@ -9,7 +9,7 @@ OBJ = $(SRC:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 
 CPPFLAGS += -Iinclude 
 CFLAGS += -lstdc++fs -Wall -Werror -std=c++17 -pedantic-errors -g 
-LDFLAGS += -lstdc++fs -Llib 
+LDFLAGS += -lstdc++fs -Llib -lSDL2 -lSDL2_ttf
 LDLIBS += 
 
 .PHONY: all clean

@@ -7,9 +7,9 @@ class DirObject {
   DirObject(std::string name, Type type);
 
   friend std::ostream& operator<<(std::ostream& os, const DirObject& f);
-
- private:
   std::string name;
   Type type;
+
+ private:
 };
 #endif // DIR_OBJECT_H_
