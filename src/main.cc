@@ -10,16 +10,25 @@ int main() {
   auto list = fmanager.listCurrentDirectory();
 	Display display(1024, 768);
 	display.init();
-	std::vector<std::unique_ptr<SDL_Texture, sdl_deleter>> tex_list;
-  for (auto n : list) {
-    std::cout << n << std::endl;
-		tex_list.push_back(display.createTextTexture(n.name, w));
-  }
+	std::vector<SDL_Texture*> tex_list;
+	SDL_Delay(5000);
+	for(int i = 0; i < 900; i++) {
+  	for (auto n : list) {
+    	std::cout << n << std::endl;
+			tex_list.push_back(display.createTextTexture(n.name, w));
+  	}
+	}
 	SDL_Rect dest = {0, 0, 70, 20};
 	for (unsigned int i = 0; i < tex_list.size(); i++) {
-		display.renderTexture(tex_list[i].get(), nullptr, &dest);
+		display.renderTexture(tex_list[i], nullptr, &dest);
 		dest.y += 20;
 	}
+	for (unsigned int i = 0; i < tex_list.size(); i++) {
+		SDL_DestroyTexture(tex_list[i]);
+	}
+	tex_list.clear();
+	display.update();
+	SDL_Delay(5000);
 	display.update();
 	SDL_Delay(5000);
   return 0;

@@ -8,6 +8,14 @@ Display::Display(unsigned int width, unsigned int height) :
   SCREEN_H(height) {
 }
 
+Display::~Display() {
+	SDL_DestroyWindow(window);
+	SDL_DestroyRenderer(renderer);
+	TTF_CloseFont(font);
+	TTF_Quit();
+	SDL_Quit();
+}
+
 void Display::update() {
 	SDL_RenderPresent(renderer);
 	SDL_SetRenderDrawColor(renderer, 0,0,0,0);
@@ -41,7 +49,7 @@ SDL_Texture* Display::surfaceToTextureSafe(SDL_Surface* surf) {
   return text;
 }
 
-std::unique_ptr<SDL_Texture, sdl_deleter> Display::createTextTexture(std::string text,
+SDL_Texture* Display::createTextTexture(std::string text,
     																		SDL_Color color) {
   
   SDL_Surface* surface = nullptr;
@@ -54,8 +62,7 @@ std::unique_ptr<SDL_Texture, sdl_deleter> Display::createTextTexture(std::string
   }
 
   texture = surfaceToTexture(surface);
-	std::unique_ptr<SDL_Texture, sdl_deleter> tex(texture);
-  return tex;
+  return texture;
 }
 
 void Display::init() {
