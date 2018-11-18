@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
+#include <memory>
 Display::Display(unsigned int width, unsigned int height) :
   SCREEN_W(width),
   SCREEN_H(height) {
@@ -40,7 +41,7 @@ SDL_Texture* Display::surfaceToTextureSafe(SDL_Surface* surf) {
   return text;
 }
 
-SDL_Texture* Display::createTextTexture(std::string text,
+std::unique_ptr<SDL_Texture, sdl_deleter> Display::createTextTexture(std::string text,
     																		SDL_Color color) {
   
   SDL_Surface* surface = nullptr;
@@ -53,7 +54,8 @@ SDL_Texture* Display::createTextTexture(std::string text,
   }
 
   texture = surfaceToTexture(surface);
-  return texture;
+	std::unique_ptr<SDL_Texture, sdl_deleter> tex(texture);
+  return tex;
 }
 
 void Display::init() {
