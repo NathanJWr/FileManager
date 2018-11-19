@@ -16,18 +16,17 @@ int main() {
 	for(int i = 0; i < 900; i++) {
   	for (auto n : list) {
     	std::cout << n << std::endl;
-      tex_list.push_back(std::make_unique<Texture>(display.createTextTexture(n.name, w)));
+      tex_list.push_back(std::move(display.createTextTexture(n.name, w)));
   	}
 	}
-	SDL_Rect dest = {0, 0, 70, 20};
+  int offset = 0;
 	for (unsigned int i = 0; i < tex_list.size(); i++) {
-		display.renderTexture(tex_list[i]->get(), nullptr, &dest);
-		dest.y += 20;
+    offset +=20;
+		display.renderTexture(tex_list[i].get());
 	}
-	tex_list.clear();
 	display.update();
 	SDL_Delay(5000);
-  
+	tex_list.clear();
 	display.update();
 	SDL_Delay(5000);
   return 0;

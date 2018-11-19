@@ -25,10 +25,10 @@ void Display::update() {
 	//SDL_SetRenderDrawColor(renderer, 0,0,0,0);
 	SDL_RenderClear(renderer);
 }
-void Display::renderTexture(SDL_Texture* texture,
-    												SDL_Rect* source,
-    												SDL_Rect* destination) {
-  SDL_RenderCopy(renderer, texture, source, destination);
+void Display::renderTexture(Texture* texture) {
+  SDL_Rect* destination = texture->get_p();
+  SDL_Rect* source = nullptr;
+  SDL_RenderCopy(renderer, texture->get_t(), source, destination);
 }
 
 SDL_Texture* Display::surfaceToTexture(SDL_Surface* surf) {
@@ -53,20 +53,26 @@ SDL_Texture* Display::surfaceToTextureSafe(SDL_Surface* surf) {
   return text;
 }
 
-SDL_Texture* Display::createTextTexture(std::string text,
-    																		SDL_Color color) {
-  
+std::unique_ptr<Texture> Display::createTextTexture(std::string text,
+    																		            SDL_Color color) {
+
+                                          
   SDL_Surface* surface = nullptr;
-  SDL_Texture* texture = nullptr;
+  SDL_Texture* tex = nullptr;
+  SDL_Rect pos = {0, 0, 0, 0};
   surface = TTF_RenderText_Solid(font, text.c_str(), color);
+  pos.w = surface->w;
+  pos.h = surface->h;
 
   if (!surface) {
 		std::cerr << "Text Render Error: " << TTF_GetError() << std::endl;
     return nullptr;
   }
 
-  texture = surfaceToTexture(surface);
-  return texture;
+  tex = surfaceToTexture(surface);
+
+  auto ptr = std::unique_ptr<Texture>(new Texture(tex, pos));
+  return ptr;
 }
 
 void Display::init() {
@@ -100,7 +106,7 @@ void Display::init() {
 
     success = false;
   }
-  font = TTF_OpenFont("assets/Ubuntu.ttf", 90);
+  font = TTF_OpenFont("assets/Ubuntu.ttf", 12);
 
   if(font == NULL) {
 		std::cerr << "Failed to load font: " <<  SDL_GetError() << std::endl;
