@@ -10,6 +10,5 @@ class DirObject {
   std::string name;
   Type type;
 
- private:
 };
 #endif // DIR_OBJECT_H_

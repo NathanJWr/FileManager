@@ -7,8 +7,9 @@ std::string FileManager::getCurrentDirectory() {
   return path.string();
 }
 
-std::vector<DirObject>& FileManager::listCurrentDirectory() {
+std::vector<DirObject> FileManager::listCurrentDirectory() {
   std::string path = getCurrentDirectory();
+  std::vector<DirObject> current_directory;
   for (const fs::directory_entry &p : fs::directory_iterator(path)) {
     std::string buff = p.path().string();
     buff.erase(buff.begin(), buff.begin() + path.size() + 1);

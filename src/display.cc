@@ -1,8 +1,4 @@
 #include "display.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <iostream>
-#include <memory>
 Display::Display(unsigned int width, unsigned int height) :
   SCREEN_W(width),
   SCREEN_H(height) {
@@ -31,6 +27,20 @@ void Display::renderTexture(Texture* texture) {
   SDL_RenderCopy(renderer, texture->get_t(), source, destination);
 }
 
+void Display::renderDirectory(const std::vector<DirObject> &list) {
+  std::vector<std::unique_ptr<Texture>> tex_list;
+  int y = 0, x = 0;
+  SDL_Color white = {255, 255, 255};
+  for (auto n : list) {
+    std::cout << n << std::endl;
+    tex_list.emplace_back(createTextTexture(n.name, white, x, y));
+    y += 20;
+  }
+  for (unsigned int i = 0; i < tex_list.size(); i++) {
+    renderTexture(tex_list[i].get());
+  }
+}
+
 SDL_Texture* Display::surfaceToTexture(SDL_Surface* surf) {
   SDL_Texture* text = nullptr;
   text = SDL_CreateTextureFromSurface(renderer, surf);
@@ -54,7 +64,9 @@ SDL_Texture* Display::surfaceToTextureSafe(SDL_Surface* surf) {
 }
 
 std::unique_ptr<Texture> Display::createTextTexture(std::string text,
-    																		            SDL_Color color) {
+    																		            SDL_Color color,
+                                                    int x,
+                                                    int y) {
 
                                           
   SDL_Surface* surface = nullptr;
@@ -63,6 +75,8 @@ std::unique_ptr<Texture> Display::createTextTexture(std::string text,
   surface = TTF_RenderText_Solid(font, text.c_str(), color);
   pos.w = surface->w;
   pos.h = surface->h;
+  pos.x = x;
+  pos.y = y;
 
   if (!surface) {
 		std::cerr << "Text Render Error: " << TTF_GetError() << std::endl;
