@@ -4,11 +4,14 @@
 class DirObject {
  public:
   enum Type {FILE, FOLDER};
-  DirObject(std::string name, Type type);
+  Type type;
+  std::string name;
+  std::string path;
+  bool selected;
+
+  DirObject(std::string name, std::string path, Type type);
 
   friend std::ostream& operator<<(std::ostream& os, const DirObject& f);
-  std::string name;
-  Type type;
 
 };
 #endif // DIR_OBJECT_H_

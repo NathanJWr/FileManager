@@ -14,5 +14,10 @@ int main() {
   display.renderDirectory(list);
 	display.update();
   SDL_Delay(5000);
+
+  list[0].selected = true;
+  display.renderDirectory(list);
+	display.update();
+  SDL_Delay(5000);
   return 0;
 }

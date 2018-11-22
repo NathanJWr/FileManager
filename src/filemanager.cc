@@ -12,14 +12,18 @@ std::vector<DirObject> FileManager::listCurrentDirectory() {
   std::vector<DirObject> current_directory;
   for (const fs::directory_entry &p : fs::directory_iterator(path)) {
     std::string buff = p.path().string();
+    std::string path_str = buff;
+
+    //erasing the full path to just get the name of the file
     buff.erase(buff.begin(), buff.begin() + path.size() + 1);
     DirObject::Type type;
+
     if (fs::is_directory(p)) {
       type = DirObject::FOLDER;
     } else if (fs::is_regular_file(p)) {
       type = DirObject::FILE;
     }
-    DirObject f(buff, type);
+    DirObject f(buff, path_str, type);
     current_directory.push_back(f);
   }
   return current_directory;

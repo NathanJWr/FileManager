@@ -1,4 +1,6 @@
 #include "display.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 Display::Display(unsigned int width, unsigned int height) :
   SCREEN_W(width),
   SCREEN_H(height) {
@@ -18,27 +20,36 @@ Display::~Display() {
 
 void Display::update() {
 	SDL_RenderPresent(renderer);
-	//SDL_SetRenderDrawColor(renderer, 0,0,0,0);
 	SDL_RenderClear(renderer);
-}
-void Display::renderTexture(Texture* texture) {
-  SDL_Rect* destination = texture->get_p();
-  SDL_Rect* source = nullptr;
-  SDL_RenderCopy(renderer, texture->get_t(), source, destination);
 }
 
 void Display::renderDirectory(const std::vector<DirObject> &list) {
   std::vector<std::unique_ptr<Texture>> tex_list;
   int y = 0, x = 0;
   SDL_Color white = {255, 255, 255};
+  //SDL_Color green = {25, 80, 99};
+  SDL_Color blue = {0, 50, 255};
+ 
+  SDL_Color color;
   for (auto n : list) {
     std::cout << n << std::endl;
-    tex_list.emplace_back(createTextTexture(n.name, white, x, y));
+    if (n.type == DirObject::FILE) {
+      color = white;
+    } else if (n.type == DirObject::FOLDER) {
+      color = blue;
+    } 
+    tex_list.emplace_back(createTextTexture(n.name, color, x, y));
     y += 20;
   }
   for (unsigned int i = 0; i < tex_list.size(); i++) {
     renderTexture(tex_list[i].get());
   }
+}
+
+void Display::renderTexture(Texture* texture) {
+  SDL_Rect* destination = texture->get_p();
+  SDL_Rect* source = nullptr;
+  SDL_RenderCopy(renderer, texture->get_t(), source, destination);
 }
 
 SDL_Texture* Display::surfaceToTexture(SDL_Surface* surf) {
@@ -67,12 +78,13 @@ std::unique_ptr<Texture> Display::createTextTexture(std::string text,
     																		            SDL_Color color,
                                                     int x,
                                                     int y) {
-
-                                          
   SDL_Surface* surface = nullptr;
   SDL_Texture* tex = nullptr;
   SDL_Rect pos = {0, 0, 0, 0};
   surface = TTF_RenderText_Solid(font, text.c_str(), color);
+  if (!surface) {
+    std::cerr << "Text creationg error" << std::endl;
+  }
   pos.w = surface->w;
   pos.h = surface->h;
   pos.x = x;
