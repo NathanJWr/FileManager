@@ -23,21 +23,24 @@ void Display::update() {
 	SDL_RenderClear(renderer);
 }
 
-void Display::renderDirectory(const std::vector<DirObject> &list) {
+void Display::renderDirectory(const Directory& dir) {
   std::vector<std::unique_ptr<Texture>> tex_list;
+  auto list = dir.get();
   int y = 0, x = 0;
   SDL_Color white = {255, 255, 255};
-  //SDL_Color green = {25, 80, 99};
+  SDL_Color green = {0, 255, 0};
   SDL_Color blue = {0, 50, 255};
  
   SDL_Color color;
   for (auto n : list) {
     std::cout << n << std::endl;
-    if (n.type == DirObject::FILE) {
+    if (n.selected) {
       color = white;
+    } else if (n.type == DirObject::FILE) {
+      color = green;
     } else if (n.type == DirObject::FOLDER) {
       color = blue;
-    } 
+    }
     tex_list.emplace_back(createTextTexture(n.name, color, x, y));
     y += 20;
   }

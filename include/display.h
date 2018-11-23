@@ -1,6 +1,7 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 #include "dirobject.h"
+#include "directory.h"
 #include "texture.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -14,7 +15,7 @@ class Display {
 	~Display();
 
   void init();
-  void renderDirectory(const std::vector<DirObject> &list);
+  void renderDirectory(const Directory&);
 	void update();
   std::unique_ptr<Texture> createTextTexture(std::string text,
                                              SDL_Color color,

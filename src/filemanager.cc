@@ -7,7 +7,7 @@ std::string FileManager::getCurrentDirectory() {
   return path.string();
 }
 
-std::vector<DirObject> FileManager::listCurrentDirectory() {
+Directory FileManager::listCurrentDirectory() {
   std::string path = getCurrentDirectory();
   std::vector<DirObject> current_directory;
   for (const fs::directory_entry &p : fs::directory_iterator(path)) {
@@ -26,7 +26,7 @@ std::vector<DirObject> FileManager::listCurrentDirectory() {
     DirObject f(buff, path_str, type);
     current_directory.push_back(f);
   }
-  return current_directory;
+  return Directory(current_directory);
 }
 
 void FileManager::changeDirectory(std::string path) {
