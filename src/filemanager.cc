@@ -1,5 +1,4 @@
 #include "filemanager.h"
-#include "dirobject.h"
 #include <fstream>
 #include <experimental/filesystem>
 std::string FileManager::getCurrentDirectory() {
@@ -36,6 +35,17 @@ void FileManager::changeDirectory(std::string path) {
    */
   fs::current_path(path);
 }
+
+bool FileManager::moveToParent() {
+  auto path = fs::current_path();
+  if (path.parent_path().string() == "") {
+    return false;
+  } else {
+    fs::current_path(path.parent_path());
+    return true;
+  }
+}
+
 
 void FileManager::createDirObject(std::string name) {
   std::ofstream file(name);

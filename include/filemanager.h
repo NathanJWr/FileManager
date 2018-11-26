@@ -1,6 +1,5 @@
 #ifndef FILE_MANAGER_H_
 #define FILE_MANAGER_H_
-#include "dirobject.h"
 #include "directory.h"
 #include <vector>
 #include <string>
@@ -10,6 +9,7 @@ class FileManager {
  public:
   std::string getCurrentDirectory();
   void changeDirectory(std::string path);
+  bool moveToParent();
 
   /* gets the file and folder names in the current directory */
   Directory listCurrentDirectory();

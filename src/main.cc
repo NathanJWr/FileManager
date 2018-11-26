@@ -1,26 +1,27 @@
-#include "dirobject.h"
 #include "filemanager.h"
 #include "display.h"
-#include "texture.h"
+#include "filesystem.h"
 #include <iostream>
 #include <SDL2/SDL.h>
 #include <memory>
 #include <vector>
-void handleInput(Directory &dir) {
+#include <list>
+void handleInput(Filesystem &dirs) {
   SDL_Event e;
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_KEYDOWN) {
       switch (e.key.keysym.sym) {
         case SDLK_j:
           //move down in same directory
-          dir.moveSelectedDown();
+          dirs.getCurrent().moveSelectedDown();
           break;
         case SDLK_k:
           //move up in same directory
-          dir.moveSelectedUp();
+          dirs.getCurrent().moveSelectedUp();
           break;
         case SDLK_l:
           //move into folder or open file
+          //dir.moveRight();
           break;
         case SDLK_h:
           //move back a directory
@@ -35,13 +36,14 @@ void handleInput(Directory &dir) {
 }
 
 int main() {
-  FileManager fmanager;
 	Display display(1024, 768);
+  std::list<Directory> directories;
 	display.init();
-  Directory dir = fmanager.listCurrentDirectory();
+  //Directory dir = fmanager.listCurrentDirectory();
+  Filesystem dirs;
   while (1) {
-    handleInput(dir);
-    display.renderDirectory(dir);
+    handleInput(dirs);
+    display.renderDirectory(dirs.getCurrent());
 	  display.update();
     SDL_Delay(100);
   }
