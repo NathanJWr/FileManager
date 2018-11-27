@@ -1,8 +1,14 @@
 #include "directory.h"
 #include "filemanager.h"
-Directory::Directory(std::vector<DirObject> d) {
+Directory::Directory(std::vector<DirObject> d, std::string p) {
   dir = d;
+	path = p;
   dir[0].selected = true;
+}
+
+const DirObject& Directory::currentlySelected() const {
+	auto cur = findCurrentlySelected();
+	return dir[cur];
 }
 
 const std::vector<DirObject>& Directory::get() const {
@@ -24,7 +30,8 @@ void Directory::moveSelectedUp() {
     dir[currently_selected-1].selected = true;
   }
 }
-unsigned int Directory::findCurrentlySelected() {
+
+unsigned int Directory::findCurrentlySelected() const {
   unsigned int currently_selected = -1;
   for (unsigned int i = 0; i < dir.size(); i++) {
     if (dir[i].selected) {

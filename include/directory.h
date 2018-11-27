@@ -5,19 +5,17 @@
 #include <memory>
 class Directory {
  public:
-  Directory(std::vector<DirObject>);
+  Directory(std::vector<DirObject>, std::string path);
   const std::vector<DirObject>& get() const;
+	const DirObject& currentlySelected() const;
   
   void moveSelectedDown();
   void moveSelectedUp();
 
+	std::string path;
  private:
   std::vector<DirObject> dir;
-  std::unique_ptr<Directory> next;
-  unsigned int findCurrentlySelected();
-
-  void moveToDirectoryLeft();
-  void setNext(std::string path);
+  unsigned int findCurrentlySelected() const;
 };
 
 #endif // DIRECTORY_H_

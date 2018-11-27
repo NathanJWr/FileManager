@@ -13,18 +13,20 @@ void handleInput(Filesystem &dirs) {
       switch (e.key.keysym.sym) {
         case SDLK_j:
           //move down in same directory
-          dirs.getCurrent().moveSelectedDown();
+          dirs.currentDir().moveSelectedDown();
           break;
         case SDLK_k:
           //move up in same directory
-          dirs.getCurrent().moveSelectedUp();
+          dirs.currentDir().moveSelectedUp();
           break;
         case SDLK_l:
           //move into folder or open file
           //dir.moveRight();
+					dirs.forward();
           break;
         case SDLK_h:
           //move back a directory
+					dirs.back();
           break;
         case SDLK_q:
           //quit
@@ -43,7 +45,7 @@ int main() {
   Filesystem dirs;
   while (1) {
     handleInput(dirs);
-    display.renderDirectory(dirs.getCurrent());
+    display.renderDirectory(dirs.currentDir());
 	  display.update();
     SDL_Delay(100);
   }

@@ -25,7 +25,7 @@ Directory FileManager::listCurrentDirectory() {
     DirObject f(buff, path_str, type);
     current_directory.push_back(f);
   }
-  return Directory(current_directory);
+  return Directory(current_directory, getCurrentDirectory());
 }
 
 void FileManager::changeDirectory(std::string path) {
