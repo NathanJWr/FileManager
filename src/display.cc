@@ -30,7 +30,7 @@ void Display::renderDirectory(const Directory& dir) {
   SDL_Color white = {255, 255, 255};
   SDL_Color green = {0, 255, 0};
   SDL_Color blue = {0, 50, 255};
- 
+
   SDL_Color color;
   for (auto n : list) {
     std::cout << n << std::endl;
@@ -104,7 +104,7 @@ std::unique_ptr<Texture> Display::createTextTexture(std::string text,
   return ptr;
 }
 
-void Display::init() {
+bool Display::init() {
   bool success = true;
   if(SDL_Init(SDL_INIT_VIDEO) < 0) {
     success = false;
@@ -141,8 +141,5 @@ void Display::init() {
 		std::cerr << "Failed to load font: " <<  SDL_GetError() << std::endl;
     success = false;
   }
-	if (!success) {
-		std::cerr << "Unable to initialize SDL" << std::endl;
-		exit(1);
-	}
+	return success;
 }

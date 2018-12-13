@@ -21,7 +21,6 @@ void handleInput(Filesystem &dirs) {
           break;
         case SDLK_l:
           //move into folder or open file
-          //dir.moveRight();
 					dirs.forward();
           break;
         case SDLK_h:
@@ -39,16 +38,16 @@ void handleInput(Filesystem &dirs) {
 
 int main() {
 	Display display(1024, 768);
-  std::list<Directory> directories;
-	display.init();
-  //Directory dir = fmanager.listCurrentDirectory();
+	if (!display.init()) {
+		std::cerr << "Failed to initialize Display!" << std::endl;
+		exit(1);
+	}
   Filesystem dirs;
   while (1) {
     handleInput(dirs);
     display.renderDirectory(dirs.currentDir());
 	  display.update();
     SDL_Delay(100);
-  }
-
+	}
   return 0;
 }

@@ -14,7 +14,7 @@ class Display {
   Display(unsigned int width, unsigned int height);
 	~Display();
 
-  void init();
+  bool init();
   void renderDirectory(const Directory&);
 	void update();
   std::unique_ptr<Texture> createTextTexture(std::string text,

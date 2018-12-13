@@ -1,6 +1,10 @@
 #include "filemanager.h"
 #include <fstream>
 #include <experimental/filesystem>
+FileManager::FileManager() {
+	show_hidden_files = false;
+}
+
 std::string FileManager::getCurrentDirectory() {
   auto path = fs::current_path();
   return path.string();
@@ -22,8 +26,10 @@ Directory FileManager::listCurrentDirectory() {
     } else if (fs::is_regular_file(p)) {
       type = DirObject::FILE;
     }
-    DirObject f(buff, path_str, type);
-    current_directory.push_back(f);
+		DirObject dirobj = DirObject(buff, path_str, type);
+		if (!dirobj.isHidden() && !show_hidden_files) {
+    	current_directory.emplace_back(DirObject(buff, path_str, type));
+		}
   }
   return Directory(current_directory, getCurrentDirectory());
 }
