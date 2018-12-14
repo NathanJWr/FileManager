@@ -7,9 +7,10 @@ Filesystem::Filesystem() {
     buff.push(fmanager.getCurrentDirectory());
   }
   while (!buff.empty()) {
-    fmanager.changeDirectory(buff.top());
-    dirs.push(fmanager.listCurrentDirectory());
-    buff.pop();
+    if( fmanager.changeDirectory(buff.top())) {
+    	dirs.push(fmanager.listCurrentDirectory());
+    	buff.pop();
+		}
   }
 }
 Directory& Filesystem::currentDir() {
@@ -21,7 +22,13 @@ void Filesystem::addCurrentDir() {
 }
 
 void Filesystem::back() {
-	dirs.pop();
+	/*
+	 * Since dirs should always contain the root directory
+	 * check to see if there is only one thing in the stack
+	 */
+	if (dirs.size() > 1) {
+		dirs.pop();
+	}
 }
 
 void Filesystem::forward() {
