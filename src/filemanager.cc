@@ -17,8 +17,11 @@ Directory FileManager::listCurrentDirectory() {
     std::string buff = p.path().string();
     std::string path_str = buff;
 
-    //erasing the full path to just get the name of the file
-    buff.erase(buff.begin(), buff.begin() + path.size() + 1);
+    // erasing the full path to just get the name of the file
+    buff.erase(buff.begin(), buff.begin() + path.size());
+		if (buff.front() == '/') {
+			buff.erase(buff.begin());
+		}
     DirObject::Type type;
 
     if (fs::is_directory(p)) {
@@ -34,12 +37,17 @@ Directory FileManager::listCurrentDirectory() {
   return Directory(current_directory, getCurrentDirectory());
 }
 
-void FileManager::changeDirectory(std::string path) {
+bool FileManager::changeDirectory(std::string path) {
   /*
    * TODO: This throws a filesystem error
    * maybe try catching it if needed?
    */
-  fs::current_path(path);
+  try {
+		fs::current_path(path);
+	} catch (fs::filesystem_error& e) {
+		return false;
+	}
+	return true;
 }
 
 bool FileManager::moveToParent() {
