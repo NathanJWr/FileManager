@@ -3,7 +3,9 @@
 Directory::Directory(std::vector<DirObject> d, std::string p) {
   dir = d;
 	path = p;
-  dir[0].selected = true;
+	if (!dir.empty()) {
+  	dir[0].selected = true;
+	}
 }
 
 const DirObject& Directory::currentlySelected() const {
