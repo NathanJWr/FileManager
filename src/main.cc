@@ -6,10 +6,17 @@
 #include <memory>
 #include <vector>
 #include <list>
-int handleInput(Filesystem &dirs) {
+class Context {
+ public:
+	bool redraw;
+	Context() : redraw(0) {}
+};
+Context handleInput(Filesystem &dirs) {
   SDL_Event e;
+	Context ctx;
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_KEYDOWN) {
+			ctx.redraw = true;
       switch (e.key.keysym.sym) {
         case SDLK_j:
           //move down in same directory
@@ -32,10 +39,9 @@ int handleInput(Filesystem &dirs) {
           exit(0);
           break;
       }
-      return 1;
     }
   }
-  return 0;
+	return ctx;
 }
 
 int main() {
@@ -45,8 +51,11 @@ int main() {
 	exit(1);
   }
   Filesystem dirs;
+  display.renderDirectory(dirs.currentDir());
+  display.update();
   while (1) {
-    if (handleInput(dirs) == 1) {
+		Context ctx = handleInput(dirs);
+    if (ctx.redraw) {
       display.renderDirectory(dirs.currentDir());
       display.update();
   	}
