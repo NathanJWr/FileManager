@@ -78,7 +78,7 @@ SDL_Texture* Display::surfaceToTextureSafe(SDL_Surface* surf) {
 }
 
 std::unique_ptr<Texture> Display::createTextTexture(std::string text,
-    																		            SDL_Color color,
+                                                    SDL_Color color,
                                                     int x,
                                                     int y) {
   SDL_Surface* surface = nullptr;

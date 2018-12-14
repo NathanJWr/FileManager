@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 #include <list>
-void handleInput(Filesystem &dirs) {
+int handleInput(Filesystem &dirs) {
   SDL_Event e;
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_KEYDOWN) {
@@ -32,22 +32,25 @@ void handleInput(Filesystem &dirs) {
           exit(0);
           break;
       }
+      return 1;
     }
   }
+  return 0;
 }
 
 int main() {
-	Display display(1024, 768);
-	if (!display.init()) {
-		std::cerr << "Failed to initialize Display!" << std::endl;
-		exit(1);
-	}
+  Display display(1024, 768);
+  if (!display.init()) {
+    std::cerr << "Failed to initialize Display!" << std::endl;
+	exit(1);
+  }
   Filesystem dirs;
   while (1) {
-    handleInput(dirs);
-    display.renderDirectory(dirs.currentDir());
-	  display.update();
-    SDL_Delay(100);
-	}
+    if (handleInput(dirs) == 1) {
+      display.renderDirectory(dirs.currentDir());
+      display.update();
+  	}
+		SDL_Delay(100);
+  }
   return 0;
 }
