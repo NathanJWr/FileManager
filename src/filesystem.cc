@@ -8,9 +8,9 @@ Filesystem::Filesystem() {
   }
   while (!buff.empty()) {
     if( fmanager.changeDirectory(buff.top())) {
-    	dirs.push(fmanager.listCurrentDirectory());
-    	buff.pop();
-		}
+      dirs.push(fmanager.listCurrentDirectory());
+      buff.pop();
+    }
   }
 }
 Directory& Filesystem::currentDir() {
@@ -22,20 +22,20 @@ void Filesystem::addCurrentDir() {
 }
 
 void Filesystem::back() {
-	/*
-	 * Since dirs should always contain the root directory
-	 * check to see if there is only one thing in the stack
-	 */
-	if (dirs.size() > 1) {
-		dirs.pop();
-	}
+  /*
+   * Since dirs should always contain the root directory
+   * check to see if there is only one thing in the stack
+   */
+  if (dirs.size() > 1) {
+    dirs.pop();
+  }
 }
 
 void Filesystem::forward() {
-	if (currentDir().currentlySelected().isFolder()) {
-		std::string name = currentDir().currentlySelected().name;
-		std::string buf = currentDir().path + "/" + name;
-		fmanager.changeDirectory(buf);
-		addCurrentDir();
-	}
+  if (currentDir().currentlySelected().isFolder()) {
+    std::string name = currentDir().currentlySelected().name;
+    std::string buf = currentDir().path + "/" + name;
+    fmanager.changeDirectory(buf);
+    addCurrentDir();
+  }
 }

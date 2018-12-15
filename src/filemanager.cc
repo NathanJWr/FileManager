@@ -2,7 +2,7 @@
 #include <fstream>
 #include <experimental/filesystem>
 FileManager::FileManager() {
-	show_hidden_files = false;
+  show_hidden_files = false;
 }
 
 std::string FileManager::getCurrentDirectory() {
@@ -19,9 +19,9 @@ Directory FileManager::listCurrentDirectory() {
 
     // erasing the full path to just get the name of the file
     buff.erase(buff.begin(), buff.begin() + path.size());
-		if (buff.front() == '/') {
-			buff.erase(buff.begin());
-		}
+    if (buff.front() == '/') {
+      buff.erase(buff.begin());
+    }
     DirObject::Type type;
 
     if (fs::is_directory(p)) {
@@ -29,10 +29,10 @@ Directory FileManager::listCurrentDirectory() {
     } else if (fs::is_regular_file(p)) {
       type = DirObject::FILE;
     }
-		DirObject dirobj = DirObject(buff, path_str, type);
-		if (!dirobj.isHidden() && !show_hidden_files) {
-    	current_directory.emplace_back(DirObject(buff, path_str, type));
-		}
+    DirObject dirobj = DirObject(buff, path_str, type);
+    if (!dirobj.isHidden() && !show_hidden_files) {
+      current_directory.emplace_back(DirObject(buff, path_str, type));
+    }
   }
   return Directory(current_directory, getCurrentDirectory());
 }
@@ -43,11 +43,12 @@ bool FileManager::changeDirectory(std::string path) {
    * maybe try catching it if needed?
    */
   try {
-		fs::current_path(path);
-	} catch (fs::filesystem_error& e) {
-		return false;
-	}
-	return true;
+    fs::current_path(path);
+  } catch (fs::filesystem_error& e) {
+    std::cout << "Cant do that\n";
+    return false;
+  }
+  return true;
 }
 
 bool FileManager::moveToParent() {

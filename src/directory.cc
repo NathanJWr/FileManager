@@ -2,15 +2,15 @@
 #include "filemanager.h"
 Directory::Directory(std::vector<DirObject> d, std::string p) {
   dir = d;
-	path = p;
-	if (!dir.empty()) {
-  	dir[0].selected = true;
-	}
+  path = p;
+  if (!dir.empty()) {
+    dir[0].selected = true;
+  }
 }
 
 const DirObject& Directory::currentlySelected() const {
-	auto cur = findCurrentlySelected();
-	return dir[cur];
+  auto cur = findCurrentlySelected();
+  return dir[cur];
 }
 
 const std::vector<DirObject>& Directory::get() const {

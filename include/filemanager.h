@@ -7,15 +7,15 @@
 namespace fs = std::experimental::filesystem;
 class FileManager {
  public:
-	FileManager();
+  FileManager();
   std::string getCurrentDirectory();
-  void changeDirectory(std::string path);
+  bool changeDirectory(std::string path);
   bool moveToParent();
 
   /* gets the file and folder names in the current directory */
   Directory listCurrentDirectory();
   void createDirObject(std::string name);
  private:
-	bool show_hidden_files;
+  bool show_hidden_files;
 };
 #endif // FILE_MANAGER_H_

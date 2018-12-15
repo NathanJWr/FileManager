@@ -7,12 +7,12 @@ Texture::Texture(SDL_Texture* tex, SDL_Rect pos) {
 }
 
 Texture::~Texture() {
-	std::cout << "Texture Destructor Called" << std::endl;
-	SDL_DestroyTexture(texture);
+  std::cout << "Texture Destructor Called" << std::endl;
+  SDL_DestroyTexture(texture);
 }
 
 SDL_Texture* Texture::get_t() {
-	return texture;
+  return texture;
 }
 
 SDL_Rect* Texture::get_p() {

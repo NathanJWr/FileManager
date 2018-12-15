@@ -8,15 +8,15 @@
 #include <list>
 class Context {
  public:
-	bool redraw;
-	Context() : redraw(0) {}
+  bool redraw;
+  Context() : redraw(0) {}
 };
 Context handleInput(Filesystem &dirs) {
   SDL_Event e;
-	Context ctx;
+  Context ctx;
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_KEYDOWN) {
-			ctx.redraw = true;
+      ctx.redraw = true;
       switch (e.key.keysym.sym) {
         case SDLK_j:
           //move down in same directory
@@ -28,11 +28,11 @@ Context handleInput(Filesystem &dirs) {
           break;
         case SDLK_l:
           //move into folder or open file
-					dirs.forward();
+          dirs.forward();
           break;
         case SDLK_h:
           //move back a directory
-					dirs.back();
+          dirs.back();
           break;
         case SDLK_q:
           //quit
@@ -41,25 +41,25 @@ Context handleInput(Filesystem &dirs) {
       }
     }
   }
-	return ctx;
+  return ctx;
 }
 
 int main() {
   Display display(1024, 768);
   if (!display.init()) {
     std::cerr << "Failed to initialize Display!" << std::endl;
-	exit(1);
+  exit(1);
   }
   Filesystem dirs;
   display.renderDirectory(dirs.currentDir());
   display.update();
   while (1) {
-		Context ctx = handleInput(dirs);
+    Context ctx = handleInput(dirs);
     if (ctx.redraw) {
       display.renderDirectory(dirs.currentDir());
       display.update();
-  	}
-		SDL_Delay(100);
+    }
+    SDL_Delay(100);
   }
   return 0;
 }

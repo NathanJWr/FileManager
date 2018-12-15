@@ -12,18 +12,18 @@
 class Display {
  public:
   Display(unsigned int width, unsigned int height);
-	~Display();
+  ~Display();
 
   bool init();
   void renderDirectory(const Directory&);
-	void update();
+  void update();
   std::unique_ptr<Texture> createTextTexture(std::string text,
                                              SDL_Color color,
                                              int x,
                                              int y);
  private:
-	SDL_Texture* surfaceToTexture(SDL_Surface* surf);
-	SDL_Texture* surfaceToTextureSafe(SDL_Surface* surf);
+  SDL_Texture* surfaceToTexture(SDL_Surface* surf);
+  SDL_Texture* surfaceToTextureSafe(SDL_Surface* surf);
   void renderTexture(Texture*);
 
   SDL_Window* window;

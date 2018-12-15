@@ -7,12 +7,12 @@ class Directory {
  public:
   Directory(std::vector<DirObject>, std::string path);
   const std::vector<DirObject>& get() const;
-	const DirObject& currentlySelected() const;
-  
+  const DirObject& currentlySelected() const;
+
   void moveSelectedDown();
   void moveSelectedUp();
 
-	std::string path;
+  std::string path;
  private:
   std::vector<DirObject> dir;
   unsigned int findCurrentlySelected() const;

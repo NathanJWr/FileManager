@@ -11,16 +11,16 @@ Display::Display(unsigned int width, unsigned int height) :
 
 Display::~Display() {
   std::cout << "Display being destroyed\n";
-	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(renderer);
-	TTF_CloseFont(font);
-	TTF_Quit();
-	SDL_Quit();
+  SDL_DestroyWindow(window);
+  SDL_DestroyRenderer(renderer);
+  TTF_CloseFont(font);
+  TTF_Quit();
+  SDL_Quit();
 }
 
 void Display::update() {
-	SDL_RenderPresent(renderer);
-	SDL_RenderClear(renderer);
+  SDL_RenderPresent(renderer);
+  SDL_RenderClear(renderer);
 }
 
 void Display::renderDirectory(const Directory& dir) {
@@ -61,7 +61,7 @@ SDL_Texture* Display::surfaceToTexture(SDL_Surface* surf) {
   SDL_FreeSurface(surf);
 
   if (!text) {
-		std::cerr << "Texture Creation Error: " <<  SDL_GetError() << std::endl;
+    std::cerr << "Texture Creation Error: " <<  SDL_GetError() << std::endl;
   }
   return text;
 }
@@ -71,7 +71,7 @@ SDL_Texture* Display::surfaceToTextureSafe(SDL_Surface* surf) {
   text = SDL_CreateTextureFromSurface(renderer, surf);
 
   if (!text) {
-		std::cerr << "Texture Creation Error: " << SDL_GetError() << std::endl;
+    std::cerr << "Texture Creation Error: " << SDL_GetError() << std::endl;
     return nullptr;
   }
   return text;
@@ -94,7 +94,7 @@ std::unique_ptr<Texture> Display::createTextTexture(std::string text,
   pos.y = y;
 
   if (!surface) {
-		std::cerr << "Text Render Error: " << TTF_GetError() << std::endl;
+    std::cerr << "Text Render Error: " << TTF_GetError() << std::endl;
     return nullptr;
   }
 
@@ -131,15 +131,15 @@ bool Display::init() {
     }
   }
   if(TTF_Init() == -1) {
-		std::cerr << "Failed to initialize TTF: " <<  SDL_GetError() << std::endl;
+    std::cerr << "Failed to initialize TTF: " <<  SDL_GetError() << std::endl;
 
     success = false;
   }
   font = TTF_OpenFont("assets/Ubuntu.ttf", 12);
 
   if(font == NULL) {
-		std::cerr << "Failed to load font: " <<  SDL_GetError() << std::endl;
+    std::cerr << "Failed to load font: " <<  SDL_GetError() << std::endl;
     success = false;
   }
-	return success;
+  return success;
 }

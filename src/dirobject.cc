@@ -6,11 +6,11 @@ DirObject::DirObject(std::string n, std::string p, Type t) {
   selected = false;
 }
 bool DirObject::isFolder() const {
-	return type == FOLDER;
+  return type == FOLDER;
 }
 
 bool DirObject::isHidden() const {
-	return (name.front() == '.');
+  return (name.front() == '.');
 }
 
 std::ostream& operator << (std::ostream& os, const DirObject& f) {
