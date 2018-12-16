@@ -34,8 +34,14 @@ void Filesystem::back() {
 void Filesystem::forward() {
   if (currentDir().currentlySelected().isFolder()) {
     std::string name = currentDir().currentlySelected().name;
-    std::string buf = currentDir().path + "/" + name;
-    fmanager.changeDirectory(buf);
-    addCurrentDir();
+    std::string buf;
+    if (currentDir().path != ROOT) {
+      buf = currentDir().path + "/" + name;
+    } else {
+      buf = currentDir().path + name;
+    }
+    if (fmanager.changeDirectory(buf)) {
+      addCurrentDir();
+    }
   }
 }

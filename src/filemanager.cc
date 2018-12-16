@@ -24,10 +24,17 @@ Directory FileManager::listCurrentDirectory() {
     }
     DirObject::Type type;
 
-    if (fs::is_directory(p)) {
-      type = DirObject::FOLDER;
-    } else if (fs::is_regular_file(p)) {
-      type = DirObject::FILE;
+    try {
+      if (fs::is_directory(p)) {
+        type = DirObject::FOLDER;
+      } else if (fs::is_regular_file(p)) {
+        type = DirObject::FILE;
+      }
+    } catch (fs::filesystem_error &e) {
+      /*
+       * Skips the file/folder that the user
+       * has insufficient permissions to query
+       */
     }
     DirObject dirobj = DirObject(buff, path_str, type);
     if (!dirobj.isHidden() && !show_hidden_files) {
@@ -45,7 +52,6 @@ bool FileManager::changeDirectory(std::string path) {
   try {
     fs::current_path(path);
   } catch (fs::filesystem_error& e) {
-    std::cout << "Cant do that\n";
     return false;
   }
   return true;

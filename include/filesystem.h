@@ -1,5 +1,6 @@
 #ifndef FILESYSTEM_H_
 #define FILESYSTEM_H_
+#define ROOT "/"
 #include "directory.h"
 #include "filemanager.h"
 #include <stack>
