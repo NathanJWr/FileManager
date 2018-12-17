@@ -15,7 +15,9 @@ class FileManager {
   /* gets the file and folder names in the current directory */
   Directory listCurrentDirectory();
   void createDirObject(std::string name);
+  bool sort_alphabetically;
  private:
   bool show_hidden_files;
+  static bool alpha_sort(DirObject, DirObject);
 };
 #endif // FILE_MANAGER_H_

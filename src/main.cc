@@ -34,6 +34,9 @@ Context handleInput(Filesystem &dirs) {
           //move back a directory
           dirs.back();
           break;
+        case SDLK_a:
+          dirs.toggleSortAlphabetically();
+          break;
         case SDLK_q:
           //quit
           exit(0);

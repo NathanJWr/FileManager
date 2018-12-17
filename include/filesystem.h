@@ -16,6 +16,8 @@ class Filesystem {
   void back();
   /* move into a directory or open a file */
   void forward();
+  /* change the FileManager settings to sort alphabetically */
+  void toggleSortAlphabetically();
  private:
   void forwardDir();
   void openFile();

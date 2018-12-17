@@ -75,3 +75,7 @@ void Filesystem::openFile() {
 
   popen(command.c_str(), "r");
 }
+
+void Filesystem::toggleSortAlphabetically() {
+  fmanager.sort_alphabetically = !fmanager.sort_alphabetically;
+}

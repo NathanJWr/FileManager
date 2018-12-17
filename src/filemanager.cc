@@ -1,13 +1,19 @@
 #include "filemanager.h"
 #include <fstream>
+#include <algorithm>
 #include <experimental/filesystem>
 FileManager::FileManager() {
   show_hidden_files = false;
+  sort_alphabetically = true;
 }
 
 const std::string FileManager::getCurrentDirectory() {
   auto path = fs::current_path();
   return path.string();
+}
+
+ bool FileManager::alpha_sort(DirObject i, DirObject j) {
+  return (i.name[0] < j.name[0]);
 }
 
 Directory FileManager::listCurrentDirectory() {
@@ -40,6 +46,9 @@ Directory FileManager::listCurrentDirectory() {
     if (!dirobj.isHidden() && !show_hidden_files) {
       current_directory.emplace_back(DirObject(buff, path_str, type));
     }
+  }
+  if (sort_alphabetically) {
+    std::sort(current_directory.begin(), current_directory.end(), alpha_sort);
   }
   return Directory(current_directory, getCurrentDirectory());
 }
