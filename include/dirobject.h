@@ -5,10 +5,12 @@ class DirObject {
  public:
   enum Type {FILE, FOLDER};
   bool isFolder() const;
+  bool isFile() const;
   bool isHidden() const;
   Type type;
   std::string name;
   std::string path;
+  std::string extension;
   bool selected;
 
   DirObject(std::string name, std::string path, Type type);

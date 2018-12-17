@@ -17,6 +17,8 @@ class Filesystem {
   /* move into a directory or open a file */
   void forward();
  private:
+  void forwardDir();
+  void openFile();
   std::stack<Directory> dirs;
   FileManager fmanager;
 };

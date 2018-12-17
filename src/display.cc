@@ -135,7 +135,7 @@ bool Display::init() {
 
     success = false;
   }
-  font = TTF_OpenFont("assets/Ubuntu.ttf", 12);
+  font = TTF_OpenFont("assets/Ubuntu.ttf", 20);
 
   if(font == NULL) {
     std::cerr << "Failed to load font: " <<  SDL_GetError() << std::endl;
