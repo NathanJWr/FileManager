@@ -8,7 +8,7 @@ namespace fs = std::experimental::filesystem;
 class FileManager {
  public:
   FileManager();
-  std::string getCurrentDirectory();
+  const std::string getCurrentDirectory();
   bool changeDirectory(std::string path);
   bool moveToParent();
 

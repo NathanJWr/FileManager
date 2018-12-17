@@ -1,7 +1,7 @@
 #include "display.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
-Display::Display(unsigned int width, unsigned int height) :
+Display::Display(int width, int height) :
   SCREEN_W(width),
   SCREEN_H(height) {
     window = nullptr;
@@ -27,9 +27,9 @@ void Display::renderDirectory(const Directory& dir) {
   std::vector<std::unique_ptr<Texture>> tex_list;
   auto list = dir.get();
   int y = 0, x = 0;
-  SDL_Color white = {255, 255, 255};
-  SDL_Color green = {0, 255, 0};
-  SDL_Color blue = {0, 50, 255};
+  SDL_Color white = {255, 255, 255, 255};
+  SDL_Color green = {0, 255, 0, 255};
+  SDL_Color blue = {0, 50, 255, 255};
 
   SDL_Color color;
   for (auto n : list) {

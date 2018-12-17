@@ -5,7 +5,7 @@ FileManager::FileManager() {
   show_hidden_files = false;
 }
 
-std::string FileManager::getCurrentDirectory() {
+const std::string FileManager::getCurrentDirectory() {
   auto path = fs::current_path();
   return path.string();
 }
@@ -18,7 +18,7 @@ Directory FileManager::listCurrentDirectory() {
     std::string path_str = buff;
 
     // erasing the full path to just get the name of the file
-    buff.erase(buff.begin(), buff.begin() + path.size());
+    buff.erase(0, path.size());
     if (buff.front() == '/') {
       buff.erase(buff.begin());
     }

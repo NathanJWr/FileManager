@@ -11,7 +11,7 @@
 #include <iostream>
 class Display {
  public:
-  Display(unsigned int width, unsigned int height);
+  Display(int width, int height);
   ~Display();
 
   bool init();
@@ -29,7 +29,7 @@ class Display {
   SDL_Window* window;
   SDL_Renderer* renderer;
   TTF_Font* font;
-  unsigned int SCREEN_W;
-  unsigned int SCREEN_H;
+  int SCREEN_W;
+  int SCREEN_H;
 };
 #endif // DISPLAY_H_

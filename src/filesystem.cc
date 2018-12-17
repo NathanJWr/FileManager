@@ -62,15 +62,15 @@ void Filesystem::openFile() {
   /* Look through all of the defined extensions to see what matches */
   for (auto str : TEXT_EXTENSIONS) {
     if (str == ext) {
-      command = (std::string) TEXT_EDITOR;
+      command = TEXT_EDITOR;
     }
   }
   for (auto str : VIDEO_EXTENSIONS) {
     if (str == ext) {
-      command = (std::string) VIDEO_PLAYER;
+      command = VIDEO_PLAYER;
     }
   }
-  std::string buff = (std::string) " " + "\"" + path + "\"";
+  std::string buff = static_cast<std::string>(" ") + "\"" + path + "\"";
   command.append(buff);
 
   popen(command.c_str(), "r");

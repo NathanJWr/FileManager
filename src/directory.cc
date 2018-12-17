@@ -34,7 +34,7 @@ void Directory::moveSelectedUp() {
 }
 
 unsigned int Directory::findCurrentlySelected() const {
-  unsigned int currently_selected = -1;
+  unsigned int currently_selected = 0;
   for (unsigned int i = 0; i < dir.size(); i++) {
     if (dir[i].selected) {
       currently_selected = i;

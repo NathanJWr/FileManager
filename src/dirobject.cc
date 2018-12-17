@@ -4,8 +4,8 @@ DirObject::DirObject(std::string n, std::string p, Type t) {
   path = p;
   type = t;
   if (type == FILE) {
-    int pos = path.find_last_of('.');
-    if (pos != -1) {
+    size_t pos = path.find_last_of('.');
+    if (pos != std::string::npos) {
       extension = path.substr(pos, path.size() - 1);
     }
   } else {
@@ -22,7 +22,7 @@ bool DirObject::isFile() const {
 }
 
 bool DirObject::isHidden() const {
-  return (name.front() == '.');
+  return (name[0] == '.');
 }
 
 std::ostream& operator << (std::ostream& os, const DirObject& f) {
