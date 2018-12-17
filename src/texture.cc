@@ -10,11 +10,3 @@ Texture::~Texture() {
   std::cout << "Texture Destructor Called" << std::endl;
   SDL_DestroyTexture(texture);
 }
-
-SDL_Texture* Texture::get_t() {
-  return texture;
-}
-
-SDL_Rect* Texture::get_p() {
-  return &position;
-}
