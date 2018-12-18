@@ -42,7 +42,7 @@ void Display::renderDirectory(const Directory& dir) {
       color = blue;
     }
     tex_list.emplace_back(createTextTexture(n.name, color, x, y));
-    y += 20;
+    y += tex_list.back().get()->get_p()->h;
   }
   for (unsigned int i = 0; i < tex_list.size(); i++) {
     renderTexture(tex_list[i].get());
