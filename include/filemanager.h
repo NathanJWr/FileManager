@@ -1,6 +1,7 @@
 #ifndef FILE_MANAGER_H_
 #define FILE_MANAGER_H_
 #include "directory.h"
+#include "config.h"
 #include <vector>
 #include <string>
 #include <experimental/filesystem>

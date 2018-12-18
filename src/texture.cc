@@ -7,6 +7,5 @@ Texture::Texture(SDL_Texture* tex, SDL_Rect pos) {
 }
 
 Texture::~Texture() {
-  std::cout << "Texture Destructor Called" << std::endl;
   SDL_DestroyTexture(texture);
 }

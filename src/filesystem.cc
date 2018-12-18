@@ -1,5 +1,4 @@
 #include "filesystem.h"
-#include "config.h"
 #include <stack>
 #include <stdlib.h>
 Filesystem::Filesystem() {
@@ -70,8 +69,20 @@ void Filesystem::openFile() {
       command = VIDEO_PLAYER;
     }
   }
+  for (auto str : PDF_EXTENSIONS) {
+    if (str == ext) {
+      command = PDF_VIEWER;
+    }
+  }
+  for (auto str : IMAGE_EXTENSIONS) {
+    if (str == ext) {
+      command = IMAGE_VIEWER;
+    }
+  }
+
   std::string buff = static_cast<std::string>(" ") + "\"" + path + "\"";
   command.append(buff);
+  std::cout << command << std::endl;
 
   popen(command.c_str(), "r");
 }

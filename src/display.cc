@@ -33,7 +33,7 @@ void Display::renderDirectory(const Directory& dir) {
 
   SDL_Color color;
   for (auto n : list) {
-    std::cout << n << std::endl;
+    //std::cout << n << std::endl;
     if (n.selected) {
       color = white;
     } else if (n.type == DirObject::FILE) {

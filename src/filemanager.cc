@@ -47,7 +47,7 @@ Directory FileManager::listCurrentDirectory() {
       current_directory.emplace_back(DirObject(buff, path_str, type));
     }
   }
-  if (sort_alphabetically) {
+  if (sort_type == ALPHABETICALLY) {
     std::sort(current_directory.begin(), current_directory.end(), alpha_sort);
   }
   return Directory(current_directory, getCurrentDirectory());

@@ -3,6 +3,7 @@
 #define ROOT "/"
 #include "directory.h"
 #include "filemanager.h"
+#include "config.h"
 #include <stack>
 class Filesystem {
  public:
