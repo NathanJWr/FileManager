@@ -2,7 +2,7 @@
 #define CONFIG_H_
 #include <string>
 enum SORT_BY {ALPHABETICALLY, TYPE};
-const SORT_BY sort_type = TYPE;
+const SORT_BY sort_type = ALPHABETICALLY;
 
 const std::string TEXT_EDITOR = "/usr/local/bin/st -e vim";
 const std::vector<std::string> TEXT_EXTENSIONS = {"", ".txt", ".cc", ".cpp", ".c", ".py", ".h"};

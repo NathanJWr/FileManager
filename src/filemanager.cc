@@ -13,7 +13,7 @@ const std::string FileManager::getCurrentDirectory() {
 }
 
 bool FileManager::alpha_sort(DirObject i, DirObject j) {
-  return (i.name[0] < j.name[0]);
+  return (i.name.compare(j.name) < 0);
 }
 
 bool FileManager::type_sort(DirObject i, DirObject j) {
