@@ -1,6 +1,5 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
-#include "dirobject.h"
 #include "directory.h"
 #include "texture.h"
 #include <SDL2/SDL.h>

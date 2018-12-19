@@ -10,7 +10,6 @@ Display::Display(int width, int height) :
 }
 
 Display::~Display() {
-  std::cout << "Display being destroyed\n";
   SDL_DestroyWindow(window);
   SDL_DestroyRenderer(renderer);
   TTF_CloseFont(font);
@@ -32,8 +31,23 @@ void Display::renderDirectory(const Directory& dir) {
   SDL_Color blue = {0, 50, 255, 255};
 
   SDL_Color color;
-  for (auto n : list) {
-    //std::cout << n << std::endl;
+  unsigned int selected_pos;
+  unsigned int start_pos = 0;
+  unsigned int end_pos = 0;
+  for (unsigned int i = 0; i < list.size(); i++) {
+    DirObject& n = list[i];
+    if (n.selected) selected_pos = i;
+  }
+  if (selected_pos > start_pos + 25) {
+    start_pos = selected_pos - 25;
+  }
+  if (selected_pos < list.size() - 35 && list.size() > 35) {
+    end_pos = selected_pos + 35;
+  } else {
+    end_pos = static_cast<unsigned int>(list.size());
+  }
+  for (unsigned int i = start_pos; i < end_pos; i++) {
+    DirObject& n = list[i];
     if (n.selected) {
       color = white;
     } else if (n.type == DirObject::FILE) {
@@ -41,8 +55,10 @@ void Display::renderDirectory(const Directory& dir) {
     } else if (n.type == DirObject::FOLDER) {
       color = blue;
     }
-    tex_list.emplace_back(createTextTexture(n.name, color, x, y));
-    y += tex_list.back().get()->get_p()->h;
+    if (y <= SCREEN_H - 20) {
+      tex_list.emplace_back(createTextTexture(n.name, color, x, y));
+      y += tex_list.back().get()->get_p()->h;
+    }
   }
   for (unsigned int i = 0; i < tex_list.size(); i++) {
     renderTexture(tex_list[i].get());
