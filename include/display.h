@@ -15,6 +15,7 @@ class Display {
 
   bool init();
   void renderDirectory(const Directory&);
+  void renderUI();
   void update();
   std::unique_ptr<Texture> createTextTexture(std::string text,
                                              SDL_Color color,
@@ -30,5 +31,10 @@ class Display {
   TTF_Font* font;
   int SCREEN_W;
   int SCREEN_H;
+
+  SDL_Rect dir_box;
+  SDL_Rect text_box;
+  unsigned int max_dir_objs;
+  SDL_Color white {255, 255, 255, 255};
 };
 #endif // DISPLAY_H_

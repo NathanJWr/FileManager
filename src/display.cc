@@ -7,6 +7,22 @@ Display::Display(int width, int height) :
     window = nullptr;
     renderer = nullptr;
     font = nullptr;
+    int x = static_cast<int>(width / 5.5);
+    int y = static_cast<int>(height / 5.5);
+    int w = static_cast<int>(width / 1.5);
+    int h = static_cast<int>(height / 1.5);
+    dir_box = {x, y, w, h};
+
+    if (!init()) {
+      exit(1);
+    }
+
+    /* figure out the height and width of a text_box */
+    SDL_Surface* surface = TTF_RenderText_Solid(font, "n/a", white);
+    text_box.w = surface->w;
+    text_box.h = surface->h;
+    SDL_FreeSurface(surface);
+    max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);
 }
 
 Display::~Display() {
@@ -18,6 +34,7 @@ Display::~Display() {
 }
 
 void Display::update() {
+  SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
   SDL_RenderPresent(renderer);
   SDL_RenderClear(renderer);
 }
@@ -28,8 +45,7 @@ void Display::renderDirectory(const Directory& dir) {
   if (list.empty()) {
     return;
   }
-  int y = 0, x = 0;
-  SDL_Color white = {255, 255, 255, 255};
+  int y = dir_box.y, x = dir_box.x;
   SDL_Color green = {0, 255, 0, 255};
   SDL_Color blue = {0, 50, 255, 255};
 
@@ -41,14 +57,15 @@ void Display::renderDirectory(const Directory& dir) {
     DirObject& n = list[i];
     if (n.selected) selected_pos = i;
   }
-  if (selected_pos > 15 && selected_pos < list.size() - 15) {
-    start_pos = selected_pos - 15;
-    end_pos = selected_pos + 15;
-  } else if (selected_pos < 15) {
+  unsigned int mid = max_dir_objs / 2;
+  if (selected_pos > mid && selected_pos < list.size() - mid) {
+    start_pos = selected_pos - mid;
+    end_pos = selected_pos + mid;
+  } else if (selected_pos < mid) {
     start_pos = 0;
     end_pos = static_cast<unsigned int> (list.size());
   } else {
-    start_pos = selected_pos - 15;
+    start_pos = selected_pos - mid;
     end_pos = static_cast<unsigned int> (list.size());
   }
   for (unsigned int i = start_pos; i < end_pos; i++) {
@@ -60,7 +77,7 @@ void Display::renderDirectory(const Directory& dir) {
     } else if (n.type == DirObject::FOLDER) {
       color = blue;
     }
-    if (i < start_pos + 30) {
+    if (y < dir_box.y + dir_box.h - 20) {
       tex_list.emplace_back(createTextTexture(n.name, color, x, y));
       y += tex_list.back().get()->get_p()->h;
     }
@@ -68,6 +85,11 @@ void Display::renderDirectory(const Directory& dir) {
   for (unsigned int i = 0; i < tex_list.size(); i++) {
     renderTexture(tex_list[i].get());
   }
+}
+
+void Display::renderUI() {
+  SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+  SDL_RenderDrawRect(renderer, &dir_box);
 }
 
 void Display::renderTexture(Texture* texture) {

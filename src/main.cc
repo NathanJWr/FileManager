@@ -48,17 +48,15 @@ Context handleInput(Filesystem &dirs) {
 
 int main() {
   Display display(1024, 768);
-  if (!display.init()) {
-    std::cerr << "Failed to initialize Display!" << std::endl;
-  exit(1);
-  }
   Filesystem dirs;
   display.renderDirectory(dirs.currentDir());
+  display.renderUI();
   display.update();
   while (1) {
     Context ctx = handleInput(dirs);
     if (ctx.redraw) {
       display.renderDirectory(dirs.currentDir());
+      display.renderUI();
       display.update();
     }
     SDL_Delay(100);
