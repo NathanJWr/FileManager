@@ -25,6 +25,9 @@ void Display::update() {
 void Display::renderDirectory(const Directory& dir) {
   std::vector<std::unique_ptr<Texture>> tex_list;
   auto list = dir.get();
+  if (list.empty()) {
+    return;
+  }
   int y = 0, x = 0;
   SDL_Color white = {255, 255, 255, 255};
   SDL_Color green = {0, 255, 0, 255};
@@ -38,13 +41,15 @@ void Display::renderDirectory(const Directory& dir) {
     DirObject& n = list[i];
     if (n.selected) selected_pos = i;
   }
-  if (selected_pos > start_pos + 25) {
-    start_pos = selected_pos - 25;
-  }
-  if (selected_pos < list.size() - 35 && list.size() > 35) {
-    end_pos = selected_pos + 35;
+  if (selected_pos > 15 && selected_pos < list.size() - 15) {
+    start_pos = selected_pos - 15;
+    end_pos = selected_pos + 15;
+  } else if (selected_pos < 15) {
+    start_pos = 0;
+    end_pos = static_cast<unsigned int> (list.size());
   } else {
-    end_pos = static_cast<unsigned int>(list.size());
+    start_pos = selected_pos - 15;
+    end_pos = static_cast<unsigned int> (list.size());
   }
   for (unsigned int i = start_pos; i < end_pos; i++) {
     DirObject& n = list[i];
@@ -55,7 +60,7 @@ void Display::renderDirectory(const Directory& dir) {
     } else if (n.type == DirObject::FOLDER) {
       color = blue;
     }
-    if (y <= SCREEN_H - 20) {
+    if (i < start_pos + 30) {
       tex_list.emplace_back(createTextTexture(n.name, color, x, y));
       y += tex_list.back().get()->get_p()->h;
     }
