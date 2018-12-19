@@ -12,8 +12,14 @@ const std::string FileManager::getCurrentDirectory() {
   return path.string();
 }
 
- bool FileManager::alpha_sort(DirObject i, DirObject j) {
+bool FileManager::alpha_sort(DirObject i, DirObject j) {
   return (i.name[0] < j.name[0]);
+}
+
+bool FileManager::type_sort(DirObject i, DirObject j) {
+  if (i.type == DirObject::FOLDER && j.type != DirObject::FOLDER) {
+   return true;
+  } else return false;
 }
 
 Directory FileManager::listCurrentDirectory() {
@@ -49,6 +55,10 @@ Directory FileManager::listCurrentDirectory() {
   }
   if (sort_type == ALPHABETICALLY) {
     std::sort(current_directory.begin(), current_directory.end(), alpha_sort);
+  }
+  if (sort_type == TYPE) {
+    std::sort(current_directory.begin(), current_directory.end(), alpha_sort);
+    std::sort(current_directory.begin(), current_directory.end(), type_sort);
   }
   return Directory(current_directory, getCurrentDirectory());
 }

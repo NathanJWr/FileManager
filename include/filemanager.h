@@ -20,5 +20,6 @@ class FileManager {
  private:
   bool show_hidden_files;
   static bool alpha_sort(DirObject, DirObject);
+  static bool type_sort(DirObject, DirObject);
 };
 #endif // FILE_MANAGER_H_
