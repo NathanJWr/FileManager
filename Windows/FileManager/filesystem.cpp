@@ -6,11 +6,11 @@ Filesystem::Filesystem() {
 	buff.push(fmanager.getCurrentDirectory());
 	while (fmanager.moveToParent()) {
 		buff.push(fmanager.getCurrentDirectory());
+		std::cout << buff.top() << std::endl;
 	}
 	while (!buff.empty()) {
 		if (fmanager.changeDirectory(buff.top())) {
 			dirs.push(fmanager.listCurrentDirectory());
-			std::cout << buff.top() << std::endl;
 			buff.pop();
 		}
 	}

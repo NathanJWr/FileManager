@@ -19,6 +19,7 @@ public:
 	bool sort_alphabetically;
 private:
 	bool show_hidden_files;
+	bool touched_root;
 	static bool alpha_sort(DirObject, DirObject);
 	static bool type_sort(DirObject, DirObject);
 };

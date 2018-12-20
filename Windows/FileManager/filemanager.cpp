@@ -6,11 +6,11 @@
 FileManager::FileManager() {
 	show_hidden_files = false;
 	sort_alphabetically = true;
+	touched_root = false;
 }
 
 const std::string FileManager::getCurrentDirectory() {
 	auto path = fs::current_path();
-	std::cout << path.string() << std::endl;
 	return path.string();
 }
 
@@ -38,7 +38,7 @@ Directory FileManager::listCurrentDirectory() {
 
 		// erasing the full path to just get the name of the file
 		buff.erase(0, path.size());
-		if (buff.front() == '/') {
+		if (buff.front() == '\\') {
 			buff.erase(buff.begin());
 		}
 		DirObject::Type type;
@@ -46,8 +46,9 @@ Directory FileManager::listCurrentDirectory() {
 		try {
 			if (fs::is_directory(p)) {
 				type = DirObject::FOLDER;
-			}
-			else if (fs::is_regular_file(p)) {
+			} else if (fs::is_regular_file(p)) {
+				type = DirObject::FILE;
+			} else {
 				type = DirObject::FILE;
 			}
 		}
@@ -88,8 +89,13 @@ bool FileManager::changeDirectory(std::string path) {
 
 bool FileManager::moveToParent() {
 	auto path = fs::current_path();
-	if (path.parent_path().string() == "C:\\") {
+	if (path.string() == "C:\\" && touched_root) {
 		return false;
+	}
+	else if (path.parent_path().string() == "C:\\") {
+		fs::current_path(path.parent_path());
+		touched_root = true;
+		return true;
 	}
 	else {
 		fs::current_path(path.parent_path());
