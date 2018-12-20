@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="config.h" />
     <ClInclude Include="directory.h" />
     <ClInclude Include="dirobject.h" />
     <ClInclude Include="display.h" />

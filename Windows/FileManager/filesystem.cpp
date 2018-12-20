@@ -1,6 +1,6 @@
 #include "filesystem.h"
 #include <stack>
-#include <stdlib.h>
+#include <windows.h>
 Filesystem::Filesystem() {
 	std::stack<std::string> buff;
 	buff.push(fmanager.getCurrentDirectory());
@@ -87,7 +87,18 @@ void Filesystem::openFile() {
 	command.append(buff);
 	std::cout << command << std::endl;
 
-	system(command.c_str());
+	//system(command.c_str());
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+	LPSTR s = const_cast<char *>(command.c_str());
+	if (!CreateProcessA(NULL, s, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+		printf("CreateProcess failed (%d).\n", GetLastError());
+		return;
+	}
 }
 
 void Filesystem::toggleSortAlphabetically() {
