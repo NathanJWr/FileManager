@@ -40,6 +40,7 @@ void Display::update() {
 }
 
 void Display::renderDirectory(const Directory& dir) {
+	cur_path = dir.path;
 	std::vector<std::unique_ptr<Texture>> tex_list;
 	auto list = dir.get();
 	if (list.empty()) {
@@ -94,6 +95,19 @@ void Display::renderDirectory(const Directory& dir) {
 void Display::renderUI() {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderDrawRect(renderer, &dir_box);
+	renderCurrentPath();
+}
+
+void Display::renderCurrentPath() {
+	int y = dir_box.y - text_box.h;
+	int x = dir_box.x;
+	while (cur_path.size() >= 40) {
+		std::cout << cur_path << " Size: " << cur_path.size() << std::endl;
+		size_t pos = cur_path.find_first_of("\\");
+		cur_path.erase(cur_path.begin(), cur_path.begin() + pos + 1);
+	}
+	auto path = createTextTexture(cur_path, white, x, y);
+	renderTexture(path.get());
 }
 
 void Display::renderTexture(Texture* texture) {

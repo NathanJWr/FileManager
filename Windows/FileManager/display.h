@@ -25,6 +25,7 @@ private:
 	SDL_Texture* surfaceToTexture(SDL_Surface* surf);
 	SDL_Texture* surfaceToTextureSafe(SDL_Surface* surf);
 	void renderTexture(Texture*);
+	void renderCurrentPath();
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
@@ -34,6 +35,7 @@ private:
 
 	SDL_Rect dir_box;
 	SDL_Rect text_box;
+	std::string cur_path;
 	unsigned int max_dir_objs;
 	SDL_Color white{ 255, 255, 255, 255 };
 };
