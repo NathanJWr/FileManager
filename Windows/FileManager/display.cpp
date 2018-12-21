@@ -1,4 +1,5 @@
 #include "display.h"
+#include "config.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 Display::Display(int width, int height) :
@@ -101,13 +102,23 @@ void Display::renderUI() {
 void Display::renderCurrentPath() {
 	int y = dir_box.y - text_box.h;
 	int x = dir_box.x;
-	while (cur_path.size() >= 40) {
-		std::cout << cur_path << " Size: " << cur_path.size() << std::endl;
-		size_t pos = cur_path.find_first_of("\\");
-		cur_path.erase(cur_path.begin(), cur_path.begin() + pos + 1);
+	int count = 0;
+	for (unsigned int i = 0; i < cur_path.size(); i++) {
+		if (cur_path.at(i) == SLASH[0]) {
+			count++;
+		}
 	}
-	auto path = createTextTexture(cur_path, white, x, y);
-	renderTexture(path.get());
+	std::string buff;
+	if (count > 2) buff = ".." + SLASH;
+	else buff = "";
+	while (count > 2) {
+		size_t pos = cur_path.find_first_of(SLASH);
+		cur_path.erase(cur_path.begin(), cur_path.begin() + pos + 1);
+		count--;
+	}
+	std::string buf = buff + cur_path;
+	auto p = createTextTexture(buf, white, x, y);
+	renderTexture(p.get());
 }
 
 void Display::renderTexture(Texture* texture) {
