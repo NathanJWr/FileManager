@@ -46,7 +46,7 @@ void Filesystem::forwardDir() {
 	std::string name = currentDir().currentlySelected().name;
 	std::string buf;
 	if (currentDir().path != ROOT) {
-		buf = currentDir().path + "/" + name;
+		buf = currentDir().path + SLASH + name;
 	}
 	else {
 		buf = currentDir().path + name;
@@ -83,7 +83,7 @@ void Filesystem::openFile() {
 		}
 	}
 
-	std::string buff = static_cast<std::string>(" ") + "\"" + path + "\"";
+	std::string buff = static_cast<std::string>(" ") + path + static_cast<std::string>(" ");
 	command.append(buff);
 	std::cout << command << std::endl;
 

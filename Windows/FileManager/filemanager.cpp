@@ -38,7 +38,7 @@ Directory FileManager::listCurrentDirectory() {
 
 		// erasing the full path to just get the name of the file
 		buff.erase(0, path.size());
-		if (buff.front() == '\\') {
+		if (buff.front() == SLASH[0]) {
 			buff.erase(buff.begin());
 		}
 		DirObject::Type type;
@@ -89,10 +89,10 @@ bool FileManager::changeDirectory(std::string path) {
 
 bool FileManager::moveToParent() {
 	auto path = fs::current_path();
-	if (path.string() == "C:\\" && touched_root) {
+	if (path.string() == ROOT && touched_root) {
 		return false;
 	}
-	else if (path.parent_path().string() == "C:\\") {
+	else if (path.parent_path().string() == ROOT) {
 		fs::current_path(path.parent_path());
 		touched_root = true;
 		return true;

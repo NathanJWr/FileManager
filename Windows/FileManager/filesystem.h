@@ -1,6 +1,5 @@
 #ifndef FILESYSTEM_H_
 #define FILESYSTEM_H_
-#define ROOT "C:\\"
 #include "directory.h"
 #include "filemanager.h"
 #include "config.h"
