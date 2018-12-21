@@ -25,6 +25,8 @@
     <ClInclude Include="display.h" />
     <ClInclude Include="filemanager.h" />
     <ClInclude Include="filesystem.h" />
+    <ClInclude Include="shortcut.h" />
+    <ClInclude Include="shortcutbar.h" />
     <ClInclude Include="texture.h" />
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +36,8 @@
     <ClCompile Include="filemanager.cpp" />
     <ClCompile Include="filesystem.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="shortcut.cpp" />
+    <ClCompile Include="shortcutbar.cpp" />
     <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

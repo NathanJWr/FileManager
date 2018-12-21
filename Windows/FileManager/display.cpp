@@ -8,12 +8,13 @@ Display::Display(int width, int height) :
 	window = nullptr;
 	renderer = nullptr;
 	font = nullptr;
-	int x = static_cast<int>(width / 5.5);
-	int y = static_cast<int>(height / 5.5);
-	int w = static_cast<int>(width / 1.5);
-	int h = static_cast<int>(height / 1.5);
-	dir_box = { x, y, w, h };
+	int dir_x = static_cast<int>(width / 5.5);
+	int dir_y = static_cast<int>(height / 5.5);
+	int dir_w = static_cast<int>(width / 1.5);
+	int dir_h = static_cast<int>(height / 1.5);
+	dir_box = {dir_x, dir_y, dir_w, dir_h};
 
+	shortcut_box = {0, 0, dir_x, height};
 	if (!init()) {
 		exit(1);
 	}
@@ -93,10 +94,30 @@ void Display::renderDirectory(const Directory& dir) {
 	}
 }
 
-void Display::renderUI() {
+void Display::renderUI(ShortcutBar &bar) {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderDrawRect(renderer, &dir_box);
+	renderShortcuts(bar);
 	renderCurrentPath();
+}
+
+void Display::renderShortcuts(ShortcutBar &bar) {
+	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	SDL_RenderDrawRect(renderer, &shortcut_box);
+
+	auto list = bar.get_s();
+	for (unsigned int i = 0; i < list.size(); i++) {
+		renderTextureRaw(list[i].texture, list[i].pos);
+	}
+}
+
+void Display::buildShortcuts(ShortcutBar &bar) {
+	int buf = 0;
+	for (unsigned int i = 0; i < bar.get_s().size(); i++) {
+		bar.get_s()[i].texture = createTextTextureRaw(bar.get_s()[i].name, white, bar.get_s()[i].pos);
+		bar.get_s()[i].pos.y = buf;
+		buf += text_box.h;
+	}
 }
 
 void Display::renderCurrentPath() {
@@ -125,6 +146,10 @@ void Display::renderTexture(Texture* texture) {
 	SDL_Rect* destination = texture->get_p();
 	SDL_Rect* source = nullptr;
 	SDL_RenderCopy(renderer, texture->get_t(), source, destination);
+}
+
+void Display::renderTextureRaw(SDL_Texture* tex, SDL_Rect pos) {
+	SDL_RenderCopy(renderer, tex, NULL, &pos);
 }
 
 SDL_Texture* Display::surfaceToTexture(SDL_Surface* surf) {
@@ -174,6 +199,27 @@ std::unique_ptr<Texture> Display::createTextTexture(std::string text,
 
 	auto ptr = std::unique_ptr<Texture>(new Texture(tex, pos));
 	return ptr;
+}
+
+SDL_Texture* Display::createTextTextureRaw(std::string text,
+	SDL_Color color,
+	SDL_Rect &pos) {
+	SDL_Surface* surface = nullptr;
+	SDL_Texture* tex = nullptr;
+	surface = TTF_RenderText_Solid(font, text.c_str(), color);
+	if (!surface) {
+		std::cerr << "Text creationg error" << std::endl;
+	}
+	pos.w = surface->w;
+	pos.h = surface->h;
+
+	if (!surface) {
+		std::cerr << "Text Render Error: " << TTF_GetError() << std::endl;
+		return nullptr;
+	}
+
+	tex = surfaceToTexture(surface);
+	return tex;
 }
 
 bool Display::init() {
