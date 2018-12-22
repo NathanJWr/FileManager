@@ -115,8 +115,15 @@ void Display::renderShortcuts(ShortcutBar &bar) {
 }
 
 void Display::buildShortcut(Shortcut &shortcut) {
+	SDL_Color color;
+	if (shortcut.highlighted) {
+		color = yellow;
+	}
+	else {
+		color = white;
+	}
 	shortcut.clean();
-	shortcut.texture = createTextTextureRaw(shortcut.name, yellow, shortcut.pos);
+	shortcut.texture = createTextTextureRaw(shortcut.name, color, shortcut.pos);
 }
 void Display::buildShortcuts(ShortcutBar &bar) {
 	int buf = 0;

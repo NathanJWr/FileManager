@@ -15,6 +15,12 @@ Filesystem::Filesystem() {
 		}
 	}
 }
+
+Filesystem::Filesystem(std::string path) {
+	fmanager.changeDirectory(path);
+	*this = Filesystem();
+}
+
 Directory& Filesystem::currentDir() {
 	return dirs.top();
 }

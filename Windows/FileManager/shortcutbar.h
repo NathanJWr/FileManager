@@ -6,7 +6,7 @@ class ShortcutBar {
 public:
 	ShortcutBar();
 	std::vector<Shortcut>& get_s();
-	void checkClicks(int x, int y);
+	bool checkClicks(int x, int y, std::string& path);
 	void clean();
 private:
 	std::vector<Shortcut> shortcuts;

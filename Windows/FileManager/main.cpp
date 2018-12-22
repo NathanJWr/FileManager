@@ -22,8 +22,10 @@ Context handleInput(Filesystem &dirs, ShortcutBar &bar) {
 		if (e.type == SDL_MOUSEBUTTONDOWN) {
 			int mouse_x, mouse_y;
 			SDL_GetMouseState(&mouse_x, &mouse_y);
-			bar.checkClicks(mouse_x, mouse_y);
-			std::cout << bar.get_s()[0].highlighted << std::endl;
+			std::string path;
+			if (bar.checkClicks(mouse_x, mouse_y, path)) {
+				dirs = Filesystem(path);
+			}
 			ctx.redraw = true;
 		}
 		if (e.type == SDL_KEYDOWN) {

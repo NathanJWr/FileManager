@@ -19,10 +19,14 @@ std::vector<Shortcut>& ShortcutBar::get_s() {
 	return shortcuts;
 }
 
-void ShortcutBar::checkClicks(int x, int y) {
+bool ShortcutBar::checkClicks(int x, int y, std::string& path) {
 	for (Shortcut& n : shortcuts) {
-		n.clicked(x, y);
+		if (n.clicked(x, y)) {
+			path = n.path();
+			return true;
+		}
 	}
+	return false;
 }
 void ShortcutBar::clean() {
 	for (auto n : shortcuts) {
