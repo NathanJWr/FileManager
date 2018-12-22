@@ -10,14 +10,20 @@ ShortcutBar::ShortcutBar() {
 
 	std::string desktop = ROOT + "Users" + SLASH + username + SLASH + "Desktop";
 	std::string documents = ROOT + "Users" + SLASH + username + SLASH + "Documents";
-	shortcuts.emplace_back(Shortcut("Desktop", desktop, 0, 0, 0 , 0));
-	shortcuts.emplace_back(Shortcut("Documents", documents, 0, 0 ,0 ,0));
+
+	shortcuts.emplace_back(Shortcut("Desktop", desktop));
+	shortcuts.emplace_back(Shortcut("Documents", documents));
 }
 
 std::vector<Shortcut>& ShortcutBar::get_s() {
 	return shortcuts;
 }
 
+void ShortcutBar::checkClicks(int x, int y) {
+	for (Shortcut& n : shortcuts) {
+		n.clicked(x, y);
+	}
+}
 void ShortcutBar::clean() {
 	for (auto n : shortcuts) {
 		n.clean();

@@ -105,18 +105,26 @@ void Display::renderShortcuts(ShortcutBar &bar) {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderDrawRect(renderer, &shortcut_box);
 
-	auto list = bar.get_s();
+	auto &list = bar.get_s();
 	for (unsigned int i = 0; i < list.size(); i++) {
+		if (list[i].redraw()) {
+			buildShortcut(list[i]);
+		}
 		renderTextureRaw(list[i].texture, list[i].pos);
 	}
 }
 
+void Display::buildShortcut(Shortcut &shortcut) {
+	shortcut.clean();
+	shortcut.texture = createTextTextureRaw(shortcut.name, yellow, shortcut.pos);
+}
 void Display::buildShortcuts(ShortcutBar &bar) {
 	int buf = 0;
 	for (unsigned int i = 0; i < bar.get_s().size(); i++) {
 		bar.get_s()[i].texture = createTextTextureRaw(bar.get_s()[i].name, white, bar.get_s()[i].pos);
 		bar.get_s()[i].pos.y = buf;
 		buf += text_box.h;
+		bar.get_s()[i].pos.x = shortcut_box.x;
 	}
 }
 

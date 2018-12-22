@@ -12,12 +12,19 @@ public:
 	bool exit;
 	Context() : redraw(0), exit(0) {}
 };
-Context handleInput(Filesystem &dirs) {
+Context handleInput(Filesystem &dirs, ShortcutBar &bar) {
 	SDL_Event e;
 	Context ctx;
 	while (SDL_PollEvent(&e)) {
 		if (e.type == SDL_QUIT) {
 			ctx.exit = true;
+		}
+		if (e.type == SDL_MOUSEBUTTONDOWN) {
+			int mouse_x, mouse_y;
+			SDL_GetMouseState(&mouse_x, &mouse_y);
+			bar.checkClicks(mouse_x, mouse_y);
+			std::cout << bar.get_s()[0].highlighted << std::endl;
+			ctx.redraw = true;
 		}
 		if (e.type == SDL_KEYDOWN) {
 			ctx.redraw = true;
@@ -61,7 +68,7 @@ int wmain(){
 	display.renderUI(shortcut_bar);
 	display.update();
 	while (1) {
-		Context ctx = handleInput(dirs);
+		Context ctx = handleInput(dirs, shortcut_bar);
 		if (ctx.redraw) {
 			display.renderDirectory(dirs.currentDir());
 			display.renderUI(shortcut_bar);

@@ -3,6 +3,7 @@
 #include "directory.h"
 #include "texture.h"
 #include "shortcutbar.h"
+#include "shortcut.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
@@ -17,6 +18,7 @@ public:
 	bool init();
 	void renderDirectory(const Directory&);
 	void renderUI(ShortcutBar &bar);
+	void buildShortcut(Shortcut& shortcut);
 	void buildShortcuts(ShortcutBar &bar);
 	void update();
 	std::unique_ptr<Texture> createTextTexture(std::string text,
@@ -46,6 +48,7 @@ private:
 	std::string cur_path;
 	unsigned int max_dir_objs;
 	SDL_Color white{ 255, 255, 255, 255 };
+	SDL_Color yellow{ 255, 255, 153, 0 };
 };
 #endif // DISPLAY_H_
 

@@ -4,16 +4,19 @@
 #include <string>
 class Shortcut {
 public:
-	Shortcut(std::string n, std::string p, int x, int y, int w, int h);
+	Shortcut(std::string n, std::string p);
 	bool clicked(int x, int y);
+	/* if the texture should change to being highlighted or return to normal */
+	bool redraw();
+	/* free the memory allocated to this object */
 	void clean();
 
 	std::string name;
 	SDL_Texture* texture;
 	SDL_Rect pos;
-private:
-	
-	std::string path;
 	bool highlighted;
+private:
+	std::string path;
+	bool changed;
 };
 #endif // SHORTCUT_H_
