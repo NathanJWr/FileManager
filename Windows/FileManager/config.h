@@ -13,7 +13,7 @@ const std::vector<std::string> TEXT_EXTENSIONS = { "", ".txt", ".cc", ".cpp", ".
 const std::string VIDEO_PLAYER = "mpv";
 const std::vector<std::string> VIDEO_EXTENSIONS = { ".mp4", ".mkv" };
 
-const std::string PDF_VIEWER = "/usr/bin/evince";
+const std::string PDF_VIEWER = "sumatraPDF";
 const std::vector<std::string> PDF_EXTENSIONS = { ".pdf" };
 
 const std::string IMAGE_VIEWER = "/usr/bin/eog";

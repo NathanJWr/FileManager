@@ -89,7 +89,7 @@ void Filesystem::openFile() {
 		}
 	}
 
-	std::string buff = static_cast<std::string>(" ") + path + static_cast<std::string>(" ");
+	std::string buff = static_cast<std::string>(" \"") + path + static_cast<std::string>("\"");
 	command.append(buff);
 	std::cout << command << std::endl;
 
