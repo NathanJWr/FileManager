@@ -52,7 +52,7 @@ Directory FileManager::listCurrentDirectory() {
 				type = DirObject::FILE;
 			}
 		}
-		catch (fs::filesystem_error &e) {
+		catch (fs::filesystem_error) {
 			/*
 			 * Skips the file/folder that the user
 			 * has insufficient permissions to query
@@ -81,7 +81,7 @@ bool FileManager::changeDirectory(std::string path) {
 	try {
 		fs::current_path(path);
 	}
-	catch (fs::filesystem_error& e) {
+	catch (fs::filesystem_error) {
 		return false;
 	}
 	return true;
