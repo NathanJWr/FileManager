@@ -10,9 +10,17 @@ ShortcutBar::ShortcutBar() {
 
 	std::string desktop = ROOT + "Users" + SLASH + username + SLASH + "Desktop";
 	std::string documents = ROOT + "Users" + SLASH + username + SLASH + "Documents";
+	std::string downloads = ROOT + "Users" + SLASH + username + SLASH + "Downloads";
+	std::string music = ROOT + "Users" + SLASH + username + SLASH + "Music";
+	std::string pictures = ROOT + "Users" + SLASH + username + SLASH + "Pictures";
+	std::string videos = ROOT + "Users" + SLASH + username + SLASH + "Videos";
 
 	shortcuts.emplace_back(Shortcut("Desktop", desktop));
 	shortcuts.emplace_back(Shortcut("Documents", documents));
+	shortcuts.emplace_back(Shortcut("Downloads", downloads));
+	shortcuts.emplace_back(Shortcut("Music", music));
+	shortcuts.emplace_back(Shortcut("Pictures", pictures));
+	shortcuts.emplace_back(Shortcut("Videos", videos));
 }
 
 std::vector<Shortcut>& ShortcutBar::get_s() {
