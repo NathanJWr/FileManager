@@ -1,7 +1,7 @@
 #include "shortcut.h"
 #include <iostream>
 Shortcut::Shortcut(std::string n, std::string p) {
-	name = n;
+	_name = n;
 	_path = p;
 	highlighted = false;
 	changed = false;
@@ -17,6 +17,10 @@ bool Shortcut::redraw() {
 
 const std::string Shortcut::path() const {
 	return _path;
+}
+
+const std::string Shortcut::name() const {
+	return _name;
 }
 
 bool Shortcut::clicked(int x, int y) {

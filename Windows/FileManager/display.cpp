@@ -42,7 +42,7 @@ void Display::update() {
 }
 
 void Display::renderDirectory(const Directory& dir) {
-	cur_path = dir.path;
+	cur_path = dir.path();
 	std::vector<std::unique_ptr<Texture>> tex_list;
 	auto list = dir.get();
 	if (list.empty()) {
@@ -78,14 +78,14 @@ void Display::renderDirectory(const Directory& dir) {
 		if (n.selected) {
 			color = white;
 		}
-		else if (n.type == DirObject::FILE) {
+		else if (n.type() == DirObject::FILE) {
 			color = green;
 		}
-		else if (n.type == DirObject::FOLDER) {
+		else if (n.type() == DirObject::FOLDER) {
 			color = blue;
 		}
 		if (y < dir_box.y + dir_box.h - 20) {
-			tex_list.emplace_back(createTextTexture(n.name, color, x, y));
+			tex_list.emplace_back(createTextTexture(n.name(), color, x, y));
 			y += tex_list.back().get()->get_p()->h;
 		}
 	}
@@ -123,12 +123,12 @@ void Display::buildShortcut(Shortcut &shortcut) {
 		color = white;
 	}
 	shortcut.clean();
-	shortcut.texture = createTextTextureRaw(shortcut.name, color, shortcut.pos);
+	shortcut.texture = createTextTextureRaw(shortcut.name(), color, shortcut.pos);
 }
 void Display::buildShortcuts(ShortcutBar &bar) {
 	int buf = 0;
 	for (unsigned int i = 0; i < bar.get_s().size(); i++) {
-		bar.get_s()[i].texture = createTextTextureRaw(bar.get_s()[i].name, white, bar.get_s()[i].pos);
+		bar.get_s()[i].texture = createTextTextureRaw(bar.get_s()[i].name(), white, bar.get_s()[i].pos);
 		bar.get_s()[i].pos.y = buf;
 		buf += text_box.h;
 		bar.get_s()[i].pos.x = shortcut_box.x;

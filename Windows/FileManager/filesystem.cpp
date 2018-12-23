@@ -49,13 +49,13 @@ void Filesystem::forward() {
 }
 
 void Filesystem::forwardDir() {
-	std::string name = currentDir().currentlySelected().name;
+	std::string name = currentDir().currentlySelected().name();
 	std::string buf;
-	if (currentDir().path != ROOT) {
-		buf = currentDir().path + SLASH + name;
+	if (currentDir().path() != ROOT) {
+		buf = currentDir().path() + SLASH + name;
 	}
 	else {
-		buf = currentDir().path + name;
+		buf = currentDir().path() + name;
 	}
 	if (fmanager.changeDirectory(buf)) {
 		addCurrentDir();
@@ -63,8 +63,8 @@ void Filesystem::forwardDir() {
 }
 
 void Filesystem::openFile() {
-	std::string path = currentDir().currentlySelected().path;
-	std::string ext = currentDir().currentlySelected().extension;
+	std::string path = currentDir().currentlySelected().path();
+	std::string ext = currentDir().currentlySelected().extension();
 	std::string command = "";
 
 	/* Look through all of the defined extensions to see what matches */
@@ -93,7 +93,7 @@ void Filesystem::openFile() {
 	command.append(buff);
 	std::cout << command << std::endl;
 
-	//system(command.c_str());
+	/* Windows stuff to execute CreateProcessA */
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 

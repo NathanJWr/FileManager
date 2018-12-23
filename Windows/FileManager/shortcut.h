@@ -9,15 +9,17 @@ public:
 	bool clicked(int x, int y);
 	/* if the texture should change to being highlighted or return to normal */
 	bool redraw();
-	const std::string path() const;
 	/* free the memory allocated to this object */
 	void clean();
 
-	std::string name;
+	const std::string path() const;
+	const std::string name() const;
+	
 	SDL_Texture* texture;
 	SDL_Rect pos;
 	bool highlighted;
 private:
+	std::string _name;
 	std::string _path;
 	bool changed;
 };

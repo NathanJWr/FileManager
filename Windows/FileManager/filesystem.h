@@ -8,7 +8,8 @@ class Filesystem {
 public:
 	/* makes a list of dirs starting from current and moving back to root */
 	Filesystem();
-	Filesystem(std::string);
+	/* changes the directory and THEN creates the Filesystem */
+	Filesystem(std::string path);
 	/* get the current directory */
 	Directory& currentDir();
 	/* add the current directory to the list of dirs */

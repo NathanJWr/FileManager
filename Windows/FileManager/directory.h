@@ -8,14 +8,17 @@ public:
 	Directory(std::vector<DirObject>, std::string path);
 	const std::vector<DirObject>& get() const;
 	const DirObject& currentlySelected() const;
+	const std::string path() const;
 
+	/* selects the item in the array that is +1 from currentlySelected() */
 	void moveSelectedDown();
+	/* selects the item in the array that is -1 from currentlySelected() */
 	void moveSelectedUp();
-
-	std::string path;
 private:
 	std::vector<DirObject> dir;
+	/* looks through dir to find the currently selected DirObject */
 	unsigned int findCurrentlySelected() const;
+	std::string _path;
 };
 
 #endif // DIRECTORY_H_

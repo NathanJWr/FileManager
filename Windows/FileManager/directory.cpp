@@ -2,7 +2,7 @@
 #include "filemanager.h"
 Directory::Directory(std::vector<DirObject> d, std::string p) {
 	dir = d;
-	path = p;
+	_path = p;
 	if (!dir.empty()) {
 		dir[0].selected = true;
 	}
@@ -15,6 +15,10 @@ const DirObject& Directory::currentlySelected() const {
 
 const std::vector<DirObject>& Directory::get() const {
 	return dir;
+}
+
+const std::string Directory::path() const {
+	return _path;
 }
 
 void Directory::moveSelectedDown() {

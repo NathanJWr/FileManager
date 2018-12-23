@@ -1,32 +1,47 @@
 #include "dirobject.h"
 #include <iostream>
 DirObject::DirObject(std::string n, std::string p, Type t) {
-	name = n;
-	path = p;
-	type = t;
-	if (type == FILE) {
-		size_t pos = path.find_last_of('.');
+	_name = n;
+	_path = p;
+	_type = t;
+	if (_type == FILE) {
+		size_t pos = _path.find_last_of('.');
 		if (pos != std::string::npos) {
-			extension = path.substr(pos, path.size() - 1);
+			_extension = _path.substr(pos, _path.size() - 1);
 		}
-	}
-	else {
-		extension = "";
+	} else {
+		_extension = "";
 	}
 	selected = false;
 }
 bool DirObject::isFolder() const {
-	return type == FOLDER;
+	return _type == FOLDER;
 }
 
 bool DirObject::isFile() const {
-	return type == FILE;
+	return _type == FILE;
 }
 
 bool DirObject::isHidden() const {
-	return (name[0] == '.');
+	return (_name[0] == '.');
+}
+
+const std::string DirObject::name() const {
+	return _name;
+}
+
+const std::string DirObject::path() const {
+	return _path;
+}
+
+const std::string DirObject::extension() const {
+	return _extension;
+}
+
+const DirObject::Type DirObject::type() const {
+	return _type;
 }
 
 std::ostream& operator << (std::ostream& os, const DirObject& f) {
-	return os << f.name << " : " << f.type;
+	return os << f.name() << " : " << f.type();
 }
