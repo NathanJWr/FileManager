@@ -40,24 +40,21 @@ void Display::update() {
 	SDL_RenderPresent(renderer);
 	SDL_RenderClear(renderer);
 }
-
-void Display::renderDirectory(const Directory& dir) {
+void Display::buildDirectory(Directory& dir) {
+	dir.clean();
 	cur_path = dir.path();
-	std::vector<std::unique_ptr<Texture>> tex_list;
-	auto list = dir.get();
+	auto& list = dir.get();
 	if (list.empty()) {
 		return;
 	}
 	int y = dir_box.y, x = dir_box.x;
-	SDL_Color green = { 0, 255, 0, 255 };
-	SDL_Color blue = { 0, 50, 255, 255 };
 
 	SDL_Color color;
 	unsigned int selected_pos;
 	unsigned int start_pos = 0;
 	unsigned int end_pos = 0;
 	for (unsigned int i = 0; i < list.size(); i++) {
-		DirObject& n = list[i];
+		DirObject n = list[i];
 		if (n.selected) selected_pos = i;
 	}
 	unsigned int mid = max_dir_objs / 2;
@@ -85,12 +82,25 @@ void Display::renderDirectory(const Directory& dir) {
 			color = blue;
 		}
 		if (y < dir_box.y + dir_box.h - 20) {
-			tex_list.emplace_back(createTextTexture(n.name(), color, x, y));
-			y += tex_list.back().get()->get_p()->h;
+			n.texture = createTextTextureRaw(n.name(), color, n.pos);
+			n.pos.y = y;
+			n.pos.x = dir_box.x;
+			y += text_box.h;
 		}
 	}
-	for (unsigned int i = 0; i < tex_list.size(); i++) {
-		renderTexture(tex_list[i].get());
+
+}
+
+void Display::renderDirectory(Directory& dir) {
+	auto list = dir.get();
+	if (list.empty()) {
+		return;
+	}
+
+	for (unsigned int i = 0; i < list.size(); i++) {
+		if (list[i].texture != NULL) {
+			renderTextureRaw(list[i].texture, list[i].pos);
+		}
 	}
 }
 

@@ -8,12 +8,18 @@ Directory::Directory(std::vector<DirObject> d, std::string p) {
 	}
 }
 
+void Directory::clean() {
+	for (auto& n : dir) {
+		n.clean();
+	}
+}
+
 const DirObject& Directory::currentlySelected() const {
 	auto cur = findCurrentlySelected();
 	return dir[cur];
 }
 
-const std::vector<DirObject>& Directory::get() const {
+std::vector<DirObject>& Directory::get() {
 	return dir;
 }
 

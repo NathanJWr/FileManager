@@ -16,8 +16,9 @@ public:
 	~Display();
 
 	bool init();
-	void renderDirectory(const Directory&);
+	void renderDirectory(Directory&);
 	void renderUI(ShortcutBar &bar);
+	void buildDirectory(Directory& dir);
 	void buildShortcut(Shortcut& shortcut);
 	void buildShortcuts(ShortcutBar &bar);
 	void update();
@@ -49,6 +50,8 @@ private:
 	unsigned int max_dir_objs;
 	SDL_Color white{ 255, 255, 255, 255 };
 	SDL_Color yellow{ 255, 255, 153, 0 };
+	SDL_Color green = { 0, 255, 0, 255 };
+	SDL_Color blue = { 0, 50, 255, 255 };
 };
 #endif // DISPLAY_H_
 

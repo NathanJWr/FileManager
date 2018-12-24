@@ -6,7 +6,7 @@
 class Directory {
 public:
 	Directory(std::vector<DirObject>, std::string path);
-	const std::vector<DirObject>& get() const;
+	std::vector<DirObject>& get();
 	const DirObject& currentlySelected() const;
 	const std::string path() const;
 
@@ -14,6 +14,8 @@ public:
 	void moveSelectedDown();
 	/* selects the item in the array that is -1 from currentlySelected() */
 	void moveSelectedUp();
+
+	void clean();
 private:
 	std::vector<DirObject> dir;
 	/* looks through dir to find the currently selected DirObject */

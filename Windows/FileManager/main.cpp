@@ -66,12 +66,14 @@ int wmain(){
 	Display display(800, 600);
 	
 	display.buildShortcuts(shortcut_bar);
+	display.buildDirectory(dirs.currentDir());
 	display.renderDirectory(dirs.currentDir());
 	display.renderUI(shortcut_bar);
 	display.update();
 	while (1) {
 		Context ctx = handleInput(dirs, shortcut_bar);
 		if (ctx.redraw) {
+			display.buildDirectory(dirs.currentDir());
 			display.renderDirectory(dirs.currentDir());
 			display.renderUI(shortcut_bar);
 			display.update();
