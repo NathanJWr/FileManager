@@ -22,18 +22,13 @@ public:
 	void buildShortcut(Shortcut& shortcut);
 	void buildShortcuts(ShortcutBar &bar);
 	void update();
-	std::unique_ptr<Texture> createTextTexture(std::string text,
-		SDL_Color color,
-		int x,
-		int y);
-	SDL_Texture* createTextTextureRaw(std::string text,
+	SDL_Texture* createTextTexture(std::string text,
 		SDL_Color color,
 		SDL_Rect &pos);
 private:
 	SDL_Texture* surfaceToTexture(SDL_Surface* surf);
 	SDL_Texture* surfaceToTextureSafe(SDL_Surface* surf);
-	void renderTexture(Texture*);
-	void renderTextureRaw(SDL_Texture*, SDL_Rect);
+	void renderTexture(SDL_Texture*, SDL_Rect);
 	void renderCurrentPath();
 	void renderShortcuts(ShortcutBar &bar);
 
