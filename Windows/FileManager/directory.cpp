@@ -9,12 +9,12 @@ Directory::Directory(std::vector<DirObject> d, std::string p) {
 }
 
 void Directory::clean() {
-	for (auto& n : dir) {
-		n.clean();
+	for (unsigned int i = 0; i < dir.size(); i++) {
+		dir[i].clean();
 	}
 }
 
-const DirObject& Directory::currentlySelected() const {
+DirObject& Directory::currentlySelected() {
 	auto cur = findCurrentlySelected();
 	return dir[cur];
 }
@@ -25,6 +25,10 @@ std::vector<DirObject>& Directory::get() {
 
 const std::string Directory::path() const {
 	return _path;
+}
+
+void Directory::addDirObj(DirObject obj) {
+	dir.push_back(obj);
 }
 
 void Directory::moveSelectedDown() {

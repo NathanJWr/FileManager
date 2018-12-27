@@ -13,9 +13,15 @@ public:
 	Context() : redraw(0), exit(0) {}
 };
 
-/* returns 1 on exit */
+/* returns 1 for exit */
 int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs) {
 	switch (e.keysym.sym) {
+		case SDLK_y:
+			dirs.yank();
+			break;
+		case SDLK_p:
+			dirs.paste();
+			break;
 		case SDLK_j:
 			dirs.currentDir().moveSelectedDown();
 			break;
@@ -42,8 +48,10 @@ void handleMouse(Filesystem &dirs, ShortcutBar &bar) {
 	int mouse_x, mouse_y;
 	SDL_GetMouseState(&mouse_x, &mouse_y);
 	if (bar.checkClicks(mouse_x, mouse_y, path)) {
+		DirObject yanked = dirs.yanked;
 		dirs.clean();
 		dirs = Filesystem(path);
+		dirs.yanked = yanked;
 	}
 }
 

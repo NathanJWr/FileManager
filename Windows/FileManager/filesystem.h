@@ -1,6 +1,7 @@
 #ifndef FILESYSTEM_H_
 #define FILESYSTEM_H_
 #include "directory.h"
+#include "dirobject.h"
 #include "filemanager.h"
 #include "config.h"
 #include <stack>
@@ -20,6 +21,11 @@ public:
 	void forward();
 	/* change the FileManager settings to sort alphabetically */
 	void toggleSortAlphabetically();
+
+	void yank();
+	void paste();
+	void clean();
+	DirObject yanked;
 private:
 	void forwardDir();
 	void openFile();

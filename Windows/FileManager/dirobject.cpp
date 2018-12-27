@@ -16,9 +16,15 @@ DirObject::DirObject(std::string n, std::string p, Type t) {
 	texture = NULL;
 }
 
+DirObject::DirObject() {
+
+}
+
 void DirObject::clean() {
-	SDL_DestroyTexture(texture);
-	texture = NULL;
+	if (texture != NULL) {
+		SDL_DestroyTexture(texture);
+		texture = NULL;
+	}
 }
 bool DirObject::isFolder() const {
 	return _type == FOLDER;

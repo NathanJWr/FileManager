@@ -103,8 +103,11 @@ bool FileManager::moveToParent() {
 	}
 }
 
-
 void FileManager::createDirObject(std::string name) {
 	std::ofstream file(name);
 	file.close();
+}
+
+void FileManager::copy(std::string from, std::string to) {
+	fs::copy(from, to, fs::copy_options::recursive);
 }

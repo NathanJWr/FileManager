@@ -14,11 +14,33 @@ Filesystem::Filesystem() {
 			buff.pop();
 		}
 	}
+	yanked = DirObject();
 }
 
 Filesystem::Filesystem(std::string path) {
 	fmanager.changeDirectory(path);
 	*this = Filesystem();
+}
+
+void Filesystem::yank() {
+	yanked = dirs.top().currentlySelected();
+	std::cout << "Yanked: " << yanked << std::endl;
+}
+
+void Filesystem::paste() {
+	if (!yanked.path().empty()) {
+		std::string to = currentDir().path();
+		fmanager.copy(yanked.path(), to);
+	}
+	currentDir().clean();
+	currentDir().addDirObj(yanked);
+}
+
+void Filesystem::clean() {
+	while (dirs.size() > 0) {
+		dirs.top().clean();
+		dirs.pop();
+	}
 }
 
 Directory& Filesystem::currentDir() {
@@ -35,12 +57,14 @@ void Filesystem::back() {
 	 * check to see if there is only one thing in the stack
 	 */
 	if (dirs.size() > 1) {
+		dirs.top().clean();
 		dirs.pop();
 	}
 }
 
 void Filesystem::forward() {
 	if (currentDir().currentlySelected().isFolder()) {
+		currentDir().clean();
 		forwardDir();
 	}
 	else if (currentDir().currentlySelected().isFile()) {

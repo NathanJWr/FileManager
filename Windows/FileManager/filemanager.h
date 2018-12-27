@@ -16,6 +16,7 @@ public:
 	/* gets the file and folder names in the current directory */
 	Directory listCurrentDirectory();
 	void createDirObject(std::string name);
+	void copy(std::string from, std::string to);
 	bool sort_alphabetically;
 private:
 	bool show_hidden_files;

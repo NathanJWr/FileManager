@@ -82,9 +82,16 @@ void Display::buildDirectory(Directory& dir) {
 			color = blue;
 		}
 		if (y < dir_box.y + dir_box.h - 20) {
-			n.texture = createTextTexture(n.name(), color, n.pos);
+			if (n.texture == NULL) {
+				n.texture = createTextTexture(n.name(), color, n.pos);
+			}
 			n.pos.y = y;
 			n.pos.x = dir_box.x;
+			/*
+			if (n.pos.x + n.pos.w > dir_box.x + dir_box.w) {
+				n.texture = NULL;
+			}
+			*/
 			y += text_box.h;
 		}
 	}
@@ -133,12 +140,16 @@ void Display::buildShortcut(Shortcut &shortcut) {
 		color = white;
 	}
 	shortcut.clean();
-	shortcut.texture = createTextTexture(shortcut.name(), color, shortcut.pos);
+	if (shortcut.texture == NULL) {
+		shortcut.texture = createTextTexture(shortcut.name(), color, shortcut.pos);
+	}
 }
 void Display::buildShortcuts(ShortcutBar &bar) {
 	int buf = 0;
 	for (unsigned int i = 0; i < bar.get_s().size(); i++) {
-		bar.get_s()[i].texture = createTextTexture(bar.get_s()[i].name(), white, bar.get_s()[i].pos);
+		if (bar.get_s()[i].texture == NULL) {
+			bar.get_s()[i].texture = createTextTexture(bar.get_s()[i].name(), white, bar.get_s()[i].pos);
+		}
 		bar.get_s()[i].pos.y = buf;
 		buf += text_box.h;
 		bar.get_s()[i].pos.x = shortcut_box.x;
@@ -166,6 +177,7 @@ void Display::renderCurrentPath() {
 	SDL_Rect pos = { x, y, text_box.w, text_box.h };
 	auto p = createTextTexture(buf, white, pos);
 	renderTexture(p, pos);
+	SDL_DestroyTexture(p);
 }
 
 void Display::renderTexture(SDL_Texture* tex, SDL_Rect pos) {

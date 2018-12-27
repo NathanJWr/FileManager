@@ -6,6 +6,7 @@
 class DirObject {
 public:
 	enum Type { FILE, FOLDER };
+	DirObject();
 	DirObject(std::string name, std::string path, Type type);
 	bool isFolder() const;
 	bool isFile() const;
