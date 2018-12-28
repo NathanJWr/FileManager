@@ -26,6 +26,7 @@ void DirObject::clean() {
 		texture = NULL;
 	}
 }
+
 bool DirObject::isFolder() const {
 	return _type == FOLDER;
 }

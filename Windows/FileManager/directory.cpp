@@ -33,22 +33,29 @@ void Directory::add(DirObject obj) {
 
 void Directory::remove() {
 	unsigned int cur = findCurrentlySelected();
+	if (cur > 0) {
+		dir[cur - 1].selected = true;
+	}
 	dir.erase(dir.begin() + cur);
 }
 
 void Directory::moveSelectedDown() {
 	auto currently_selected = findCurrentlySelected();
+	std::cout << "Selected: " << currently_selected;
 	if (dir.size() - 1 > currently_selected) {
 		dir[currently_selected].selected = false;
 		dir[currently_selected + 1].selected = true;
+		std::cout << "  Moved to: " << currently_selected + 1 << std::endl;
 	}
 }
 
 void Directory::moveSelectedUp() {
 	auto currently_selected = findCurrentlySelected();
+	std::cout << "Selected: " << currently_selected;
 	if (currently_selected > 0) {
 		dir[currently_selected].selected = false;
 		dir[currently_selected - 1].selected = true;
+		std::cout << "  Moved to: " << currently_selected - 1 << std::endl;
 	}
 }
 

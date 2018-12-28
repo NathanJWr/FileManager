@@ -36,8 +36,9 @@ void Filesystem::paste() {
 }
 
 void Filesystem::remove() {
-	fmanager.remove(currentDir().currentlySelected().path());
-	currentDir().remove();
+	if (fmanager.remove(currentDir().currentlySelected().path())) {
+		currentDir().remove();
+	}
 }
 
 void Filesystem::clean() {

@@ -17,7 +17,7 @@ public:
 	Directory listCurrentDirectory();
 	void createDirObject(std::string name);
 	void copy(std::string from, std::string to);
-	void remove(std::string path);
+	bool remove(std::string path);
 	bool sort_alphabetically;
 private:
 	bool show_hidden_files;
