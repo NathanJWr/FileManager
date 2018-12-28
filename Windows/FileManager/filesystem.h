@@ -21,9 +21,12 @@ public:
 	void forward();
 	/* change the FileManager settings to sort alphabetically */
 	void toggleSortAlphabetically();
-
+	/* Yank the current DirObject */
 	void yank();
+	/* Paste the yanked DirObject in the Current Directory */
 	void paste();
+	/* Delete the current DirObject */
+	void remove();
 	void clean();
 	DirObject yanked;
 private:

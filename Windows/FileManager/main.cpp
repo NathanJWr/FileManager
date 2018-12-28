@@ -22,6 +22,9 @@ int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs) {
 		case SDLK_p:
 			dirs.paste();
 			break;
+		case SDLK_d:
+			dirs.remove();
+			break;
 		case SDLK_j:
 			dirs.currentDir().moveSelectedDown();
 			break;

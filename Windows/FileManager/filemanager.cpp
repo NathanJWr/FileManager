@@ -111,3 +111,11 @@ void FileManager::createDirObject(std::string name) {
 void FileManager::copy(std::string from, std::string to) {
 	fs::copy(from, to, fs::copy_options::recursive);
 }
+
+void FileManager::remove(std::string path) {
+	try {
+		fs::remove_all(path);
+	} catch (fs::filesystem_error) {
+		std::cout << "Cant delete " << path << std::endl;
+	}
+}

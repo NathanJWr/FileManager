@@ -50,7 +50,7 @@ void Display::buildDirectory(Directory& dir) {
 	int y = dir_box.y, x = dir_box.x;
 
 	SDL_Color color;
-	unsigned int selected_pos;
+	unsigned int selected_pos = 0;
 	unsigned int start_pos = 0;
 	unsigned int end_pos = 0;
 	for (unsigned int i = 0; i < list.size(); i++) {

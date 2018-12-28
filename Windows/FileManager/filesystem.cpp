@@ -32,8 +32,12 @@ void Filesystem::paste() {
 		std::string to = currentDir().path();
 		fmanager.copy(yanked.path(), to);
 	}
-	currentDir().clean();
-	currentDir().addDirObj(yanked);
+	currentDir().add(yanked);
+}
+
+void Filesystem::remove() {
+	fmanager.remove(currentDir().currentlySelected().path());
+	currentDir().remove();
 }
 
 void Filesystem::clean() {

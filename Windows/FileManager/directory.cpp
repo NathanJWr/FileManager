@@ -27,8 +27,13 @@ const std::string Directory::path() const {
 	return _path;
 }
 
-void Directory::addDirObj(DirObject obj) {
+void Directory::add(DirObject obj) {
 	dir.push_back(obj);
+}
+
+void Directory::remove() {
+	unsigned int cur = findCurrentlySelected();
+	dir.erase(dir.begin() + cur);
 }
 
 void Directory::moveSelectedDown() {
