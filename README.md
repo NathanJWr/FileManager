@@ -1,6 +1,6 @@
 # FileManager
 A Simple File Manger with vim-like keybindings
-[![image](https://imgur.com/a/PvOxurv)](https://www.youtube.com/watch?v=OkKMVQ5VGpM)
+[![image](https://i.imgur.com/hGG8J8o.png)](https://www.youtube.com/watch?v=OkKMVQ5VGpM)
 
 # Movement
 Use normal "h", "j", "k", and "l" vim keys to move up, down, left, and right through directories
