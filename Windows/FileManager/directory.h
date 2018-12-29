@@ -18,12 +18,14 @@ public:
 	void add(DirObject obj);
 	/* removes the currently selected DirObject */
 	void remove();
+	
 	void clean();
 private:
 	std::vector<DirObject> dir;
 	/* looks through dir to find the currently selected DirObject */
 	unsigned int findCurrentlySelected() const;
 	std::string _path;
+	static bool alpha_sort(DirObject, DirObject);
 };
 
 #endif // DIRECTORY_H_

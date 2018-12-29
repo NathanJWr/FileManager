@@ -14,21 +14,6 @@ const std::string FileManager::getCurrentDirectory() {
 	return path.string();
 }
 
-bool FileManager::alpha_sort(DirObject i, DirObject j) {
-	std::string name1 = i.name();
-	std::string name2 = j.name();
-	transform(name1.begin(), name1.end(), name1.begin(), tolower);
-	transform(name2.begin(), name2.end(), name2.begin(), tolower);
-	return (name1.compare(name2) < 0);
-}
-
-bool FileManager::type_sort(DirObject i, DirObject j) {
-	if (i.type() == DirObject::FOLDER && j.type() != DirObject::FOLDER) {
-		return true;
-	}
-	else return false;
-}
-
 Directory FileManager::listCurrentDirectory() {
 	std::string path = getCurrentDirectory();
 	std::vector<DirObject> current_directory;
@@ -62,13 +47,6 @@ Directory FileManager::listCurrentDirectory() {
 		if (!dirobj.isHidden() && !show_hidden_files) {
 			current_directory.emplace_back(DirObject(buff, path_str, type));
 		}
-	}
-	if (sort_type == ALPHABETICALLY) {
-		std::sort(current_directory.begin(), current_directory.end(), alpha_sort);
-	}
-	if (sort_type == TYPE) {
-		std::sort(current_directory.begin(), current_directory.end(), alpha_sort);
-		std::sort(current_directory.begin(), current_directory.end(), type_sort);
 	}
 	return Directory(current_directory, getCurrentDirectory());
 }
@@ -114,10 +92,14 @@ void FileManager::copy(std::string from, std::string to) {
 
 bool FileManager::remove(std::string path) {
 	try {
-		fs::remove_all(path);
+		if (fs::remove_all(path) == 0) {
+			std::cout << "Cant delete " << path << std::endl;
+			return false;
+		}
 	} catch (fs::filesystem_error) {
 		std::cout << "Cant delete " << path << std::endl;
 		return false;
 	}
+	std::cout << "Removed: " << path << std::endl;
 	return true;
 }

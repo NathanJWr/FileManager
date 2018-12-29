@@ -31,8 +31,11 @@ void Filesystem::paste() {
 	if (!yanked.path().empty()) {
 		std::string to = currentDir().path();
 		fmanager.copy(yanked.path(), to);
+
+		/* The yanked DirObject needs to have it's path changed to fit the new place it's in */
+		DirObject to_add(yanked.name(), to + SLASH + yanked.name(), yanked.type());
+		currentDir().add(to_add);
 	}
-	currentDir().add(yanked);
 }
 
 void Filesystem::remove() {
