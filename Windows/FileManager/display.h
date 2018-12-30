@@ -14,6 +14,7 @@ public:
 	/* put the Directory contentts on screen */
 	void renderDirectory(Directory&);
 	/* put all of the UI elements on the screen */
+	void renderUI(ShortcutBar &bar, std::string message);
 	void renderUI(ShortcutBar &bar);
 	/* create textures for a Directory */
 	void buildDirectory(Directory& dir);
@@ -21,6 +22,8 @@ public:
 	void buildShortcut(Shortcut& shortcut);
 	/* create textures for a ShortcutBar */
 	void buildShortcuts(ShortcutBar &bar);
+
+	void renderConsoleMessage(std::string message);
 	/* display the screen */
 	void update();
 	
@@ -44,6 +47,8 @@ private:
 	SDL_Rect dir_box;
 	SDL_Rect shortcut_box;
 	SDL_Rect text_box;
+	SDL_Rect console_box;
+
 	std::string cur_path;
 	unsigned int max_dir_objs;
 	SDL_Color white{ 255, 255, 255, 255 };

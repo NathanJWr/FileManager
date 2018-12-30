@@ -91,15 +91,6 @@ void FileManager::copy(std::string from, std::string to) {
 }
 
 bool FileManager::remove(std::string path) {
-	try {
-		if (fs::remove_all(path) == 0) {
-			std::cout << "Cant delete " << path << std::endl;
-			return false;
-		}
-	} catch (fs::filesystem_error) {
-		std::cout << "Cant delete " << path << std::endl;
-		return false;
-	}
-	std::cout << "Removed: " << path << std::endl;
-	return true;
+	std::error_code e;
+	return fs::remove(path, e);
 }

@@ -27,6 +27,7 @@ public:
 	void paste();
 	/* Delete the current DirObject */
 	void remove();
+	const std::string currentDirObjName();
 	void clean();
 	DirObject yanked;
 private:

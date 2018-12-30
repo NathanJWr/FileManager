@@ -10,9 +10,10 @@ Display::Display(int width, int height) :
 	font = nullptr;
 	int dir_x = static_cast<int>(width / 5.5);
 	int dir_y = static_cast<int>(height / 5.5);
-	int dir_w = static_cast<int>(width / 1.5);
+	int dir_w = SCREEN_W;
 	int dir_h = static_cast<int>(height / 1.5);
 	dir_box = {dir_x, dir_y, dir_w, dir_h};
+	console_box = { dir_x, dir_y + dir_h, SCREEN_W, SCREEN_H};
 
 	shortcut_box = {0, 0, dir_x, height};
 	if (!init()) {
@@ -114,8 +115,21 @@ void Display::renderDirectory(Directory& dir) {
 void Display::renderUI(ShortcutBar &bar) {
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	SDL_RenderDrawRect(renderer, &dir_box);
+	SDL_RenderDrawRect(renderer, &console_box);
 	renderShortcuts(bar);
 	renderCurrentPath();
+}
+
+void Display::renderUI(ShortcutBar &bar, std::string console_message) {
+	renderUI(bar);
+	renderConsoleMessage(console_message);
+}
+
+void Display::renderConsoleMessage(std::string message) {
+	SDL_Rect pos = console_box; // Width and Height are going to be set in the next call
+	SDL_Texture* tex = createTextTexture(message, white, pos);
+	renderTexture(tex, pos);
+	SDL_DestroyTexture(tex);
 }
 
 void Display::renderShortcuts(ShortcutBar &bar) {
@@ -212,7 +226,7 @@ SDL_Texture* Display::createTextTexture(std::string text,
 	SDL_Surface* surface = nullptr;
 	SDL_Texture* tex = nullptr;
 	surface = TTF_RenderText_Solid(font, text.c_str(), color);
-	if (!surface) {
+	if (surface == NULL) {
 		std::cerr << "Text creationg error" << std::endl;
 	}
 	pos.w = surface->w;

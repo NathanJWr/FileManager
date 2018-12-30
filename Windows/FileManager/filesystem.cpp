@@ -44,6 +44,10 @@ void Filesystem::remove() {
 	}
 }
 
+const std::string Filesystem::currentDirObjName() {
+	return currentDir().currentlySelected().name();
+}
+
 void Filesystem::clean() {
 	while (dirs.size() > 0) {
 		dirs.top().clean();
