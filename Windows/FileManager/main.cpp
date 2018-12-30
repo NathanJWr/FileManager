@@ -1,6 +1,7 @@
 #include "display.h"
 #include "filesystem.h"
 #include "shortcutbar.h"
+#include "message.h"
 #include <iostream>
 #include <SDL.h>
 #include <memory>
@@ -11,12 +12,12 @@ public:
 	bool redraw;
 	bool exit;
 	bool message;
-	std::string text;
-	Context() : redraw(0), exit(0), message(0) {}
+	Message msg;
+	Context() : redraw(0), exit(0), message(0), msg() {}
 };
 
-/* returns 1 for exit */
-int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, std::string &message) {
+/* returns 1 for message_handling */
+int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message) {
 	switch (e.keysym.sym) {
 		case SDLK_y:
 			dirs.yank();
@@ -25,7 +26,8 @@ int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, std::string &message) {
 			dirs.paste();
 			break;
 		case SDLK_d:
-			message = "Are you sure you want to delete " + dirs.currentDirObjName() + "? Y/N";
+			message = Message(Message::REMOVE, dirs.currentDirObjName());
+			return 1;
 			break;
 		case SDLK_j:
 			dirs.currentDir().moveSelectedDown();
@@ -43,20 +45,32 @@ int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, std::string &message) {
 			dirs.toggleSortAlphabetically();
 			break;
 		case SDLK_q:
+			message = Message(Message::QUIT);
 			return 1;
+			break;
 	}
 	return 0;
 }
 
-void handleMessageResponse(SDL_KeyboardEvent &e, Filesystem &dirs) {
+Context handleMessageResponse(SDL_KeyboardEvent &e, Filesystem &dirs, Message msg) {
+	Context ctx;
 	switch (e.keysym.sym) {
-		case SDLK_y:
-			dirs.remove();
-			break;
-		case SDLK_n:
-			// Do nothing
-			break;
+	case SDLK_y:
+		switch (msg.type()) {
+			case Message::REMOVE:
+				dirs.remove();
+				ctx.redraw = true;
+				break;
+			case Message::QUIT:
+				ctx.exit = true;
+				break;
+		}
+		break;
+	case SDLK_n:
+		ctx.redraw = true;
+		break;
 	}
+	return ctx;
 }
 
 void handleMouse(Filesystem &dirs, ShortcutBar &bar) {
@@ -71,7 +85,7 @@ void handleMouse(Filesystem &dirs, ShortcutBar &bar) {
 	}
 }
 
-Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar, bool message) {
+Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 	Context ctx;
 	switch (e.type) {
 		case SDL_QUIT:
@@ -83,15 +97,8 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar, bool messa
 			break;
 		case SDL_KEYDOWN:
 			ctx.redraw = true;
-			std::string msg = "";
-			if (message) {
-				handleMessageResponse(e.key, dirs);
-			} else if (handleKeys(e.key, dirs, msg) == 1) {
-				ctx.exit = true;
-			}
-			if (!msg.empty()) {
+			if (handleKeys(e.key, dirs, ctx.msg) == 1) {
 				ctx.message = true;
-				ctx.text = msg;
 			}
 	}
 	return ctx;
@@ -107,23 +114,32 @@ int wmain(){
 	display.renderDirectory(dirs.currentDir());
 	display.renderUI(shortcut_bar);
 	display.update();
-
 	SDL_Event e;
-	bool message = false;
+
+	/* There are no messages on the console that need to be handled */
+	bool handle_message = false;
+	Message msg;
+
 	while (1) {
 		SDL_WaitEvent(&e);
-		Context ctx = handleInput(e, dirs, shortcut_bar, message);
+		Context ctx;
+		if (handle_message) {
+			ctx = handleMessageResponse(e.key, dirs, msg);
+		} else {
+			ctx = handleInput(e, dirs, shortcut_bar);
+		}
 		SDL_PollEvent(&e);
 		if (ctx.redraw) {
 			display.buildDirectory(dirs.currentDir());
 			display.renderDirectory(dirs.currentDir());
 
 			if (ctx.message) {
-				display.renderUI(shortcut_bar, ctx.text);
-				message = true;
+				display.renderUI(shortcut_bar, ctx.msg.message());
+				msg = (ctx.msg);
+				handle_message = true;
 			} else {
 				display.renderUI(shortcut_bar);
-				message = false;
+				handle_message = false;
 			}
 
 			display.update();
