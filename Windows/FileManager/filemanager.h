@@ -2,6 +2,7 @@
 #define FILE_MANAGER_H_
 #include "directory.h"
 #include "config.h"
+#include "dirobject.h"
 #include <vector>
 #include <string>
 #include <experimental/filesystem>
@@ -17,7 +18,7 @@ public:
 	Directory listCurrentDirectory();
 	void createDirObject(std::string name);
 	void copy(std::string from, std::string to);
-	bool remove(std::string path);
+	bool remove(DirObject obj);
 	bool sort_alphabetically;
 private:
 	bool show_hidden_files;

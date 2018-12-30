@@ -1,5 +1,6 @@
 #include "filemanager.h"
 #include "config.h"
+#include <Windows.h>
 #include <fstream>
 #include <algorithm>
 #include <experimental/filesystem>
@@ -90,7 +91,16 @@ void FileManager::copy(std::string from, std::string to) {
 	fs::copy(from, to, fs::copy_options::recursive);
 }
 
-bool FileManager::remove(std::string path) {
+bool FileManager::remove(DirObject obj) {
 	std::error_code e;
-	return fs::remove(path, e);
+	if (obj.type() == DirObject::FILE) {
+		return fs::remove(obj.path(), e);
+	} else if (obj.type() == DirObject::FOLDER) {
+		if (fs::remove_all(obj.path(), e) == static_cast<std::uintmax_t>(-1)) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	return false;
 }
