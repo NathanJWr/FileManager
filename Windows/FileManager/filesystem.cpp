@@ -14,7 +14,7 @@ Filesystem::Filesystem() {
 			buff.pop();
 		}
 	}
-	yanked = DirObject();
+	yanked = std::move(DirObject());
 }
 
 Filesystem::Filesystem(std::string path) {
@@ -23,7 +23,7 @@ Filesystem::Filesystem(std::string path) {
 }
 
 void Filesystem::yank() {
-	yanked = dirs.top().currentlySelected();
+	yanked = std::move(dirs.top().currentlySelected());
 	std::cout << "Yanked: " << yanked << std::endl;
 }
 
@@ -34,12 +34,12 @@ void Filesystem::paste() {
 
 		/* The yanked DirObject needs to have it's path changed to fit the new place it's in */
 		DirObject to_add(yanked.name(), to + SLASH + yanked.name(), yanked.type());
-		currentDir().add(to_add);
+		currentDir().add(std::move(to_add));
 	}
 }
 
 void Filesystem::remove() {
-	if (fmanager.remove(currentDir().currentlySelected())) {
+	if (fmanager.remove(std::move(currentDir().currentlySelected()))) {
 		currentDir().remove();
 	}
 }

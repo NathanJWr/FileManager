@@ -1,5 +1,4 @@
 #include "directory.h"
-#include "filemanager.h"
 #include <algorithm>
 #include <string>
 bool Directory::alpha_sort(const DirObject i, const DirObject j) {
@@ -21,7 +20,7 @@ Directory::Directory(std::vector<DirObject> d, std::string p) {
 
 void Directory::clean() {
 	for (unsigned int i = 0; i < dir.size(); i++) {
-		dir[i].clean();
+		
 	}
 }
 

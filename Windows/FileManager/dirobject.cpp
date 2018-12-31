@@ -13,18 +13,11 @@ DirObject::DirObject(std::string n, std::string p, Type t) {
 		_extension = "";
 	}
 	selected = false;
-	texture = NULL;
+	changed = true;
 }
 
 DirObject::DirObject() {
 
-}
-
-void DirObject::clean() {
-	if (texture != NULL) {
-		SDL_DestroyTexture(texture);
-		texture = NULL;
-	}
 }
 
 bool DirObject::isFolder() const {

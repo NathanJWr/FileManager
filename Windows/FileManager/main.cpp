@@ -79,10 +79,10 @@ void handleMouse(Filesystem &dirs, ShortcutBar &bar) {
 	int mouse_x, mouse_y;
 	SDL_GetMouseState(&mouse_x, &mouse_y);
 	if (bar.checkClicks(mouse_x, mouse_y, path)) {
-		DirObject yanked = dirs.yanked;
+		DirObject yanked = std::move(dirs.yanked);
 		dirs.clean();
 		dirs = Filesystem(path);
-		dirs.yanked = yanked;
+		dirs.yanked = std::move(yanked);
 	}
 }
 
@@ -106,7 +106,6 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 }
 
 int wmain(){
-
 	bool success = true;
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		success = false;
@@ -119,8 +118,8 @@ int wmain(){
 	ShortcutBar shortcut_bar;
 	Display display(800, 600);
 	
-	display.buildShortcuts(shortcut_bar);
-	display.buildDirectory(dirs.currentDir());
+	//display.buildShortcuts(shortcut_bar);
+	//display.buildDirectory(dirs.currentDir());
 	display.renderDirectory(dirs.currentDir());
 	display.renderUI(shortcut_bar);
 	display.update();
@@ -140,7 +139,7 @@ int wmain(){
 		}
 		SDL_PollEvent(&e);
 		if (ctx.redraw) {
-			display.buildDirectory(dirs.currentDir());
+			//display.buildDirectory(dirs.currentDir());
 			display.renderDirectory(dirs.currentDir());
 
 			if (ctx.message) {
@@ -158,7 +157,7 @@ int wmain(){
 			break;
 		}
 	}
-	shortcut_bar.clean();
+	//shortcut_bar.clean();
 
 	/* TODO:
 	This these quits throw an excpetion since display isn't out of scope when they are called

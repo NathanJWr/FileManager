@@ -36,8 +36,3 @@ bool ShortcutBar::checkClicks(int x, int y, std::string& path) {
 	}
 	return false;
 }
-void ShortcutBar::clean() {
-	for (auto n : shortcuts) {
-		n.clean();
-	}
-}

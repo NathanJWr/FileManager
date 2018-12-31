@@ -1,13 +1,11 @@
 #include "display.h"
 #include "config.h"
-#include "sdl2wrapper.h"
-#include <SDL.h>
-#include <SDL_ttf.h>
-Display::Display(int width, int height) :
+Display::Display(int width, int height) : 
+	/* These need to be in the initializer list since they don't have default constructors */
 	window(SDL2::makeWindow("FileManager", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN)),
 	renderer(SDL2::makeRenderer(window, -1, SDL_RENDERER_ACCELERATED)),
 	font(SDL2::makeFont("assets/Ubuntu.ttf", 20)) {
-
+ 
 	SCREEN_W = width;
 	SCREEN_H = height;
 	
@@ -32,21 +30,19 @@ void Display::update() {
 	SDL_RenderPresent(renderer.get());
 	SDL_RenderClear(renderer.get());
 }
-void Display::buildDirectory(Directory& dir) {
-	dir.clean();
+
+void Display::renderDirectory(Directory& dir) {
+	DirTextures.clear(); // TODO: find a way to not have to clear entirely
 	cur_path = dir.path();
-	auto& list = dir.get();
+	auto list = dir.get();
 	if (list.empty()) {
 		return;
 	}
-	int y = dir_box.y, x = dir_box.x;
-
-	SDL_Color color;
 	unsigned int selected_pos = 0;
 	unsigned int start_pos = 0;
 	unsigned int end_pos = 0;
 	for (unsigned int i = 0; i < list.size(); i++) {
-		DirObject n = list[i];
+		DirObject& n = list[i];
 		if (n.selected) selected_pos = i;
 	}
 	unsigned int mid = max_dir_objs / 2;
@@ -62,8 +58,10 @@ void Display::buildDirectory(Directory& dir) {
 		start_pos = selected_pos - mid;
 		end_pos = static_cast<unsigned int> (list.size());
 	}
-	for (unsigned int i = start_pos; i < end_pos; i++) {
-		DirObject& n = list[i];
+
+	// Build all the textures for now
+	for (auto& n : list) {
+		SDL_Color color;
 		if (n.selected) {
 			color = white;
 		}
@@ -73,32 +71,21 @@ void Display::buildDirectory(Directory& dir) {
 		else if (n.type() == DirObject::FOLDER) {
 			color = blue;
 		}
+		DirTextures.emplace_back(SDL2::makeTextTexture(font, n.name().c_str(), color, renderer));
+		DirTextures.back().pos.x = dir_box.x;
+	}
+	int y = dir_box.y, x = dir_box.x;
+
+	// Display textures
+	for (unsigned int i = start_pos; i < end_pos; i++) {
+		auto& n = DirTextures[i];
+		
 		if (y < dir_box.y + dir_box.h - 20) {
-			if (n.texture == NULL) {
-				n.texture = createTextTexture(n.name(), color, n.pos);
-			}
+
 			n.pos.y = y;
 			n.pos.x = dir_box.x;
-			/*
-			if (n.pos.x + n.pos.w > dir_box.x + dir_box.w) {
-				n.texture = NULL;
-			}
-			*/
 			y += text_box.h;
-		}
-	}
-
-}
-
-void Display::renderDirectory(Directory& dir) {
-	auto list = dir.get();
-	if (list.empty()) {
-		return;
-	}
-
-	for (unsigned int i = 0; i < list.size(); i++) {
-		if (list[i].texture != NULL) {
-			renderTexture(list[i].texture, list[i].pos);
+			renderTextTexture(n);
 		}
 	}
 }
@@ -117,53 +104,33 @@ void Display::renderUI(ShortcutBar &bar, std::string console_message) {
 }
 
 void Display::renderConsoleMessage(std::string message) {
-	SDL_Rect pos = console_box; // Width and Height are going to be set in the next call
-	SDL_Texture* tex = createTextTexture(message, white, pos);
-	renderTexture(tex, pos);
-	SDL_DestroyTexture(tex);
+	SDL2::TextTexture text = SDL2::makeTextTexture(font, message.c_str(), white, renderer);
+	text.pos.x = console_box.x;
+	text.pos.y = console_box.y;
+	renderTextTexture(text);
 }
 
 void Display::renderShortcuts(ShortcutBar &bar) {
 	SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
 	SDL_RenderDrawRect(renderer.get(), &shortcut_box);
-
-	auto &list = bar.get_s();
-	for (unsigned int i = 0; i < list.size(); i++) {
-		if (list[i].redraw()) {
-			buildShortcut(list[i]);
-		}
-		renderTexture(list[i].texture, list[i].pos);
-	}
-}
-
-void Display::buildShortcut(Shortcut &shortcut) {
-	SDL_Color color;
-	if (shortcut.highlighted) {
-		color = yellow;
-	}
-	else {
-		color = white;
-	}
-	shortcut.clean();
-	if (shortcut.texture == NULL) {
-		shortcut.texture = createTextTexture(shortcut.name(), color, shortcut.pos);
-	}
-}
-void Display::buildShortcuts(ShortcutBar &bar) {
 	int buf = 0;
-	for (unsigned int i = 0; i < bar.get_s().size(); i++) {
-		if (bar.get_s()[i].texture == NULL) {
-			bar.get_s()[i].texture = createTextTexture(bar.get_s()[i].name(), white, bar.get_s()[i].pos);
+	auto &list = bar.get_s();
+	for (auto& n : list) {
+		SDL_Color color;
+		if (n.highlighted) {
+			color = yellow;
+		} else {
+			color = white;
 		}
-		bar.get_s()[i].pos.y = buf;
+		SDL2::TextTexture text = SDL2::makeTextTexture(font, n.name().c_str(), color, renderer);
+		text.pos.y = buf;
 		buf += text_box.h;
-		bar.get_s()[i].pos.x = shortcut_box.x;
+		n.pos = text.pos;
+		renderTextTexture(text);
 	}
 }
 
 void Display::renderCurrentPath() {
-	int y = dir_box.y - text_box.h;
-	int x = dir_box.x;
 	int count = 0;
 	for (unsigned int i = 0; i < cur_path.size(); i++) {
 		if (cur_path.at(i) == SLASH[0]) {
@@ -179,45 +146,12 @@ void Display::renderCurrentPath() {
 		count--;
 	}
 	std::string buf = buff + cur_path;
-	SDL_Rect pos = { x, y, text_box.w, text_box.h };
-	auto p = createTextTexture(buf, white, pos);
-	renderTexture(p, pos);
-	SDL_DestroyTexture(p);
+	auto p = SDL2::makeTextTexture(font, buf.c_str(), white, renderer);
+	p.pos.x = dir_box.x;
+	p.pos.y = dir_box.y - text_box.h;
+	renderTextTexture(p);
 }
 
-void Display::renderTexture(SDL_Texture* tex, SDL_Rect pos) {
-	SDL_RenderCopy(renderer.get(), tex, NULL, &pos);
-}
-
-
-SDL_Texture* Display::surfaceToTexture(SDL_Surface* surf) {
-	SDL_Texture* text = nullptr;
-	text = SDL_CreateTextureFromSurface(renderer.get(), surf);
-	SDL_FreeSurface(surf);
-
-	if (!text) {
-		std::cerr << "Texture Creation Error: " << SDL_GetError() << std::endl;
-	}
-	return text;
-}
-
-SDL_Texture* Display::createTextTexture(std::string text,
-	SDL_Color color,
-	SDL_Rect &pos) {
-	SDL_Surface* surface = nullptr;
-	SDL_Texture* tex = nullptr;
-	surface = TTF_RenderText_Solid(font.get(), text.c_str(), color);
-	if (surface == NULL) {
-		std::cerr << "Text creationg error" << std::endl;
-	}
-	pos.w = surface->w;
-	pos.h = surface->h;
-
-	if (!surface) {
-		std::cerr << "Text Render Error: " << TTF_GetError() << std::endl;
-		return nullptr;
-	}
-
-	tex = surfaceToTexture(surface);
-	return tex;
+void Display::renderTextTexture(SDL2::TextTexture& tex) {
+	SDL_RenderCopy(renderer.get(), tex.texture.get(), NULL, &tex.pos);
 }

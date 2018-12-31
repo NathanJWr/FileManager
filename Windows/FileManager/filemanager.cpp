@@ -1,6 +1,5 @@
 #include "filemanager.h"
 #include "config.h"
-#include <Windows.h>
 #include <fstream>
 #include <algorithm>
 #include <experimental/filesystem>

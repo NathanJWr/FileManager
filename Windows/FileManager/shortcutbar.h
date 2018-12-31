@@ -7,7 +7,6 @@ public:
 	ShortcutBar();
 	std::vector<Shortcut>& get_s();
 	bool checkClicks(int x, int y, std::string& path);
-	void clean();
 private:
 	std::vector<Shortcut> shortcuts;
 };

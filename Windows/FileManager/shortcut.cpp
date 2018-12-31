@@ -5,12 +5,6 @@ Shortcut::Shortcut(std::string n, std::string p) {
 	_path = p;
 	highlighted = false;
 	changed = false;
-	texture = NULL;
-}
-
-void Shortcut::clean() {
-	SDL_DestroyTexture(texture);
-	texture = NULL;
 }
 
 bool Shortcut::redraw() {

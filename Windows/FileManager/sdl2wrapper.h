@@ -1,25 +1,25 @@
-#pragma once
-#ifndef SDL2WRAPPER_H_
-#define SDL2WRAPPER_H_
+#ifndef SDLWRAP_H_
+#define SDLWRAP_H_
 #include <utility>
 #include <system_error>
 #include <memory>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <iostream>
 namespace SDL2 {
-	/*
-	SDL_Texture* surfaceToTexture(SDL_Surface* surf, SDL_Renderer* renderer) {
+	
+	inline SDL_Texture* surfaceToTexture(SDL_Surface* surf, SDL_Renderer* renderer) {
 		SDL_Texture* text = nullptr;
 		text = SDL_CreateTextureFromSurface(renderer, surf);
-		SDL_FreeSurface(surf);
+		//SDL_FreeSurface(surf);
 		if (!text) {
 			throw std::system_error(errno, std::generic_category());
 		}
 		return text;
 	}
-	*/
+	
 	template<typename Creator, typename Destructor, typename... Arguments>
-	auto make_resource(Creator c, Destructor d, Arguments&&... args) {
+	inline auto make_resource(Creator c, Destructor d, Arguments&&... args) {
 		auto r = c(std::forward<Arguments>(args)...);
 		if (!r) { throw std::system_error(errno, std::generic_category()); }
 		return std::unique_ptr<std::decay_t<decltype(*r)>, decltype(d)>(r, d);
@@ -55,14 +55,15 @@ namespace SDL2 {
 	inline text_surface makeTextSurface(font_ptr& f, const char* t, SDL_Color c) {
 		return make_resource(TTF_RenderText_Solid, SDL_FreeSurface, f.get(), t, c);
 	}
-	/*
+	
 	inline TextTexture makeTextTexture(font_ptr& f, const char* t, SDL_Color c, renderer_ptr& r) {
 		auto s = make_resource(TTF_RenderText_Solid, SDL_FreeSurface, f.get(), t, c);
+		if (!s) { std::cout << "PROBLEM HERE"; }
 		return { make_resource(surfaceToTexture, SDL_DestroyTexture, s.get(), r.get()), {0, 0, s->w, s->h} };
 	}
 	inline TextTexture makeTextTexture(text_surface& s, renderer_ptr& r) {
 		SDL_Rect pos = { 0, 0, s->w, s->h };
 		return { make_resource(surfaceToTexture, SDL_DestroyTexture, s.get(), r.get()), pos };
-	}*/
+	}
 }
-#endif // SDL2WRAPPER_H_
+#endif // SDLWRAP_H_
