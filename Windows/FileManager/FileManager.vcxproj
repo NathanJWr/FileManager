@@ -26,6 +26,7 @@
     <ClInclude Include="filemanager.h" />
     <ClInclude Include="filesystem.h" />
     <ClInclude Include="message.h" />
+    <ClInclude Include="sdl2wrapper.h" />
     <ClInclude Include="shortcut.h" />
     <ClInclude Include="shortcutbar.h" />
   </ItemGroup>

@@ -3,14 +3,13 @@
 #include "directory.h"
 #include "shortcutbar.h"
 #include "shortcut.h"
+#include "sdl2wrapper.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include <string>
 class Display {
 public:
 	Display(int width, int height);
-	~Display();
-
 	/* put the Directory contentts on screen */
 	void renderDirectory(Directory&);
 	/* put all of the UI elements on the screen */
@@ -29,18 +28,17 @@ public:
 	
 private:
 	SDL_Texture* surfaceToTexture(SDL_Surface* surf);
-	SDL_Texture* surfaceToTextureSafe(SDL_Surface* surf);
 	SDL_Texture* createTextTexture(std::string text,
 					SDL_Color color,
 					SDL_Rect &pos);
 	void renderTexture(SDL_Texture*, SDL_Rect);
 	void renderCurrentPath();
 	void renderShortcuts(ShortcutBar &bar);
-	bool init();
 
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-	TTF_Font* font;
+	SDL2::window_ptr window;
+	SDL2::renderer_ptr renderer;
+	SDL2::font_ptr font;
+	
 	int SCREEN_W;
 	int SCREEN_H;
 

@@ -4,6 +4,7 @@
 #include "message.h"
 #include <iostream>
 #include <SDL.h>
+#include <SDL_ttf.h>
 #include <memory>
 #include <vector>
 #include <list>
@@ -105,6 +106,15 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 }
 
 int wmain(){
+
+	bool success = true;
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		success = false;
+	}
+	if (TTF_Init() == -1) {
+		std::cerr << "Failed to initialize TTF: " << SDL_GetError() << std::endl;
+		success = false;
+	}
 	Filesystem dirs;
 	ShortcutBar shortcut_bar;
 	Display display(800, 600);
@@ -149,5 +159,13 @@ int wmain(){
 		}
 	}
 	shortcut_bar.clean();
+
+	/* TODO:
+	This these quits throw an excpetion since display isn't out of scope when they are called
+	-> window and renderer and font arent out of scope
+	
+	TTF_Quit();
+	SDL_Quit();
+	*/
 	return 0;
 }

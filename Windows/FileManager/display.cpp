@@ -1,13 +1,16 @@
 #include "display.h"
 #include "config.h"
+#include "sdl2wrapper.h"
 #include <SDL.h>
 #include <SDL_ttf.h>
 Display::Display(int width, int height) :
-	SCREEN_W(width),
-	SCREEN_H(height) {
-	window = nullptr;
-	renderer = nullptr;
-	font = nullptr;
+	window(SDL2::makeWindow("FileManager", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN)),
+	renderer(SDL2::makeRenderer(window, -1, SDL_RENDERER_ACCELERATED)),
+	font(SDL2::makeFont("assets/Ubuntu.ttf", 20)) {
+
+	SCREEN_W = width;
+	SCREEN_H = height;
+	
 	int dir_x = static_cast<int>(width / 5.5);
 	int dir_y = static_cast<int>(height / 5.5);
 	int dir_w = SCREEN_W;
@@ -16,30 +19,18 @@ Display::Display(int width, int height) :
 	console_box = { dir_x, dir_y + dir_h, SCREEN_W, SCREEN_H};
 
 	shortcut_box = {0, 0, dir_x, height};
-	if (!init()) {
-		exit(1);
-	}
 
 	/* figure out the height and width of a text_box */
-	SDL_Surface* surface = TTF_RenderText_Solid(font, "n/a", white);
-	text_box.w = surface->w;
-	text_box.h = surface->h;
-	SDL_FreeSurface(surface);
+	auto temp_buff = SDL2::makeTextSurface(font, "text", white);
+	text_box.w = temp_buff.get()->w;
+	text_box.h = temp_buff.get()->h;
 	max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);
 }
 
-Display::~Display() {
-	SDL_DestroyWindow(window);
-	SDL_DestroyRenderer(renderer);
-	TTF_CloseFont(font);
-	TTF_Quit();
-	SDL_Quit();
-}
-
 void Display::update() {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-	SDL_RenderPresent(renderer);
-	SDL_RenderClear(renderer);
+	SDL_SetRenderDrawColor(renderer.get(), 0, 0, 0, 255);
+	SDL_RenderPresent(renderer.get());
+	SDL_RenderClear(renderer.get());
 }
 void Display::buildDirectory(Directory& dir) {
 	dir.clean();
@@ -113,9 +104,9 @@ void Display::renderDirectory(Directory& dir) {
 }
 
 void Display::renderUI(ShortcutBar &bar) {
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_RenderDrawRect(renderer, &dir_box);
-	SDL_RenderDrawRect(renderer, &console_box);
+	SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
+	SDL_RenderDrawRect(renderer.get(), &dir_box);
+	SDL_RenderDrawRect(renderer.get(), &console_box);
 	renderShortcuts(bar);
 	renderCurrentPath();
 }
@@ -133,8 +124,8 @@ void Display::renderConsoleMessage(std::string message) {
 }
 
 void Display::renderShortcuts(ShortcutBar &bar) {
-	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-	SDL_RenderDrawRect(renderer, &shortcut_box);
+	SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
+	SDL_RenderDrawRect(renderer.get(), &shortcut_box);
 
 	auto &list = bar.get_s();
 	for (unsigned int i = 0; i < list.size(); i++) {
@@ -195,27 +186,17 @@ void Display::renderCurrentPath() {
 }
 
 void Display::renderTexture(SDL_Texture* tex, SDL_Rect pos) {
-	SDL_RenderCopy(renderer, tex, NULL, &pos);
+	SDL_RenderCopy(renderer.get(), tex, NULL, &pos);
 }
+
 
 SDL_Texture* Display::surfaceToTexture(SDL_Surface* surf) {
 	SDL_Texture* text = nullptr;
-	text = SDL_CreateTextureFromSurface(renderer, surf);
+	text = SDL_CreateTextureFromSurface(renderer.get(), surf);
 	SDL_FreeSurface(surf);
 
 	if (!text) {
 		std::cerr << "Texture Creation Error: " << SDL_GetError() << std::endl;
-	}
-	return text;
-}
-
-SDL_Texture* Display::surfaceToTextureSafe(SDL_Surface* surf) {
-	SDL_Texture* text = nullptr;
-	text = SDL_CreateTextureFromSurface(renderer, surf);
-
-	if (!text) {
-		std::cerr << "Texture Creation Error: " << SDL_GetError() << std::endl;
-		return nullptr;
 	}
 	return text;
 }
@@ -225,7 +206,7 @@ SDL_Texture* Display::createTextTexture(std::string text,
 	SDL_Rect &pos) {
 	SDL_Surface* surface = nullptr;
 	SDL_Texture* tex = nullptr;
-	surface = TTF_RenderText_Solid(font, text.c_str(), color);
+	surface = TTF_RenderText_Solid(font.get(), text.c_str(), color);
 	if (surface == NULL) {
 		std::cerr << "Text creationg error" << std::endl;
 	}
@@ -239,44 +220,4 @@ SDL_Texture* Display::createTextTexture(std::string text,
 
 	tex = surfaceToTexture(surface);
 	return tex;
-}
-
-bool Display::init() {
-	bool success = true;
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		success = false;
-	}
-	else if (!SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1")) {
-		std::cerr << "Linear filtering not enabled!" << std::endl;
-	}
-	window = SDL_CreateWindow("FileManager",
-		SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED,
-		SCREEN_W,
-		SCREEN_H,
-		SDL_WINDOW_SHOWN);
-	if (window == NULL) {
-		success = false;
-	}
-	else {
-		renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-		if (renderer == nullptr) {
-			success = false;
-		}
-		else {
-			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-		}
-	}
-	if (TTF_Init() == -1) {
-		std::cerr << "Failed to initialize TTF: " << SDL_GetError() << std::endl;
-
-		success = false;
-	}
-	font = TTF_OpenFont("assets/Ubuntu.ttf", 20);
-
-	if (font == NULL) {
-		std::cerr << "Failed to load font: " << SDL_GetError() << std::endl;
-		success = false;
-	}
-	return success;
 }
