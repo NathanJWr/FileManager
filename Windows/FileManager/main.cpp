@@ -80,7 +80,6 @@ void handleMouse(Filesystem &dirs, ShortcutBar &bar) {
 	SDL_GetMouseState(&mouse_x, &mouse_y);
 	if (bar.checkClicks(mouse_x, mouse_y, path)) {
 		DirObject yanked = std::move(dirs.yanked);
-		dirs.clean();
 		dirs = Filesystem(path);
 		dirs.yanked = std::move(yanked);
 	}
@@ -94,6 +93,7 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 			break;
 		case SDL_MOUSEBUTTONDOWN:
 			ctx.redraw = true;
+			dirs.currentDir().last_move = Directory::NONE;
 			handleMouse(dirs, bar);
 			break;
 		case SDL_KEYDOWN:
@@ -139,18 +139,18 @@ int wmain(){
 		}
 		SDL_PollEvent(&e);
 		if (ctx.redraw) {
-			//display.buildDirectory(dirs.currentDir());
+			if (ctx.message) dirs.currentDir().last_move = Directory::NONE;
 			display.renderDirectory(dirs.currentDir());
-
 			if (ctx.message) {
 				display.renderUI(shortcut_bar, ctx.msg.message());
 				msg = (ctx.msg);
 				handle_message = true;
-			} else {
+			}
+			else {
 				display.renderUI(shortcut_bar);
 				handle_message = false;
 			}
-
+			
 			display.update();
 		}
 		if (ctx.exit) {

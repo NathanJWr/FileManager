@@ -5,6 +5,7 @@
 #include <memory>
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <string>
 #include <iostream>
 namespace SDL2 {
 	
@@ -37,6 +38,7 @@ namespace SDL2 {
 	struct TextTexture {
 		text_texture texture;
 		SDL_Rect pos;
+		std::string text;
 	};
 	inline renderer_ptr makeRenderer(window_ptr& w, int index, Uint32 flags) {
 		return make_resource(SDL_CreateRenderer, SDL_DestroyRenderer, w.get(), index, flags);
@@ -58,8 +60,7 @@ namespace SDL2 {
 	
 	inline TextTexture makeTextTexture(font_ptr& f, const char* t, SDL_Color c, renderer_ptr& r) {
 		auto s = make_resource(TTF_RenderText_Solid, SDL_FreeSurface, f.get(), t, c);
-		if (!s) { std::cout << "PROBLEM HERE"; }
-		return { make_resource(surfaceToTexture, SDL_DestroyTexture, s.get(), r.get()), {0, 0, s->w, s->h} };
+		return { make_resource(surfaceToTexture, SDL_DestroyTexture, s.get(), r.get()), {0, 0, s->w, s->h}, t };
 	}
 	inline TextTexture makeTextTexture(text_surface& s, renderer_ptr& r) {
 		SDL_Rect pos = { 0, 0, s->w, s->h };

@@ -5,6 +5,7 @@
 #include "shortcutbar.h"
 #include "shortcut.h"
 #include <string>
+#include <deque>
 class Display {
 public:
 	Display(int width, int height);
@@ -21,6 +22,7 @@ private:
 	void renderTextTexture(SDL2::TextTexture& tex);
 	void renderCurrentPath();
 	void renderShortcuts(ShortcutBar &bar);
+	SDL_Color determineColor(DirObject obj);
 
 	SDL2::window_ptr window;
 	SDL2::renderer_ptr renderer;
@@ -30,8 +32,8 @@ private:
 	SDL_Color yellow{ 255, 255, 153, 0 };
 	SDL_Color green = { 0, 255, 0, 255 };
 	SDL_Color blue = { 0, 50, 255, 255 };
-
-	std::vector<SDL2::TextTexture> DirTextures;
+	
+	std::deque<SDL2::TextTexture> DirTextures;
 	std::vector<SDL2::TextTexture> shortcuts;
 	
 	int SCREEN_W;
@@ -43,7 +45,7 @@ private:
 	SDL_Rect console_box;
 
 	std::string cur_path;
-	unsigned int max_dir_objs;
+
 
 };
 #endif // DISPLAY_H_

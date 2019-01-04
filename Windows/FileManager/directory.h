@@ -5,6 +5,8 @@
 #include <memory>
 class Directory {
 public:
+	enum LastMove {UP, DOWN, NONE};
+	LastMove last_move;
 	Directory(std::vector<DirObject>, std::string path);
 	std::vector<DirObject>& get();
 	DirObject& currentlySelected();
@@ -18,8 +20,11 @@ public:
 	void add(DirObject obj);
 	/* removes the currently selected DirObject */
 	void remove();
-	
-	void clean();
+
+
+	unsigned int max_dir_objs;
+	unsigned int min_dir_objs;
+	unsigned int selected_at;
 private:
 	std::vector<DirObject> dir;
 	/* looks through dir to find the currently selected DirObject */

@@ -22,7 +22,7 @@ Display::Display(int width, int height) :
 	auto temp_buff = SDL2::makeTextSurface(font, "text", white);
 	text_box.w = temp_buff.get()->w;
 	text_box.h = temp_buff.get()->h;
-	max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);
+	//max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);;
 }
 
 void Display::update() {
@@ -31,63 +31,156 @@ void Display::update() {
 	SDL_RenderClear(renderer.get());
 }
 
+SDL_Color Display::determineColor(DirObject obj) {
+	SDL_Color color;
+	if (obj.selected) {
+		color = white;
+	}
+	else if (obj.type() == DirObject::FILE) {
+		color = green;
+	}
+	else if (obj.type() == DirObject::FOLDER) {
+		color = blue;
+	}
+	return color;
+}
+
 void Display::renderDirectory(Directory& dir) {
-	DirTextures.clear(); // TODO: find a way to not have to clear entirely
 	cur_path = dir.path();
-	auto list = dir.get();
-	if (list.empty()) {
-		return;
-	}
-	unsigned int selected_pos = 0;
-	unsigned int start_pos = 0;
-	unsigned int end_pos = 0;
-	for (unsigned int i = 0; i < list.size(); i++) {
-		DirObject& n = list[i];
-		if (n.selected) selected_pos = i;
-	}
-	unsigned int mid = max_dir_objs / 2;
-	if (selected_pos > mid && selected_pos < list.size() - mid) {
-		start_pos = selected_pos - mid;
-		end_pos = selected_pos + mid;
-	}
-	else if (selected_pos < mid) {
-		start_pos = 0;
-		end_pos = static_cast<unsigned int> (list.size());
-	}
-	else {
-		start_pos = selected_pos - mid;
-		end_pos = static_cast<unsigned int> (list.size());
-	}
-
-	// Build all the textures for now
-	for (auto& n : list) {
-		SDL_Color color;
-		if (n.selected) {
-			color = white;
+	if (dir.last_move == Directory::NONE) {
+		/* New directory, so everything needs to be cleared */
+		DirTextures.clear();
+		if (dir.max_dir_objs == 0) dir.max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);
+		int buf_y = dir_box.y;
+		int size;
+		if (dir.get().size() < dir.min_dir_objs + dir.max_dir_objs) {
+			size = dir.get().size();
+		} else {
+			size = dir.min_dir_objs + dir.max_dir_objs;
 		}
-		else if (n.type() == DirObject::FILE) {
-			color = green;
+		for (int i = dir.min_dir_objs; i < size; ++i) {
+			auto color = determineColor(dir.get()[i]);
+			DirTextures.emplace_back(SDL2::makeTextTexture(font, dir.get()[i].name().c_str(), color, renderer));
+			DirTextures.back().pos.x = dir_box.x;
+			DirTextures.back().pos.y = buf_y;
+			buf_y += text_box.h;
 		}
-		else if (n.type() == DirObject::FOLDER) {
-			color = blue;
-		}
-		DirTextures.emplace_back(SDL2::makeTextTexture(font, n.name().c_str(), color, renderer));
-		DirTextures.back().pos.x = dir_box.x;
-	}
-	int y = dir_box.y, x = dir_box.x;
-
-	// Display textures
-	for (unsigned int i = start_pos; i < end_pos; i++) {
-		auto& n = DirTextures[i];
-		
-		if (y < dir_box.y + dir_box.h - 20) {
-
-			n.pos.y = y;
-			n.pos.x = dir_box.x;
-			y += text_box.h;
+		for (auto& n : DirTextures) {
 			renderTextTexture(n);
 		}
+	} else if (dir.last_move == Directory::UP) {
+		/* The selected DirObject isn't at the top
+		 * Redraw old selected item AND the new one
+		 */
+		if (dir.selected_at > 0 && (dir.selected_at - dir.min_dir_objs > 0) ){
+			unsigned int sel;
+			sel = dir.selected_at - dir.min_dir_objs;
+			
+			auto redraw1 = std::move(DirTextures[sel]);
+			auto redraw2 = std::move(DirTextures[sel - 1]);
+
+			SDL_Color color = determineColor(dir.get()[dir.selected_at]);
+			DirTextures[sel] = std::move(SDL2::makeTextTexture(font, redraw1.text.c_str(), color, renderer));
+			DirTextures[sel].pos = redraw1.pos;
+
+			DirTextures[--sel] = std::move(SDL2::makeTextTexture(font, redraw2.text.c_str(), white, renderer));
+			DirTextures[sel].pos = redraw2.pos;
+
+			for (auto& n : DirTextures) {
+				renderTextTexture(n);
+			}
+			--dir.selected_at;
+		}
+
+		/* The selected DirObject IS at the top
+		 * Add one texture to the TOP/FRONT of the list
+		 * Remove one texture from the BOTTOM/END of the list
+		 */
+		else if (dir.selected_at > 0 && dir.selected_at - dir.min_dir_objs <= 0) {
+			unsigned int sel;
+			sel = dir.selected_at - dir.min_dir_objs;
+
+			auto redraw = std::move(DirTextures.front());
+			SDL_Color color1 = determineColor(dir.get()[dir.selected_at]);
+			DirTextures.front() = std::move(SDL2::makeTextTexture(font, redraw.text.c_str(), color1, renderer));
+			DirTextures.front().pos = redraw.pos;
+
+			DirTextures.pop_back();
+			auto& tba = dir.get()[--dir.selected_at];
+			SDL_Color color2 = determineColor(tba);
+			DirTextures.emplace_front(SDL2::makeTextTexture(font, tba.name().c_str(), color2, renderer));
+			DirTextures.front().pos.x = redraw.pos.x;
+			DirTextures.front().pos.y = redraw.pos.y;
+			DirTextures.front().pos.y -= text_box.h;
+
+			for (auto& n : DirTextures) {
+				n.pos.y += text_box.h;
+				renderTextTexture(n);
+			}
+			dir.min_dir_objs--;
+		} else {
+			for (auto& n : DirTextures) {
+				renderTextTexture(n);
+			}
+		}
 	}
+	else if (dir.last_move == Directory::DOWN) {
+		/* The selected DirObject isn't at the bottom
+		 * Redraw the old selected item an new one
+		 */
+		if (dir.selected_at + 1 < dir.get().size() && (dir.selected_at - dir.min_dir_objs) < dir.max_dir_objs - 1 ) {
+			unsigned int sel;
+			sel = dir.selected_at - dir.min_dir_objs;
+
+			auto redraw1 = std::move(DirTextures[sel]);
+			auto redraw2 = std::move(DirTextures[sel + 1]);
+
+			SDL_Color color = determineColor(dir.get()[dir.selected_at]);
+			DirTextures[sel] = std::move(SDL2::makeTextTexture(font, redraw1.text.c_str(), color, renderer));
+			DirTextures[sel].pos = redraw1.pos;
+
+			DirTextures[++sel] = std::move(SDL2::makeTextTexture(font, redraw2.text.c_str(), white, renderer));
+			DirTextures[sel].pos = redraw2.pos;
+
+			for (auto& n : DirTextures) {
+				renderTextTexture(n);
+			}
+			dir.selected_at += 1;
+		}
+		/* The selected DirObject IS at the bottom
+		 * Add one DirObject to the bottom/end of the list
+		 * Remove one DirObject to the top/front of the list
+		 */
+		else if (dir.selected_at + 1 < dir.get().size() && (dir.selected_at - dir.min_dir_objs) >= dir.max_dir_objs - 1) {
+			dir.min_dir_objs++;
+
+			auto redraw = std::move(DirTextures.back());
+			SDL_Color color1 = determineColor(dir.get()[dir.selected_at]);
+			DirTextures.back() = std::move(SDL2::makeTextTexture(font, redraw.text.c_str(), color1, renderer));
+			DirTextures.back().pos = redraw.pos;
+
+			DirTextures.pop_front();
+			auto& tba = dir.get()[++dir.selected_at];
+			SDL_Color color2 = determineColor(tba);
+			DirTextures.emplace_back(SDL2::makeTextTexture(font, tba.name().c_str(), color2, renderer));
+			DirTextures.back().pos.x = redraw.pos.x;
+			DirTextures.back().pos.y = redraw.pos.y;
+			DirTextures.back().pos.y += text_box.h;
+
+			for (auto& n : DirTextures) {
+				n.pos.y -= text_box.h;
+				renderTextTexture(n);
+			}
+		}
+		else {
+			for (auto& n : DirTextures) {
+				renderTextTexture(n);
+			}
+		}
+	}
+	std::cout << "Selected at: " << dir.selected_at << std::endl;
+	std::cout << "Min_dir_objs: " << dir.min_dir_objs << std::endl;
+	std::cout << "Max_dir_objs: " << dir.max_dir_objs << std::endl;
 }
 
 void Display::renderUI(ShortcutBar &bar) {

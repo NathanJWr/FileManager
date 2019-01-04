@@ -16,12 +16,10 @@ Directory::Directory(std::vector<DirObject> d, std::string p) {
 		dir[0].selected = true;
 	}
 	std::sort(dir.begin(), dir.end(), alpha_sort);
-}
-
-void Directory::clean() {
-	for (unsigned int i = 0; i < dir.size(); i++) {
-		
-	}
+	last_move = NONE;
+	max_dir_objs = 0;
+	min_dir_objs = 0;
+	selected_at = 0;
 }
 
 DirObject& Directory::currentlySelected() {
@@ -60,6 +58,7 @@ void Directory::moveSelectedDown() {
 		dir[currently_selected].selected = false;
 		dir[currently_selected + 1].selected = true;
 		std::cout << "  Moved to: " << currently_selected + 1 << std::endl;
+		last_move = DOWN;
 	}
 }
 
@@ -70,6 +69,7 @@ void Directory::moveSelectedUp() {
 		dir[currently_selected].selected = false;
 		dir[currently_selected - 1].selected = true;
 		std::cout << "  Moved to: " << currently_selected - 1 << std::endl;
+		last_move = UP;
 	}
 }
 

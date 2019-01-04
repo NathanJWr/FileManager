@@ -23,7 +23,8 @@ Filesystem::Filesystem(std::string path) {
 }
 
 void Filesystem::yank() {
-	yanked = std::move(dirs.top().currentlySelected());
+	dirs.top().last_move = Directory::NONE;
+	yanked = dirs.top().currentlySelected();
 	std::cout << "Yanked: " << yanked << std::endl;
 }
 
@@ -48,13 +49,6 @@ const std::string Filesystem::currentDirObjName() {
 	return currentDir().currentlySelected().name();
 }
 
-void Filesystem::clean() {
-	while (dirs.size() > 0) {
-		dirs.top().clean();
-		dirs.pop();
-	}
-}
-
 Directory& Filesystem::currentDir() {
 	return dirs.top();
 }
@@ -69,14 +63,14 @@ void Filesystem::back() {
 	 * check to see if there is only one thing in the stack
 	 */
 	if (dirs.size() > 1) {
-		dirs.top().clean();
 		dirs.pop();
 	}
 }
 
 void Filesystem::forward() {
+	/* This is so the dir will be redrawn correctly when it is accessed again */
+	dirs.top().last_move = Directory::NONE;
 	if (currentDir().currentlySelected().isFolder()) {
-		currentDir().clean();
 		forwardDir();
 	}
 	else if (currentDir().currentlySelected().isFile()) {
