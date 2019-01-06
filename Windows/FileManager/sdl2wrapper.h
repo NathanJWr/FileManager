@@ -62,9 +62,9 @@ namespace SDL2 {
 		auto s = make_resource(TTF_RenderText_Solid, SDL_FreeSurface, f.get(), t, c);
 		return { make_resource(surfaceToTexture, SDL_DestroyTexture, s.get(), r.get()), {0, 0, s->w, s->h}, t };
 	}
-	inline TextTexture makeTextTexture(text_surface& s, renderer_ptr& r) {
+	inline TextTexture makeTextTexture(std::string text, text_surface& s, renderer_ptr& r) {
 		SDL_Rect pos = { 0, 0, s->w, s->h };
-		return { make_resource(surfaceToTexture, SDL_DestroyTexture, s.get(), r.get()), pos };
+		return { make_resource(surfaceToTexture, SDL_DestroyTexture, s.get(), r.get()), pos, text };
 	}
 }
 #endif // SDLWRAP_H_

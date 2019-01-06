@@ -116,7 +116,8 @@ int wmain(){
 	}
 	Filesystem dirs;
 	ShortcutBar shortcut_bar;
-	Display display(800, 600);
+	Display display(1024, 768);
+	display.update();
 	
 	display.renderDirectory(dirs.currentDir());
 	display.renderUI(shortcut_bar);

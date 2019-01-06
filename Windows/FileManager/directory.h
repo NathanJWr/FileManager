@@ -8,6 +8,7 @@ public:
 	enum LastMove {UP, DOWN, NONE};
 	LastMove last_move;
 	Directory(std::vector<DirObject>, std::string path);
+
 	std::vector<DirObject>& get();
 	DirObject& currentlySelected();
 	const std::string path() const;
@@ -21,7 +22,7 @@ public:
 	/* removes the currently selected DirObject */
 	void remove();
 
-
+	/* To keep track of what is displayed on screen */
 	unsigned int max_dir_objs;
 	unsigned int min_dir_objs;
 	unsigned int selected_at;
@@ -29,6 +30,7 @@ private:
 	std::vector<DirObject> dir;
 	/* looks through dir to find the currently selected DirObject */
 	unsigned int findCurrentlySelected() const;
+
 	std::string _path;
 	static bool alpha_sort(DirObject, DirObject);
 };

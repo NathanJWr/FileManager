@@ -4,15 +4,15 @@ Display::Display(int width, int height) :
 	/* These need to be in the initializer list since they don't have default constructors */
 	window(SDL2::makeWindow("FileManager", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN)),
 	renderer(SDL2::makeRenderer(window, -1, SDL_RENDERER_ACCELERATED)),
-	font(SDL2::makeFont("assets/Ubuntu.ttf", 20)) {
+	font(SDL2::makeFont("assets/Ubuntu.ttf", 16)) {
  
 	SCREEN_W = width;
 	SCREEN_H = height;
 	
 	int dir_x = static_cast<int>(width / 5.5);
-	int dir_y = static_cast<int>(height / 5.5);
+	int dir_y = static_cast<int>(height / 25);
 	int dir_w = SCREEN_W;
-	int dir_h = static_cast<int>(height / 1.5);
+	int dir_h = static_cast<int>(height / 1.2);
 	dir_box = {dir_x, dir_y, dir_w, dir_h};
 	console_box = { dir_x, dir_y + dir_h, SCREEN_W, SCREEN_H};
 
@@ -25,9 +25,10 @@ Display::Display(int width, int height) :
 }
 
 void Display::update() {
-	SDL_SetRenderDrawColor(renderer.get(), 0, 0, 0, 255);
+	SDL_SetRenderDrawColor(renderer.get(), 0, 43, 54, 255);
 	SDL_RenderPresent(renderer.get());
 	SDL_RenderClear(renderer.get());
+	SDL_SetRenderDrawColor(renderer.get(), 0, 43, 54, 255);
 }
 
 SDL_Color Display::determineColor(DirObject obj) {
@@ -35,9 +36,9 @@ SDL_Color Display::determineColor(DirObject obj) {
 	if (obj.selected) {
 		color = white;
 	} else if (obj.type() == DirObject::FILE) {
-		color = green;
+		color = text;
 	} else if (obj.type() == DirObject::FOLDER) {
-		color = blue;
+		color = folder;
 	}
 	return color;
 }
@@ -210,7 +211,7 @@ void Display::renderShortcuts(ShortcutBar &bar) {
 		if (n.highlighted) {
 			color = yellow;
 		} else {
-			color = white;
+			color = shortcut;
 		}
 		SDL2::TextTexture text = SDL2::makeTextTexture(font, n.name().c_str(), color, renderer);
 		text.pos.y = buf;
