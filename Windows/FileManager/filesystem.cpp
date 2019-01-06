@@ -76,6 +76,7 @@ void Filesystem::forward() {
 	else if (currentDir().currentlySelected().isFile()) {
 		openFile();
 	}
+
 }
 
 void Filesystem::forwardDir() {
@@ -94,47 +95,7 @@ void Filesystem::forwardDir() {
 
 void Filesystem::openFile() {
 	std::string path = currentDir().currentlySelected().path();
-	std::string ext = currentDir().currentlySelected().extension();
-	std::string command = "";
-
-	/* Look through all of the defined extensions to see what matches */
-	for (auto str : TEXT_EXTENSIONS) {
-		if (str == ext) {
-			command = TEXT_EDITOR;
-		}
-	}
-	for (auto str : VIDEO_EXTENSIONS) {
-		if (str == ext) {
-			command = VIDEO_PLAYER;
-		}
-	}
-	for (auto str : PDF_EXTENSIONS) {
-		if (str == ext) {
-			command = PDF_VIEWER;
-		}
-	}
-	for (auto str : IMAGE_EXTENSIONS) {
-		if (str == ext) {
-			command = IMAGE_VIEWER;
-		}
-	}
-
-	std::string buff = static_cast<std::string>(" \"") + path + static_cast<std::string>("\"");
-	command.append(buff);
-	std::cout << command << std::endl;
-
-	/* Windows stuff to execute CreateProcessA */
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-
-	ZeroMemory(&si, sizeof(si));
-	si.cb = sizeof(si);
-	ZeroMemory(&pi, sizeof(pi));
-	LPSTR s = const_cast<char *>(command.c_str());
-	if (!CreateProcessA(NULL, s, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
-		printf("CreateProcess failed (%d).\n", GetLastError());
-		return;
-	}
+	ShellExecute(0, 0, path.c_str(), 0, 0, SW_SHOW);
 }
 
 void Filesystem::toggleSortAlphabetically() {

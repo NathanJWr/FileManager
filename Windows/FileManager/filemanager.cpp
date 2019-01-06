@@ -96,6 +96,7 @@ bool FileManager::remove(DirObject obj) {
 		return fs::remove(obj.path(), e);
 	} else if (obj.type() == DirObject::FOLDER) {
 		if (fs::remove_all(obj.path(), e) == static_cast<std::uintmax_t>(-1)) {
+			std::cout << e;
 			return false;
 		} else {
 			return true;

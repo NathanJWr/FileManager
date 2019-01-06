@@ -118,8 +118,6 @@ int wmain(){
 	ShortcutBar shortcut_bar;
 	Display display(800, 600);
 	
-	//display.buildShortcuts(shortcut_bar);
-	//display.buildDirectory(dirs.currentDir());
 	display.renderDirectory(dirs.currentDir());
 	display.renderUI(shortcut_bar);
 	display.update();
@@ -157,7 +155,6 @@ int wmain(){
 			break;
 		}
 	}
-	//shortcut_bar.clean();
 
 	/* TODO:
 	This these quits throw an excpetion since display isn't out of scope when they are called
