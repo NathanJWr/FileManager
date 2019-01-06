@@ -40,7 +40,7 @@ void Filesystem::paste() {
 }
 
 void Filesystem::remove() {
-	if (fmanager.remove(std::move(currentDir().currentlySelected()))) {
+	if (fmanager.remove(currentDir().currentlySelected())) {
 		currentDir().remove();
 	}
 }

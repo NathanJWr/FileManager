@@ -22,7 +22,6 @@ Display::Display(int width, int height) :
 	auto temp_buff = SDL2::makeTextSurface(font, "text", white);
 	text_box.w = temp_buff.get()->w;
 	text_box.h = temp_buff.get()->h;
-	//max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);;
 }
 
 void Display::update() {
@@ -35,11 +34,9 @@ SDL_Color Display::determineColor(DirObject obj) {
 	SDL_Color color;
 	if (obj.selected) {
 		color = white;
-	}
-	else if (obj.type() == DirObject::FILE) {
+	} else if (obj.type() == DirObject::FILE) {
 		color = green;
-	}
-	else if (obj.type() == DirObject::FOLDER) {
+	} else if (obj.type() == DirObject::FOLDER) {
 		color = blue;
 	}
 	return color;

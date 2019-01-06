@@ -47,6 +47,7 @@ void Directory::remove() {
 	unsigned int cur = findCurrentlySelected();
 	if (cur > 0) {
 		dir[cur - 1].selected = true;
+		selected_at = cur - 1;
 	}
 	dir.erase(dir.begin() + cur);
 }
