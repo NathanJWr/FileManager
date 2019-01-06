@@ -105,7 +105,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\njw\Desktop\SDL2 Libraries\SDL2_ttf-2.0.14\include;C:\Users\njw\Desktop\SDL2 Libraries\SDL2-2.0.9\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\njw\Documents\GitHub\FileManager\Windows\FileManager\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2main.lib;SDL2.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -118,7 +118,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\njw\Desktop\SDL2 Libraries\SDL2-2.0.9\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\njw\Documents\GitHub\FileManager\Windows\FileManager\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
