@@ -1,5 +1,6 @@
 #include "dirobject.h"
 #include <iostream>
+#include <windows.h>
 DirObject::DirObject(std::string n, std::string p, Type t) {
 	_name = n;
 	_path = p;
@@ -29,7 +30,8 @@ bool DirObject::isFile() const {
 }
 
 bool DirObject::isHidden() const {
-	return (_name[0] == '.');
+	DWORD attributes = GetFileAttributes(path().c_str());
+	return (attributes & FILE_ATTRIBUTE_HIDDEN);
 }
 
 const std::string DirObject::name() const {
