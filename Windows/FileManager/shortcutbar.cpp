@@ -1,12 +1,15 @@
 #include "shortcutbar.h"
 #include "config.h"
+
+#ifdef _WIN32
 #include <windows.h>
 #include <Lmcons.h>
+#define USERNAME() TCHAR username[UNLEN + 1]; DWORD size = UNLEN + 1; GetUserName((TCHAR*)username, &size);
+#endif
+
 ShortcutBar::ShortcutBar() {
 	/* Query the OS for username */
-	TCHAR username[UNLEN + 1];
-	DWORD size = UNLEN + 1;
-	GetUserName((TCHAR*)username, &size);
+	USERNAME();
 
 	std::string desktop = ROOT + "Users" + SLASH + username + SLASH + "Desktop";
 	std::string documents = ROOT + "Users" + SLASH + username + SLASH + "Documents";

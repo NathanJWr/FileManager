@@ -1,6 +1,15 @@
 #include "dirobject.h"
 #include <iostream>
-#include <windows.h>
+
+#ifdef _WIN32
+#include <Windows.h>
+#define Is_Hidden(Path) (GetFileAttributes(Path) & FILE_ATTRIBUTE_HIDDEN)
+#endif
+
+#ifdef linux
+#define Is_Hidden(Path) (Path[0] == '.')
+#endif
+
 DirObject::DirObject(std::string n, std::string p, Type t) {
 	_name = n;
 	_path = p;
@@ -30,8 +39,7 @@ bool DirObject::isFile() const {
 }
 
 bool DirObject::isHidden() const {
-	DWORD attributes = GetFileAttributes(path().c_str());
-	return (attributes & FILE_ATTRIBUTE_HIDDEN);
+	return Is_Hidden(path().c_str());	
 }
 
 const std::string DirObject::name() const {

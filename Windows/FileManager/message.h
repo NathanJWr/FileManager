@@ -3,7 +3,7 @@
 #include <string>
 class Message {
 public:
-	enum Type {REMOVE, QUIT};	
+	enum Type {REMOVE, QUIT, YANK, PASTE};	
 	Message();
 	Message(Type t);
 	Message(Type t, std::string file_name);

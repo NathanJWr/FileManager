@@ -1,6 +1,11 @@
 #include "filesystem.h"
 #include <stack>
+
+#ifdef _WIN32
 #include <windows.h>
+#define EXECUTE(Path) ShellExecute(0, 0, Path, 0, 0, SW_SHOW);
+#endif
+
 Filesystem::Filesystem() {
 	std::stack<std::string> buff;
 	buff.push(fmanager.getCurrentDirectory());
@@ -95,7 +100,7 @@ void Filesystem::forwardDir() {
 
 void Filesystem::openFile() {
 	std::string path = currentDir().currentlySelected().path();
-	ShellExecute(0, 0, path.c_str(), 0, 0, SW_SHOW);
+	EXECUTE(path.c_str());
 }
 
 void Filesystem::toggleSortAlphabetically() {

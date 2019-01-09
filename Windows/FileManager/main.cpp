@@ -13,18 +13,24 @@ public:
 	bool redraw;
 	bool exit;
 	bool message;
+	bool response;
 	Message msg;
-	Context() : redraw(0), exit(0), message(0), msg() {}
+	Context() : redraw(0), exit(0), message(0), response(0), msg() {}
 };
 
-/* returns 1 for message_handling */
+/* returns 1 for message_handling+console_message */
+/* returns 2 for console_message */
 int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message) {
 	switch (e.keysym.sym) {
 		case SDLK_y:
 			dirs.yank();
+			message = Message(Message::YANK, dirs.currentDirObjName());
+			return 2;	
 			break;
 		case SDLK_p:
 			dirs.paste();
+			message = Message(Message::PASTE, dirs.currentDirObjName());
+			return 2;
 			break;
 		case SDLK_d:
 			message = Message(Message::REMOVE, dirs.currentDirObjName());
@@ -98,7 +104,11 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 			break;
 		case SDL_KEYDOWN:
 			ctx.redraw = true;
-			if (handleKeys(e.key, dirs, ctx.msg) == 1) {
+			int val = handleKeys(e.key, dirs, ctx.msg);
+			if (val == 1) {
+				ctx.message = true;
+				ctx.response = true;
+			} else if (val == 2) {
 				ctx.message = true;
 			}
 	}
@@ -143,7 +153,7 @@ int wmain(){
 			if (ctx.message) {
 				display.renderUI(shortcut_bar, ctx.msg.message());
 				msg = (ctx.msg);
-				handle_message = true;
+				if (ctx.response) handle_message = true;
 			}
 			else {
 				display.renderUI(shortcut_bar);

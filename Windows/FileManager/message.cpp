@@ -10,6 +10,10 @@ Message::Message(Type t, std::string file_name) {
 	_type = t;
 	if (t == REMOVE) {
 		_message = "Are you sure you want to delete " + file_name + "? Y/N";
+	} else if (t == YANK) {
+		_message = "Yanked " + file_name + "!";
+	} else if (t == PASTE) {
+		_message = "Pasted " + file_name + "!";
 	}
 }
 const std::string Message::message() const {
