@@ -3,10 +3,18 @@
 #include <utility>
 #include <system_error>
 #include <memory>
-#include <SDL.h>
-#include <SDL_ttf.h>
+
 #include <string>
 #include <iostream>
+
+#ifdef _WIN32
+#include <SDL.h>
+#include <SDL_ttf.h>
+#endif
+#ifdef linux
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#endif
 namespace SDL2 {
 	
 	inline SDL_Texture* surfaceToTexture(SDL_Surface* surf, SDL_Renderer* renderer) {
