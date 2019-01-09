@@ -1,7 +1,13 @@
 #ifndef SHORTCUT_H_
 #define SHORTCUT_H_
 #include <string>
+
+#ifdef _WIN32
 #include <SDL.h>
+#endif
+#ifdef __unix__
+#include <SDL2/SDL.h>
+#endif
 class Shortcut {
 public:
 	Shortcut(std::string n, std::string p);

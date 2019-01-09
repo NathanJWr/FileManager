@@ -3,11 +3,20 @@
 #include "shortcutbar.h"
 #include "message.h"
 #include <iostream>
-#include <SDL.h>
-#include <SDL_ttf.h>
 #include <memory>
 #include <vector>
 #include <list>
+
+#ifdef _WIN32
+#include <SDL.h>
+#include <SDL_ttf.h>
+#endif
+
+#ifdef __unix__
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#endif
+
 class Context {
 public:
 	bool redraw;
@@ -25,7 +34,7 @@ int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message) {
 		case SDLK_y:
 			dirs.yank();
 			message = Message(Message::YANK, dirs.currentDirObjName());
-			return 2;	
+			return 2;
 			break;
 		case SDLK_p:
 			dirs.paste();
@@ -115,7 +124,7 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 	return ctx;
 }
 
-int wmain(){
+int main(){
 	bool success = true;
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		success = false;
@@ -128,7 +137,7 @@ int wmain(){
 	ShortcutBar shortcut_bar;
 	Display display(1024, 768);
 	display.update();
-	
+
 	display.renderDirectory(dirs.currentDir());
 	display.renderUI(shortcut_bar);
 	display.update();
@@ -159,7 +168,7 @@ int wmain(){
 				display.renderUI(shortcut_bar);
 				handle_message = false;
 			}
-			
+
 			display.update();
 		}
 		if (ctx.exit) {
@@ -170,7 +179,7 @@ int wmain(){
 	/* TODO:
 	This these quits throw an excpetion since display isn't out of scope when they are called
 	-> window and renderer and font arent out of scope
-	
+
 	TTF_Quit();
 	SDL_Quit();
 	*/

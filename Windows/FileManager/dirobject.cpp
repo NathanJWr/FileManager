@@ -6,8 +6,8 @@
 #define Is_Hidden(Path) (GetFileAttributes(Path) & FILE_ATTRIBUTE_HIDDEN)
 #endif
 
-#ifdef linux
-#define Is_Hidden(Path) (Path[0] == '.')
+#ifdef __unix__
+#define Is_Hidden(Path) Path[0] == '.';
 #endif
 
 DirObject::DirObject(std::string n, std::string p, Type t) {
@@ -39,7 +39,7 @@ bool DirObject::isFile() const {
 }
 
 bool DirObject::isHidden() const {
-	return Is_Hidden(path().c_str());	
+	return Is_Hidden(path().c_str());
 }
 
 const std::string DirObject::name() const {

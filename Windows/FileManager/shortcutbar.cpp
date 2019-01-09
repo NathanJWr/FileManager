@@ -7,6 +7,11 @@
 #define USERNAME() TCHAR username[UNLEN + 1]; DWORD size = UNLEN + 1; GetUserName((TCHAR*)username, &size);
 #endif
 
+#ifdef __unix__
+#include <unistd.h>
+#define USERNAME() char* username =getlogin();
+#endif
+
 ShortcutBar::ShortcutBar() {
 	/* Query the OS for username */
 	USERNAME();

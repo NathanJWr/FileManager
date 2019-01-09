@@ -6,6 +6,11 @@
 #define EXECUTE(Path) ShellExecute(0, 0, Path, 0, 0, SW_SHOW);
 #endif
 
+#ifdef __unix__
+#include <stdio.h>
+#define EXECUTE(Path) popen(Path, "r");
+#endif
+
 Filesystem::Filesystem() {
 	std::stack<std::string> buff;
 	buff.push(fmanager.getCurrentDirectory());

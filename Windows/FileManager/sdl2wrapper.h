@@ -1,3 +1,13 @@
+#ifdef _WIN32
+#include <SDL.h>
+#include <SDL_ttf.h>
+#endif
+
+#ifdef __unix__
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#endif
+
 #ifndef SDLWRAP_H_
 #define SDLWRAP_H_
 #include <utility>
@@ -7,16 +17,8 @@
 #include <string>
 #include <iostream>
 
-#ifdef _WIN32
-#include <SDL.h>
-#include <SDL_ttf.h>
-#endif
-#ifdef linux
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#endif
 namespace SDL2 {
-	
+
 	inline SDL_Texture* surfaceToTexture(SDL_Surface* surf, SDL_Renderer* renderer) {
 		SDL_Texture* text = nullptr;
 		text = SDL_CreateTextureFromSurface(renderer, surf);
@@ -26,7 +28,7 @@ namespace SDL2 {
 		}
 		return text;
 	}
-	
+
 	template<typename Creator, typename Destructor, typename... Arguments>
 	inline auto make_resource(Creator c, Destructor d, Arguments&&... args) {
 		auto r = c(std::forward<Arguments>(args)...);
@@ -65,7 +67,7 @@ namespace SDL2 {
 	inline text_surface makeTextSurface(font_ptr& f, const char* t, SDL_Color c) {
 		return make_resource(TTF_RenderText_Solid, SDL_FreeSurface, f.get(), t, c);
 	}
-	
+
 	inline TextTexture makeTextTexture(font_ptr& f, const char* t, SDL_Color c, renderer_ptr& r) {
 		auto s = make_resource(TTF_RenderText_Solid, SDL_FreeSurface, f.get(), t, c);
 		return { make_resource(surfaceToTexture, SDL_DestroyTexture, s.get(), r.get()), {0, 0, s->w, s->h}, t };
