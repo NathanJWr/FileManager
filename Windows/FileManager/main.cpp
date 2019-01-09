@@ -10,11 +10,13 @@
 #ifdef _WIN32
 #include <SDL.h>
 #include <SDL_ttf.h>
+#define MAIN() wmain()
 #endif
 
 #ifdef __unix__
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
+#define MAIN() main()
 #endif
 
 class Context {
@@ -124,7 +126,7 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 	return ctx;
 }
 
-int main(){
+int MAIN() {
 	bool success = true;
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		success = false;
