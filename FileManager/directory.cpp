@@ -42,15 +42,19 @@ void Directory::add(DirObject obj) {
 
 	dir.push_back(obj);
 	std::sort(dir.begin(), dir.end(), alpha_sort);
+	selected_at = findCurrentlySelected();
 }
 
 void Directory::remove() {
-	unsigned int cur = findCurrentlySelected();
-	if (cur > 0) {
-		dir[cur - 1].selected = true;
-		selected_at = cur - 1;
+	if (selected_at > 0) {
+		dir[selected_at - 1].selected = true;
+		dir.erase(dir.begin() + selected_at);
+		selected_at--;
+	} else if (selected_at == 0) {
+		dir.erase(dir.begin() + selected_at);
+		dir[0].selected = true;
+		selected_at = 0;
 	}
-	dir.erase(dir.begin() + cur);
 }
 
 void Directory::moveSelectedDown() {
