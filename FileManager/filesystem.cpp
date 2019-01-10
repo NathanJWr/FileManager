@@ -8,7 +8,7 @@
 
 #ifdef __unix__
 #include <stdio.h>
-#define EXECUTE(Path) std::string tmp = "xdg-open " + Path; FILE* file = popen(tmp.c_str(), "r"); pclose(file);
+#define EXECUTE(Path) std::string tmp = "xdg-open \"" + Path + "\""; FILE* file = popen(tmp.c_str(), "r"); pclose(file);
 #endif
 
 Filesystem::Filesystem() {
