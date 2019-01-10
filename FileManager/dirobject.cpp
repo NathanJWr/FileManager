@@ -3,11 +3,11 @@
 
 #ifdef _WIN32
 #include <Windows.h>
-#define Is_Hidden(Path) (GetFileAttributes(Path) & FILE_ATTRIBUTE_HIDDEN)
+#define Is_Hidden(Path, Name) (GetFileAttributes(Path.c_str()) & FILE_ATTRIBUTE_HIDDEN)
 #endif
 
 #ifdef __unix__
-#define Is_Hidden(Path) Path[0] == '.';
+#define Is_Hidden(Path, Name) Name.at(0) == '.';
 #endif
 
 DirObject::DirObject(std::string n, std::string p, Type t) {
@@ -39,7 +39,7 @@ bool DirObject::isFile() const {
 }
 
 bool DirObject::isHidden() const {
-	return Is_Hidden(path().c_str());
+	return Is_Hidden(path(), name());
 }
 
 const std::string DirObject::name() const {
