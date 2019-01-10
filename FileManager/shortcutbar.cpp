@@ -4,24 +4,32 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <Lmcons.h>
-#define USERNAME() TCHAR username[UNLEN + 1]; DWORD size = UNLEN + 1; GetUserName((TCHAR*)username, &size);
+#define USERNAME() \
+	TCHAR username[UNLEN + 1]; \
+	DWORD size = UNLEN + 1; \
+	GetUserName((TCHAR*)username, &size);
 #endif
 
 #ifdef __unix__
 #include <unistd.h>
-#define USERNAME() char username[100]; getlogin_r(username, sizeof(username));
+#include <sys/types.h>
+#include <pwd.h>
+#define USERNAME() \
+	std::string username; uid_t uid = geteuid(); \
+	struct passwd *pw = getpwuid(uid); \
+	if (pw) username = pw->pw_name;
 #endif
 
 ShortcutBar::ShortcutBar() {
 	/* Query the OS for username */
 	USERNAME();
 
-	std::string desktop = ROOT + SLASH + HOME + SLASH  + username + SLASH + "Desktop";
-	std::string documents = ROOT + SLASH + HOME + SLASH + username + SLASH + "Documents";
-	std::string downloads = ROOT + SLASH + HOME + SLASH + username + SLASH + "Downloads";
-	std::string music = ROOT + SLASH + HOME + SLASH + username + SLASH + "Music";
-	std::string pictures = ROOT + SLASH + HOME + SLASH + username + SLASH + "Pictures";
-	std::string videos = ROOT + SLASH + HOME + SLASH + username + SLASH + "Videos";
+	std::string desktop = ROOT + HOME + SLASH  + username + SLASH + "Desktop";
+	std::string documents = ROOT + HOME + SLASH + username + SLASH + "Documents";
+	std::string downloads = ROOT + HOME + SLASH + username + SLASH + "Downloads";
+	std::string music = ROOT + HOME + SLASH + username + SLASH + "Music";
+	std::string pictures = ROOT + HOME + SLASH + username + SLASH + "Pictures";
+	std::string videos = ROOT + HOME + SLASH + username + SLASH + "Videos";
 
 	shortcuts.emplace_back(Shortcut("Desktop", desktop));
 	shortcuts.emplace_back(Shortcut("Documents", documents));
