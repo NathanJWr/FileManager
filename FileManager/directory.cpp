@@ -13,9 +13,9 @@ Directory::Directory(std::vector<DirObject> d, std::string p) {
 	dir = d;
 	_path = p;
 	if (!dir.empty()) {
+		std::sort(dir.begin(), dir.end(), alpha_sort);
 		dir[0].selected = true;
 	}
-	std::sort(dir.begin(), dir.end(), alpha_sort);
 	last_move = NONE;
 	max_dir_objs = 0;
 	min_dir_objs = 0;
@@ -23,8 +23,9 @@ Directory::Directory(std::vector<DirObject> d, std::string p) {
 }
 
 DirObject& Directory::currentlySelected() {
-	auto cur = findCurrentlySelected();
-	return dir[cur];
+	//auto cur = findCurrentlySelected();
+	//return dir[cur];
+	return dir[selected_at];
 }
 
 std::vector<DirObject>& Directory::get() {
@@ -38,7 +39,7 @@ const std::string Directory::path() const {
 void Directory::add(DirObject obj) {
 	currentlySelected().selected = false;
 	obj.selected = true;
-	
+
 	dir.push_back(obj);
 	std::sort(dir.begin(), dir.end(), alpha_sort);
 }
