@@ -3,12 +3,12 @@
 
 #ifdef _WIN32
 #include <windows.h>
-#define EXECUTE(Path) ShellExecute(0, 0, Path, 0, 0, SW_SHOW);
+#define EXECUTE(Path) ShellExecute(0, 0, Path.c_str(), 0, 0, SW_SHOW);
 #endif
 
 #ifdef __unix__
 #include <stdio.h>
-#define EXECUTE(Path) popen(Path, "r");
+#define EXECUTE(Path) std::string tmp = "xdg-open " + Path; popen(tmp.c_str(), "r");
 #endif
 
 Filesystem::Filesystem() {
@@ -105,7 +105,7 @@ void Filesystem::forwardDir() {
 
 void Filesystem::openFile() {
 	std::string path = currentDir().currentlySelected().path();
-	EXECUTE(path.c_str());
+	EXECUTE(path);
 }
 
 void Filesystem::toggleSortAlphabetically() {
