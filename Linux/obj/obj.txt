@@ -1,1 +1,0 @@
-Store the .o files here during compilation

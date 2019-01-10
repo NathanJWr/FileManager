@@ -9,19 +9,19 @@
 
 #ifdef __unix__
 #include <unistd.h>
-#define USERNAME() char* username =getlogin();
+#define USERNAME() char username[100]; getlogin_r(username, sizeof(username));
 #endif
 
 ShortcutBar::ShortcutBar() {
 	/* Query the OS for username */
 	USERNAME();
 
-	std::string desktop = ROOT + "Users" + SLASH + username + SLASH + "Desktop";
-	std::string documents = ROOT + "Users" + SLASH + username + SLASH + "Documents";
-	std::string downloads = ROOT + "Users" + SLASH + username + SLASH + "Downloads";
-	std::string music = ROOT + "Users" + SLASH + username + SLASH + "Music";
-	std::string pictures = ROOT + "Users" + SLASH + username + SLASH + "Pictures";
-	std::string videos = ROOT + "Users" + SLASH + username + SLASH + "Videos";
+	std::string desktop = ROOT + SLASH + HOME + SLASH  + username + SLASH + "Desktop";
+	std::string documents = ROOT + SLASH + HOME + SLASH + username + SLASH + "Documents";
+	std::string downloads = ROOT + SLASH + HOME + SLASH + username + SLASH + "Downloads";
+	std::string music = ROOT + SLASH + HOME + SLASH + username + SLASH + "Music";
+	std::string pictures = ROOT + SLASH + HOME + SLASH + username + SLASH + "Pictures";
+	std::string videos = ROOT + SLASH + HOME + SLASH + username + SLASH + "Videos";
 
 	shortcuts.emplace_back(Shortcut("Desktop", desktop));
 	shortcuts.emplace_back(Shortcut("Documents", documents));

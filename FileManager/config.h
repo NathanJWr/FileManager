@@ -6,11 +6,13 @@
 #ifdef _WIN32
 const std::string ROOT = "C:\\";
 const std::string SLASH = "\\";
+const std::string HOME = "Users";
 #endif
 
 #ifdef __unix__
 const std::string ROOT = "/";
 const std::string SLASH = "/";
+const std::string HOME  = "home";
 #endif
 
 
