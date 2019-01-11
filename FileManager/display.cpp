@@ -1,27 +1,44 @@
 #include "display.h"
 #include "config.h"
-Display::Display(int width, int height) : 
+Display::Display(int width, int height) :
 	/* These need to be in the initializer list since they don't have default constructors */
 	window(SDL2::makeWindow("FileManager", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN)),
 	renderer(SDL2::makeRenderer(window, -1, SDL_RENDERER_ACCELERATED)),
-	font(SDL2::makeFont("assets/Ubuntu.ttf", 16)) {
- 
+	font(SDL2::makeFont("assets/Ubuntu.ttf", 32)),
+	folder_icon(SDL2::makeIMGTexture("assets/folder.png", renderer)),
+	image_icon(SDL2::makeIMGTexture("assets/image.png", renderer)),
+	text_icon(SDL2::makeIMGTexture("assets/text.png", renderer)),
+	cpp_icon(SDL2::makeIMGTexture("assets/c++src.png", renderer)),
+	script_icon(SDL2::makeIMGTexture("assets/script.png", renderer)) {
+
 	SCREEN_W = width;
 	SCREEN_H = height;
-	
+
 	int dir_x = static_cast<int>(width / 5.5);
 	int dir_y = static_cast<int>(height / 25);
 	int dir_w = SCREEN_W;
 	int dir_h = static_cast<int>(height / 1.2);
-	dir_box = {dir_x, dir_y, dir_w, dir_h};
-	console_box = { dir_x, dir_y + dir_h, SCREEN_W, SCREEN_H};
-
-	shortcut_box = {0, 0, dir_x, height};
 
 	/* figure out the height and width of a text_box */
 	auto temp_buff = SDL2::makeTextSurface(font, "text", white);
 	text_box.w = temp_buff.get()->w;
 	text_box.h = temp_buff.get()->h;
+
+	int icon_size = text_box.w / 2;
+
+	folder_icon.pos = {dir_x, 0, icon_size, icon_size};
+	image_icon.pos = {dir_x, 0, icon_size, icon_size};
+	text_icon.pos = {dir_x, 0, icon_size, icon_size};
+	cpp_icon.pos = {dir_x, 0, icon_size, icon_size};
+	script_icon.pos = {dir_x, 0, icon_size, icon_size};
+
+	dir_box = {dir_x, dir_y, dir_w, dir_h};
+	console_box = { dir_x, dir_y + dir_h, SCREEN_W, SCREEN_H};
+
+	shortcut_box = {0, 0, dir_x, height};
+
+
+	//folder_icon = SDL2::makeIMGTexture("assets/folder.png",renderer);
 }
 
 void Display::update() {
@@ -43,28 +60,48 @@ SDL_Color Display::determineColor(DirObject obj) {
 	return color;
 }
 
+void Display::renderIcon(DirObject obj, int y) {
+	if (obj.isFolder()) {
+		folder_icon.pos.y = y;
+		renderTexture(folder_icon);
+	} else if (obj.extension() == ".png" || obj.extension() == ".jpg") {
+		image_icon.pos.y = y;
+		renderTexture(image_icon);
+	} else if (obj.extension() == ".cpp" || obj.extension() == ".cc") {
+		cpp_icon.pos.y = y;
+		renderTexture(cpp_icon);
+	} else if (obj.extension() == ".exe" || obj.extension() == ".sh") {
+		script_icon.pos.y = y;
+		renderTexture(script_icon);
+	} else {
+		text_icon.pos.y = y;
+		renderTexture(text_icon);
+	}
+}
+
 void Display::renderDirectory(Directory& dir) {
 	cur_path = dir.path();
+	int buf_x = dir_box.x + folder_icon.pos.w;
+
+	int size = 0;;
+	if (dir.max_dir_objs == 0) dir.max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);
+	if (dir.get().size() < dir.min_dir_objs + dir.max_dir_objs) {
+		size = dir.get().size();
+	} else {
+		size = dir.min_dir_objs + dir.max_dir_objs;
+	}
+
 	if (dir.last_move == Directory::NONE) {
 		/* New directory, so everything needs to be cleared */
 		DirTextures.clear();
-		if (dir.max_dir_objs == 0) dir.max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);
 		int buf_y = dir_box.y;
-		int size;
-		if (dir.get().size() < dir.min_dir_objs + dir.max_dir_objs) {
-			size = dir.get().size();
-		} else {
-			size = dir.min_dir_objs + dir.max_dir_objs;
-		}
 		for (int i = dir.min_dir_objs; i < size; ++i) {
 			auto color = determineColor(dir.get()[i]);
 			DirTextures.emplace_back(SDL2::makeTextTexture(font, dir.get()[i].name().c_str(), color, renderer));
-			DirTextures.back().pos.x = dir_box.x;
+			DirTextures.back().pos.x = buf_x;
 			DirTextures.back().pos.y = buf_y;
+
 			buf_y += text_box.h;
-		}
-		for (auto& n : DirTextures) {
-			renderTextTexture(n);
 		}
 	} else if (dir.last_move == Directory::UP) {
 		/* The selected DirObject isn't at the top
@@ -73,7 +110,7 @@ void Display::renderDirectory(Directory& dir) {
 		if (dir.selected_at > 0 && (dir.selected_at - dir.min_dir_objs > 0) ){
 			unsigned int sel;
 			sel = dir.selected_at - dir.min_dir_objs;
-			
+
 			auto redraw1 = std::move(DirTextures[sel]);
 			auto redraw2 = std::move(DirTextures[sel - 1]);
 
@@ -113,13 +150,8 @@ void Display::renderDirectory(Directory& dir) {
 
 			for (auto& n : DirTextures) {
 				n.pos.y += text_box.h;
-				renderTextTexture(n);
 			}
 			dir.min_dir_objs--;
-		} else {
-			for (auto& n : DirTextures) {
-				renderTextTexture(n);
-			}
 		}
 	}
 	else if (dir.last_move == Directory::DOWN) {
@@ -140,9 +172,6 @@ void Display::renderDirectory(Directory& dir) {
 			DirTextures[++sel] = std::move(SDL2::makeTextTexture(font, redraw2.text.c_str(), white, renderer));
 			DirTextures[sel].pos = redraw2.pos;
 
-			for (auto& n : DirTextures) {
-				renderTextTexture(n);
-			}
 			dir.selected_at += 1;
 		}
 		/* The selected DirObject IS at the bottom
@@ -167,15 +196,23 @@ void Display::renderDirectory(Directory& dir) {
 
 			for (auto& n : DirTextures) {
 				n.pos.y -= text_box.h;
-				renderTextTexture(n);
-			}
-		}
-		else {
-			for (auto& n : DirTextures) {
-				renderTextTexture(n);
 			}
 		}
 	}
+
+	/* Render the created/changed textures
+	 * AND the icons associated with their file type
+	 */
+	if (dir.get().size() < dir.min_dir_objs + dir.max_dir_objs) {
+		size = dir.get().size();
+	} else {
+		size = dir.min_dir_objs + dir.max_dir_objs;
+	}
+	for (int i = dir.min_dir_objs; i < size; ++i) {
+		renderIcon(dir.get()[i], DirTextures[i - dir.min_dir_objs].pos.y);
+		renderTextTexture(DirTextures[i-dir.min_dir_objs]);
+	}
+
 	std::cout << "Selected at: " << dir.selected_at << std::endl;
 	std::cout << "Min_dir_objs: " << dir.min_dir_objs << std::endl;
 	std::cout << "Max_dir_objs: " << dir.max_dir_objs << std::endl;
@@ -243,6 +280,10 @@ void Display::renderCurrentPath() {
 	renderTextTexture(p);
 }
 
-void Display::renderTextTexture(SDL2::TextTexture& tex) {
-	SDL_RenderCopy(renderer.get(), tex.texture.get(), NULL, &tex.pos);
+void Display::renderTextTexture(SDL2::TextTexture& t) {
+	SDL_RenderCopy(renderer.get(), t.tex.get(), NULL, &t.pos);
+}
+
+void Display::renderTexture(SDL2::ImgTexture& t) {
+	SDL_RenderCopy(renderer.get(), t.tex.get(), NULL, &t.pos);
 }
