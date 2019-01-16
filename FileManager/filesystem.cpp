@@ -41,6 +41,10 @@ void Filesystem::yank() {
 void Filesystem::paste() {
 	if (!yanked.path().empty()) {
 		std::string to = currentDir().path();
+		if (yanked.isFolder()) {
+			to += SLASH + yanked.name();
+			fmanager.createDirectory(to);
+		}
 		fmanager.copy(yanked.path(), to);
 
 		/* The yanked DirObject needs to have it's path changed to fit the new place it's in */

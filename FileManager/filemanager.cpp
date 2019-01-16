@@ -104,3 +104,7 @@ bool FileManager::remove(DirObject obj) {
 	}
 	return false;
 }
+
+void FileManager::createDirectory(std::string path) {
+	fs::create_directory(path);
+}

@@ -66,6 +66,9 @@ int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message) {
 			message = Message(Message::QUIT);
 			return 1;
 			break;
+		default:
+			dirs.currentDir().last_move = Directory::NONE;
+			break;
 	}
 	return 0;
 }
@@ -137,7 +140,7 @@ int MAIN() {
 	}
 	Filesystem dirs;
 	ShortcutBar shortcut_bar;
-	Display display(1024, 768);
+	Display display(1280, 800);
 	display.update();
 
 	display.renderDirectory(dirs.currentDir());
@@ -152,27 +155,30 @@ int MAIN() {
 	while (1) {
 		SDL_WaitEvent(&e);
 		Context ctx;
+
 		if (handle_message) {
 			ctx = handleMessageResponse(e.key, dirs, msg);
 		} else {
 			ctx = handleInput(e, dirs, shortcut_bar);
 		}
+
 		SDL_PollEvent(&e);
+
 		if (ctx.redraw) {
-			if (ctx.message) dirs.currentDir().last_move = Directory::NONE;
 			display.renderDirectory(dirs.currentDir());
 			if (ctx.message) {
+				dirs.currentDir().last_move = Directory::NONE;
 				display.renderUI(shortcut_bar, ctx.msg.message());
-				msg = (ctx.msg);
-				if (ctx.response) handle_message = true;
-			}
-			else {
+				msg = ctx.msg; // This msg is sent to handleMessageRespnse
+				if (ctx.response) handle_message = true; // Need to be set to handle message response
+			} else {
 				display.renderUI(shortcut_bar);
 				handle_message = false;
 			}
 
 			display.update();
 		}
+
 		if (ctx.exit) {
 			break;
 		}
