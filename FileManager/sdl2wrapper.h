@@ -1,6 +1,7 @@
 #ifdef _WIN32
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <SDL_image.h>
 #endif
 
 #ifdef __unix__
