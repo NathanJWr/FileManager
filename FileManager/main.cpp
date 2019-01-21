@@ -25,12 +25,14 @@ public:
 	bool exit;
 	bool message;
 	bool response;
+	bool shell_input;
 	Message msg;
-	Context() : redraw(0), exit(0), message(0), response(0), msg() {}
+	Context() : redraw(0), exit(0), message(0), response(0), shell_input(0), msg() {}
 };
 
 /* returns 1 for message_handling+console_message */
 /* returns 2 for console_message */
+/* returns 3 for shell_input */
 int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message) {
 	switch (e.keysym.sym) {
 		case SDLK_y:
@@ -64,6 +66,7 @@ int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message) {
 			break;
 		case SDLK_s:
 			//Execute a command
+			return 3;
 			break;
 		case SDLK_q:
 			message = Message(Message::QUIT);
@@ -110,7 +113,8 @@ void handleMouse(Filesystem &dirs, ShortcutBar &bar) {
 
 Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 	Context ctx;
-	switch (e.type) {
+	switch (e.type)
+ 	{
 		case SDL_QUIT:
 			ctx.exit = true;
 			break;
@@ -122,73 +126,139 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 		case SDL_KEYDOWN:
 			ctx.redraw = true;
 			int val = handleKeys(e.key, dirs, ctx.msg);
-			if (val == 1) {
+			if (val == 1)
+		 	{
 				ctx.message = true;
 				ctx.response = true;
 				dirs.currentDir().last_move = Directory::NONE;
-			} else if (val == 2) {
+			}
+		 	else if (val == 2)
+		 	{
 				ctx.message = true;
 				dirs.currentDir().last_move = Directory::NONE;
+			}
+			else if (val == 3)
+			{
+				ctx.shell_input = true;
 			}
 	}
 	return ctx;
 }
 
-void drawAll(Display& display, Filesystem& dirs, ShortcutBar& shortcut_bar, Context ctx)
+void drawAll(Display& display, Filesystem& dirs, ShortcutBar& shortcut_bar, Context ctx, bool new_message)
 {
 	display.renderDirectory(dirs.currentDir());
-	if (ctx.message) {
+	if (ctx.message)
+	{
 		dirs.currentDir().last_move = Directory::NONE;
-		display.renderUI(shortcut_bar, ctx.msg.message());
-	} else {
+		display.renderUI(shortcut_bar, ctx.msg.message(), new_message);
+	}
+ 	else
+ 	{
 		display.renderUI(shortcut_bar);
 	}
 
 	display.update();
 }
 
-int MAIN() {
+char to_lowercase(char c)
+{
+	if (c >= 'A' && c <= 'Z')
+		return c + 32;
+
+	return c;
+}
+std::string getKeyPress(SDL_Event& e)
+{
+	const uint8_t *state = SDL_GetKeyboardState(NULL);
+	std::string tmp;
+	std::string key;
+	tmp = SDL_GetKeyName(e.key.keysym.sym);
+	if (state[SDL_SCANCODE_LSHIFT] && e.key.keysym.sym != SDLK_LSHIFT)
+	{
+		key = tmp;
+	}
+	if (!state[SDL_SCANCODE_LSHIFT]) // Change to lowercase
+	{
+		for (char& c : tmp)
+		{
+		c = to_lowercase(c);
+		}
+		key = tmp;
+	}
+	if (state[SDL_SCANCODE_SPACE])
+	{
+		key = " ";
+	}
+	return key;
+}
+
+int MAIN()
+{
 	bool success = true;
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+ 	{
 		success = false;
 	}
-	if (TTF_Init() == -1) {
+	if (TTF_Init() == -1)
+ 	{
 		std::cerr << "Failed to initialize TTF: " << SDL_GetError() << std::endl;
 		success = false;
 	}
 	Filesystem dirs;
 	ShortcutBar shortcut_bar;
 	Display display(1280, 800);
-	display.update();
 
+	/* initial render */
+	display.update();
 	display.renderDirectory(dirs.currentDir());
 	display.renderUI(shortcut_bar);
 	display.update();
-	SDL_Event e;
 
+	SDL_Event e;
 	/* There are no messages on the console that need to be handled */
 	bool handle_message = false;
 	Message msg;
 
-	while (1) {
-		SDL_WaitEvent(&e);
+	while (1)
+	{
 		Context ctx;
+		SDL_WaitEvent(&e);
 
-		if (handle_message) {
+		if (handle_message)
+		{
 			ctx = handleMessageResponse(e.key, dirs, msg);
-		} else {
+		}
+		else
+	 	{
 			ctx = handleInput(e, dirs, shortcut_bar);
 		}
 
+		if (ctx.shell_input)
+		{
+			SDL_WaitEvent(&e);
+			Context shell;
+			ctx.msg = Message(getKeyPress(e));
+			while (shell.msg.message() != "return")
+			{
+				SDL_WaitEvent(&e);
+				shell.message = true;
+				shell.msg = Message(getKeyPress(e));
+				drawAll(display, dirs, shortcut_bar, shell, false);
+				SDL_PollEvent(&e);
+			}
+		}
 
-		if (ctx.redraw) {
+		if (ctx.redraw)
+	 	{
 			if (ctx.message) msg = ctx.msg; // This msg is sent to handleMessageRespnse
 			if (ctx.response) handle_message = true; // Need to be set to handle message response
 			else handle_message = false;
-			drawAll(display, dirs, shortcut_bar, ctx);
+			drawAll(display, dirs, shortcut_bar, ctx, true);
 		}
 
-		if (ctx.exit) {
+		if (ctx.exit)
+	 	{
 			break;
 		}
 		SDL_PollEvent(&e);

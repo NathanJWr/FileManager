@@ -3,7 +3,7 @@ Message::Message() {}
 Message::Message(Type t) {
 	_type = t;
 	if (t == QUIT) {
-		_message = "Are you sure you want to quit? Y/N";	
+		_message = "Are you sure you want to quit? Y/N";
 	}
 }
 Message::Message(Type t, std::string file_name) {
@@ -15,6 +15,11 @@ Message::Message(Type t, std::string file_name) {
 	} else if (t == PASTE) {
 		_message = "Pasted " + file_name + "!";
 	}
+}
+Message::Message(std::string message)
+{
+	_type = SHELL;
+	_message = message;
 }
 const std::string Message::message() const {
 	return _message;

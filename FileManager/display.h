@@ -14,12 +14,12 @@ public:
 	/* put all of the UI elements on the screen */
 	void renderUI(ShortcutBar &bar);
 	/* message will be displayed in the console box */
-	void renderUI(ShortcutBar &bar, std::string message);
+	void renderUI(ShortcutBar &bar, std::string message, bool new_message);
 	/* display the screen */
 	void update();
 
 private:
-	void renderConsoleMessage(std::string message);
+	void renderConsoleMessage(std::string message, bool new_message);
 	void renderTextTexture(SDL2::TextTexture& tex);
 	void renderTexture(SDL2::ImgTexture& tex);
 	void renderIcon(DirObject obj, int y);
@@ -41,6 +41,8 @@ private:
 
 	std::deque<SDL2::TextTexture> DirTextures;
 	std::vector<SDL2::TextTexture> shortcuts;
+	std::vector<SDL2::TextTexture> shell_letters;
+	int shell_letter_pos;
 
 	int SCREEN_W;
 	int SCREEN_H;

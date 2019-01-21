@@ -36,9 +36,7 @@ Display::Display(int width, int height) :
 	console_box = { dir_x, dir_y + dir_h, SCREEN_W, SCREEN_H};
 
 	shortcut_box = {0, 0, dir_x, height};
-
-
-	//folder_icon = SDL2::makeIMGTexture("assets/folder.png",renderer);
+	shell_letter_pos = 0;
 }
 
 void Display::update() {
@@ -226,16 +224,33 @@ void Display::renderUI(ShortcutBar &bar) {
 	renderCurrentPath();
 }
 
-void Display::renderUI(ShortcutBar &bar, std::string console_message) {
+void Display::renderUI(ShortcutBar &bar, std::string console_message, bool new_message) {
 	renderUI(bar);
-	renderConsoleMessage(console_message);
+	renderConsoleMessage(console_message, new_message);
 }
 
-void Display::renderConsoleMessage(std::string message) {
+void Display::renderConsoleMessage(std::string message, bool new_message) {
 	SDL2::TextTexture text = SDL2::makeTextTexture(font, message.c_str(), white, renderer);
+
+	if (new_message)
+	{
+		shell_letters.clear();
+		shell_letter_pos = 0;
+	}
+	shell_letters.emplace_back(SDL2::makeTextTexture(font, message.c_str(), white, renderer));
+	shell_letters.back().pos.x = console_box.x + shell_letter_pos;
+	shell_letter_pos += shell_letters.back().pos.w;
+	shell_letters.back().pos.y = console_box.y;
+
+	/*
 	text.pos.x = console_box.x;
 	text.pos.y = console_box.y;
 	renderTextTexture(text);
+	*/
+	for (SDL2::TextTexture &n : shell_letters)
+	{
+		renderTextTexture(n);
+	}
 }
 
 void Display::renderShortcuts(ShortcutBar &bar) {
