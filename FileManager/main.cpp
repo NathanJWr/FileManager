@@ -62,6 +62,9 @@ int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message) {
 		case SDLK_a:
 			dirs.toggleSortAlphabetically();
 			break;
+		case SDLK_s:
+			//Execute a command
+			break;
 		case SDLK_q:
 			message = Message(Message::QUIT);
 			return 1;
@@ -122,11 +125,26 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 			if (val == 1) {
 				ctx.message = true;
 				ctx.response = true;
+				dirs.currentDir().last_move = Directory::NONE;
 			} else if (val == 2) {
 				ctx.message = true;
+				dirs.currentDir().last_move = Directory::NONE;
 			}
 	}
 	return ctx;
+}
+
+void drawAll(Display& display, Filesystem& dirs, ShortcutBar& shortcut_bar, Context ctx)
+{
+	display.renderDirectory(dirs.currentDir());
+	if (ctx.message) {
+		dirs.currentDir().last_move = Directory::NONE;
+		display.renderUI(shortcut_bar, ctx.msg.message());
+	} else {
+		display.renderUI(shortcut_bar);
+	}
+
+	display.update();
 }
 
 int MAIN() {
@@ -162,26 +180,18 @@ int MAIN() {
 			ctx = handleInput(e, dirs, shortcut_bar);
 		}
 
-		SDL_PollEvent(&e);
 
 		if (ctx.redraw) {
-			display.renderDirectory(dirs.currentDir());
-			if (ctx.message) {
-				dirs.currentDir().last_move = Directory::NONE;
-				display.renderUI(shortcut_bar, ctx.msg.message());
-				msg = ctx.msg; // This msg is sent to handleMessageRespnse
-				if (ctx.response) handle_message = true; // Need to be set to handle message response
-			} else {
-				display.renderUI(shortcut_bar);
-				handle_message = false;
-			}
-
-			display.update();
+			if (ctx.message) msg = ctx.msg; // This msg is sent to handleMessageRespnse
+			if (ctx.response) handle_message = true; // Need to be set to handle message response
+			else handle_message = false;
+			drawAll(display, dirs, shortcut_bar, ctx);
 		}
 
 		if (ctx.exit) {
 			break;
 		}
+		SDL_PollEvent(&e);
 	}
 
 	/* TODO:
