@@ -19,7 +19,7 @@ public:
 	void createDirObject(std::string name);
 	void copy(std::string from, std::string to);
 	bool remove(DirObject obj);
-	void createDirectory(std::string path);
+	void createDirectory(std::string path, std::string oldpath);
 	bool sort_alphabetically;
 private:
 	bool show_hidden_files;

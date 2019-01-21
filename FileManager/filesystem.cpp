@@ -43,7 +43,7 @@ void Filesystem::paste() {
 		std::string to = currentDir().path();
 		if (yanked.isFolder()) {
 			to += SLASH + yanked.name();
-			fmanager.createDirectory(to);
+			fmanager.createDirectory(to, yanked.path());
 		}
 		fmanager.copy(yanked.path(), to);
 
