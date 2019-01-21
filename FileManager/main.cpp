@@ -236,15 +236,19 @@ int MAIN()
 
 		if (ctx.shell_input)
 		{
-			SDL_WaitEvent(&e);
+//			SDL_WaitEvent(&e);
 			Context shell;
-			ctx.msg = Message(getKeyPress(e));
+//			ctx.msg = Message(getKeyPress(e));
 			while (shell.msg.message() != "return")
 			{
 				SDL_WaitEvent(&e);
 				shell.message = true;
-				shell.msg = Message(getKeyPress(e));
-				drawAll(display, dirs, shortcut_bar, shell, false);
+				if (e.type == SDL_KEYDOWN)
+				{
+					shell.msg = Message(getKeyPress(e));
+					std::cout << shell.msg.message() << std::endl;
+					drawAll(display, dirs, shortcut_bar, shell, false);
+				}
 				SDL_PollEvent(&e);
 			}
 		}
