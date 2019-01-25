@@ -30,24 +30,25 @@ public:
 	Context() : redraw(0), exit(0), message(0), response(0), shell_input(0), msg() {}
 };
 
-/* returns 1 for message_handling+console_message */
-/* returns 2 for console_message */
-/* returns 3 for shell_input */
-int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message) {
-	switch (e.keysym.sym) {
+enum HandleType {NONE, MESSAGE_CONSOLE, CONSOLE, SHELL};
+
+HandleType handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message)
+{
+	switch (e.keysym.sym)
+ 	{
 		case SDLK_y:
 			dirs.yank();
 			message = Message(Message::YANK, dirs.currentDirObjName());
-			return 2;
+			return CONSOLE;
 			break;
 		case SDLK_p:
 			dirs.paste();
 			message = Message(Message::PASTE, dirs.currentDirObjName());
-			return 2;
+			return CONSOLE;
 			break;
 		case SDLK_d:
 			message = Message(Message::REMOVE, dirs.currentDirObjName());
-			return 1;
+			return CONSOLE;
 			break;
 		case SDLK_j:
 			dirs.currentDir().moveSelectedDown();
@@ -65,18 +66,17 @@ int handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message) {
 			dirs.toggleSortAlphabetically();
 			break;
 		case SDLK_s:
-			//Execute a command
-			return 3;
+			return SHELL;
 			break;
 		case SDLK_q:
 			message = Message(Message::QUIT);
-			return 1;
+			return MESSAGE_CONSOLE;
 			break;
 		default:
 			dirs.currentDir().last_move = Directory::NONE;
 			break;
 	}
-	return 0;
+	return NONE;
 }
 
 Context handleMessageResponse(SDL_KeyboardEvent &e, Filesystem &dirs, Message msg) {
@@ -100,18 +100,21 @@ Context handleMessageResponse(SDL_KeyboardEvent &e, Filesystem &dirs, Message ms
 	return ctx;
 }
 
-void handleMouse(Filesystem &dirs, ShortcutBar &bar) {
+void handleMouse(Filesystem &dirs, ShortcutBar &bar)
+{
 	std::string path;
 	int mouse_x, mouse_y;
 	SDL_GetMouseState(&mouse_x, &mouse_y);
-	if (bar.checkClicks(mouse_x, mouse_y, path)) {
+	if (bar.checkClicks(mouse_x, mouse_y, path))
+ 	{
 		DirObject yanked = std::move(dirs.yanked);
 		dirs = Filesystem(path);
 		dirs.yanked = std::move(yanked);
 	}
 }
 
-Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
+Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar)
+{
 	Context ctx;
 	switch (e.type)
  	{
@@ -125,19 +128,19 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 			break;
 		case SDL_KEYDOWN:
 			ctx.redraw = true;
-			int val = handleKeys(e.key, dirs, ctx.msg);
-			if (val == 1)
+			HandleType val = handleKeys(e.key, dirs, ctx.msg);
+			if (val == MESSAGE_CONSOLE)
 		 	{
 				ctx.message = true;
 				ctx.response = true;
 				dirs.currentDir().last_move = Directory::NONE;
 			}
-		 	else if (val == 2)
+		 	else if (val == CONSOLE)
 		 	{
 				ctx.message = true;
 				dirs.currentDir().last_move = Directory::NONE;
 			}
-			else if (val == 3)
+			else if (val == SHELL)
 			{
 				ctx.shell_input = true;
 			}
@@ -145,7 +148,11 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar) {
 	return ctx;
 }
 
-void drawAll(Display& display, Filesystem& dirs, ShortcutBar& shortcut_bar, Context ctx, bool new_message)
+void drawAll(Display& display,
+	 	Filesystem& dirs,
+	 	ShortcutBar& shortcut_bar,
+	 	Context ctx,
+	 	bool new_message)
 {
 	display.renderDirectory(dirs.currentDir());
 	if (ctx.message)
@@ -168,6 +175,7 @@ char to_lowercase(char c)
 
 	return c;
 }
+
 std::string getKeyPress(SDL_Event& e)
 {
 	const uint8_t *state = SDL_GetKeyboardState(NULL);
@@ -191,6 +199,41 @@ std::string getKeyPress(SDL_Event& e)
 		key = " ";
 	}
 	return key;
+}
+
+void handleShellInput(SDL_Event& e, Display& display, Filesystem& dirs, ShortcutBar& bar)
+{
+	Context shell;
+	std::string command;
+	while (shell.msg.message() != "return")
+	{
+		SDL_WaitEvent(&e);
+		shell.message = true;
+		if (e.type == SDL_KEYDOWN)
+		{
+			shell.msg = Message(getKeyPress(e));
+			if (!shell.msg.message().empty() && shell.msg.message() != "shift" && shell.msg.message() != "return")
+			{
+				if (shell.msg.message() == "backspace")
+				{
+					display.popShellLetter();
+					if (command.size() > 0) command.pop_back();
+					drawAll(display, dirs, bar, shell, false);
+					continue;
+				}
+				drawAll(display, dirs, bar, shell, false);
+				command += shell.msg.message();
+				std::cout << command << std::endl;
+			}
+		}
+		SDL_PollEvent(&e);
+	}
+	std::cout << "Executing: " << command << std::endl;
+
+	FILE* file = popen(command.c_str(), "r");
+	pclose(file);
+	display.clearShellLetters();
+	drawAll(display, dirs, bar, shell, false);
 }
 
 int MAIN()
@@ -218,7 +261,7 @@ int MAIN()
 	SDL_Event e;
 	/* There are no messages on the console that need to be handled */
 	bool handle_message = false;
-	Message msg;
+	Message msg; // The message sent to messageHandler
 
 	while (1)
 	{
@@ -236,21 +279,7 @@ int MAIN()
 
 		if (ctx.shell_input)
 		{
-//			SDL_WaitEvent(&e);
-			Context shell;
-//			ctx.msg = Message(getKeyPress(e));
-			while (shell.msg.message() != "return")
-			{
-				SDL_WaitEvent(&e);
-				shell.message = true;
-				if (e.type == SDL_KEYDOWN)
-				{
-					shell.msg = Message(getKeyPress(e));
-					std::cout << shell.msg.message() << std::endl;
-					drawAll(display, dirs, shortcut_bar, shell, false);
-				}
-				SDL_PollEvent(&e);
-			}
+				handleShellInput(e, display, dirs, shortcut_bar);
 		}
 
 		if (ctx.redraw)
@@ -258,6 +287,7 @@ int MAIN()
 			if (ctx.message) msg = ctx.msg; // This msg is sent to handleMessageRespnse
 			if (ctx.response) handle_message = true; // Need to be set to handle message response
 			else handle_message = false;
+			std::cout << "Message: " << msg.message() << std::endl;
 			drawAll(display, dirs, shortcut_bar, ctx, true);
 		}
 

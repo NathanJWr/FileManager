@@ -18,6 +18,9 @@ public:
 	/* display the screen */
 	void update();
 
+	void popShellLetter();
+	void clearShellLetters();
+
 private:
 	void renderConsoleMessage(std::string message, bool new_message);
 	void renderTextTexture(SDL2::TextTexture& tex);
@@ -34,7 +37,6 @@ private:
 	SDL_Color white{ 255, 255, 255, 255 };
 	SDL_Color yellow{ 181, 137, 0, 255 };
 	SDL_Color green = { 0, 255, 0, 255 };
-	//SDL_Color text = { 147, 161, 161, 255 };
 	SDL_Color text = { 133, 153, 0, 255 };
 	SDL_Color shortcut = { 42, 161, 152, 255 };
 	SDL_Color folder = { 38, 139, 210, 255 };

@@ -211,9 +211,11 @@ void Display::renderDirectory(Directory& dir) {
 		renderTextTexture(DirTextures[i-dir.min_dir_objs]);
 	}
 
+	/*
 	std::cout << "Selected at: " << dir.selected_at << std::endl;
 	std::cout << "Min_dir_objs: " << dir.min_dir_objs << std::endl;
 	std::cout << "Max_dir_objs: " << dir.max_dir_objs << std::endl;
+	*/
 }
 
 void Display::renderUI(ShortcutBar &bar) {
@@ -224,12 +226,14 @@ void Display::renderUI(ShortcutBar &bar) {
 	renderCurrentPath();
 }
 
-void Display::renderUI(ShortcutBar &bar, std::string console_message, bool new_message) {
+void Display::renderUI(ShortcutBar &bar, std::string console_message, bool new_message)
+{
 	renderUI(bar);
 	renderConsoleMessage(console_message, new_message);
 }
 
-void Display::renderConsoleMessage(std::string message, bool new_message) {
+void Display::renderConsoleMessage(std::string message, bool new_message)
+{
 	SDL2::TextTexture text = SDL2::makeTextTexture(font, message.c_str(), white, renderer);
 
 	if (new_message)
@@ -237,32 +241,36 @@ void Display::renderConsoleMessage(std::string message, bool new_message) {
 		shell_letters.clear();
 		shell_letter_pos = 0;
 	}
-	shell_letters.emplace_back(SDL2::makeTextTexture(font, message.c_str(), white, renderer));
-	shell_letters.back().pos.x = console_box.x + shell_letter_pos;
-	shell_letter_pos += shell_letters.back().pos.w;
-	shell_letters.back().pos.y = console_box.y;
+	std::cout << message << std::endl;
+	if (message != "backspace" && message != "return")
+	{
+		shell_letters.emplace_back(SDL2::makeTextTexture(font, message.c_str(), white, renderer));
+		shell_letters.back().pos.x = console_box.x + shell_letter_pos;
+		shell_letter_pos += shell_letters.back().pos.w;
+		shell_letters.back().pos.y = console_box.y;
+	}
 
-	/*
-	text.pos.x = console_box.x;
-	text.pos.y = console_box.y;
-	renderTextTexture(text);
-	*/
 	for (SDL2::TextTexture &n : shell_letters)
 	{
 		renderTextTexture(n);
 	}
 }
 
-void Display::renderShortcuts(ShortcutBar &bar) {
+void Display::renderShortcuts(ShortcutBar &bar)
+{
 	SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
 	SDL_RenderDrawRect(renderer.get(), &shortcut_box);
 	int buf = 0;
 	auto &list = bar.get_s();
-	for (auto& n : list) {
+	for (auto& n : list)
+ 	{
 		SDL_Color color;
-		if (n.highlighted) {
+		if (n.highlighted)
+	 	{
 			color = yellow;
-		} else {
+		}
+		else
+	 	{
 			color = shortcut;
 		}
 		SDL2::TextTexture text = SDL2::makeTextTexture(font, n.name().c_str(), color, renderer);
@@ -273,17 +281,21 @@ void Display::renderShortcuts(ShortcutBar &bar) {
 	}
 }
 
-void Display::renderCurrentPath() {
+void Display::renderCurrentPath()
+{
 	int count = 0;
-	for (unsigned int i = 0; i < cur_path.size(); i++) {
-		if (cur_path.at(i) == SLASH[0]) {
+	for (unsigned int i = 0; i < cur_path.size(); i++)
+ 	{
+		if (cur_path.at(i) == SLASH[0])
+	 	{
 			count++;
 		}
 	}
 	std::string buff;
 	if (count > 2) buff = ".." + SLASH;
 	else buff = "";
-	while (count > 2) {
+	while (count > 2)
+	{
 		size_t pos = cur_path.find_first_of(SLASH);
 		cur_path.erase(cur_path.begin(), cur_path.begin() + pos + 1);
 		count--;
@@ -295,10 +307,27 @@ void Display::renderCurrentPath() {
 	renderTextTexture(p);
 }
 
-void Display::renderTextTexture(SDL2::TextTexture& t) {
+void Display::renderTextTexture(SDL2::TextTexture& t)
+{
 	SDL_RenderCopy(renderer.get(), t.tex.get(), NULL, &t.pos);
 }
 
-void Display::renderTexture(SDL2::ImgTexture& t) {
+void Display::renderTexture(SDL2::ImgTexture& t)
+{
 	SDL_RenderCopy(renderer.get(), t.tex.get(), NULL, &t.pos);
+}
+
+void Display::popShellLetter()
+{
+	if (!shell_letters.empty())
+	{
+		shell_letter_pos -= shell_letters.back().pos.w;
+		shell_letters.pop_back();
+	}
+}
+
+void Display::clearShellLetters()
+{
+	shell_letters.clear();
+	shell_letter_pos = 0;
 }
