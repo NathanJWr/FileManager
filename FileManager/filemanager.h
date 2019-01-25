@@ -7,7 +7,8 @@
 #include <string>
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
-class FileManager {
+class FileManager
+{
 public:
 	FileManager();
 	const std::string getCurrentDirectory();

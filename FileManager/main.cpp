@@ -201,7 +201,10 @@ std::string getKeyPress(SDL_Event& e)
 	return key;
 }
 
-void handleShellInput(SDL_Event& e, Display& display, Filesystem& dirs, ShortcutBar& bar)
+void handleShellInput(SDL_Event& e,
+	 	Display& display,
+	 	Filesystem& dirs,
+	 	ShortcutBar& bar)
 {
 	Context shell;
 	std::string command;
@@ -212,7 +215,9 @@ void handleShellInput(SDL_Event& e, Display& display, Filesystem& dirs, Shortcut
 		if (e.type == SDL_KEYDOWN)
 		{
 			shell.msg = Message(getKeyPress(e));
-			if (!shell.msg.message().empty() && shell.msg.message() != "shift" && shell.msg.message() != "return")
+			if (!shell.msg.message().empty()
+					&& shell.msg.message() != "shift"
+					&& shell.msg.message() != "return")
 			{
 				if (shell.msg.message() == "backspace")
 				{

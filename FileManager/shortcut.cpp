@@ -1,42 +1,53 @@
 #include "shortcut.h"
 #include <iostream>
-Shortcut::Shortcut(std::string n, std::string p) {
+Shortcut::Shortcut(std::string n, std::string p)
+{
 	_name = n;
 	_path = p;
 	highlighted = false;
 	changed = false;
 }
 
-bool Shortcut::redraw() {
+bool Shortcut::redraw()
+{
 	return changed;
 }
 
-const std::string Shortcut::path() const {
+const std::string Shortcut::path() const
+{
 	return _path;
 }
 
-const std::string Shortcut::name() const {
+const std::string Shortcut::name() const
+{
 	return _name;
 }
 
-bool Shortcut::clicked(int x, int y) {
+bool Shortcut::clicked(int x, int y)
+{
 	if (x >= pos.x
 		&& x <= pos.x + pos.w
 		&& y >= pos.y
-		&& y <= pos.y + pos.h) {
-		
-		if (highlighted) {
+		&& y <= pos.y + pos.h)
+	{
+
+		if (highlighted)
+		{
 			std::cout << "Clicked" << std::endl;
 			changed = true;
 			highlighted = false;
 			return true;
-		} else {
+		}
+	 	else
+		{
 			std::cout << "Highlighted" << std::endl;
 			highlighted = true;
 			changed = true;
 			return false;
 		}
-	} else {
+	}
+ 	else
+	{
 		changed = false;
 		return false;
 	}

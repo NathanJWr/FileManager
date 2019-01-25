@@ -2,7 +2,8 @@
 #define DIR_OBJECT_H_
 #include <iostream>
 #include <string>
-class DirObject {
+class DirObject
+{
 public:
 	bool changed;
 	enum Type { FILE, FOLDER };

@@ -2,7 +2,8 @@
 #define SHORTCUT_BAR_H_
 #include "shortcut.h"
 #include <vector>
-class ShortcutBar {
+class ShortcutBar
+{
 public:
 	ShortcutBar();
 	std::vector<Shortcut>& get_s();

@@ -8,7 +8,8 @@
 #ifdef __unix__
 #include <SDL2/SDL.h>
 #endif
-class Shortcut {
+class Shortcut
+{
 public:
 	Shortcut(std::string n, std::string p);
 	/* returns true if the directory should be changed to the Shortcut*/

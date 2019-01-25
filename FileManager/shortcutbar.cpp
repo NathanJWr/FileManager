@@ -20,7 +20,8 @@
 	if (pw) username = pw->pw_name;
 #endif
 
-ShortcutBar::ShortcutBar() {
+ShortcutBar::ShortcutBar()
+{
 	/* Query the OS for username */
 	USERNAME();
 
@@ -39,13 +40,17 @@ ShortcutBar::ShortcutBar() {
 	shortcuts.emplace_back(Shortcut("Videos", videos));
 }
 
-std::vector<Shortcut>& ShortcutBar::get_s() {
+std::vector<Shortcut>& ShortcutBar::get_s()
+{
 	return shortcuts;
 }
 
-bool ShortcutBar::checkClicks(int x, int y, std::string& path) {
-	for (Shortcut& n : shortcuts) {
-		if (n.clicked(x, y)) {
+bool ShortcutBar::checkClicks(int x, int y, std::string& path)
+{
+	for (Shortcut& n : shortcuts)
+	{
+		if (n.clicked(x, y))
+		{
 			path = n.path();
 			return true;
 		}

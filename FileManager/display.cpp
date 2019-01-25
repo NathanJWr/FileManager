@@ -9,7 +9,8 @@ Display::Display(int width, int height) :
 	image_icon(SDL2::makeIMGTexture("assets/image.png", renderer)),
 	text_icon(SDL2::makeIMGTexture("assets/text.png", renderer)),
 	cpp_icon(SDL2::makeIMGTexture("assets/c++src.png", renderer)),
-	script_icon(SDL2::makeIMGTexture("assets/script.png", renderer)) {
+	script_icon(SDL2::makeIMGTexture("assets/script.png", renderer))
+{
 
 	SCREEN_W = width;
 	SCREEN_H = height;
@@ -39,61 +40,84 @@ Display::Display(int width, int height) :
 	shell_letter_pos = 0;
 }
 
-void Display::update() {
+void Display::update()
+{
 	SDL_SetRenderDrawColor(renderer.get(), 0, 43, 54, 255);
 	SDL_RenderPresent(renderer.get());
 	SDL_RenderClear(renderer.get());
 	SDL_SetRenderDrawColor(renderer.get(), 0, 43, 54, 255);
 }
 
-SDL_Color Display::determineColor(DirObject obj) {
+SDL_Color Display::determineColor(DirObject obj)
+{
 	SDL_Color color;
-	if (obj.selected) {
+	if (obj.selected)
+	{
 		color = white;
-	} else if (obj.type() == DirObject::FILE) {
+	}
+ 	else if (obj.type() == DirObject::FILE)
+	{
 		color = text;
-	} else if (obj.type() == DirObject::FOLDER) {
+	}
+ 	else if (obj.type() == DirObject::FOLDER)
+	{
 		color = folder;
 	}
 	return color;
 }
 
-void Display::renderIcon(DirObject obj, int y) {
-	if (obj.isFolder()) {
+void Display::renderIcon(DirObject obj, int y)
+{
+	if (obj.isFolder())
+	{
 		folder_icon.pos.y = y;
 		renderTexture(folder_icon);
-	} else if (obj.extension() == ".png" || obj.extension() == ".jpg") {
+	}
+ 	else if (obj.extension() == ".png" || obj.extension() == ".jpg")
+	{
 		image_icon.pos.y = y;
 		renderTexture(image_icon);
-	} else if (obj.extension() == ".cpp" || obj.extension() == ".cc") {
+	}
+ 	else if (obj.extension() == ".cpp" || obj.extension() == ".cc")
+	{
 		cpp_icon.pos.y = y;
 		renderTexture(cpp_icon);
-	} else if (obj.extension() == ".exe" || obj.extension() == ".sh") {
+	}
+ 	else if (obj.extension() == ".exe" || obj.extension() == ".sh")
+	{
 		script_icon.pos.y = y;
 		renderTexture(script_icon);
-	} else {
+	}
+	else
+	{
 		text_icon.pos.y = y;
 		renderTexture(text_icon);
 	}
 }
 
-void Display::renderDirectory(Directory& dir) {
+void Display::renderDirectory(Directory& dir)
+{
 	cur_path = dir.path();
 	int buf_x = dir_box.x + folder_icon.pos.w;
 
 	int size = 0;;
 	if (dir.max_dir_objs == 0) dir.max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);
-	if (dir.get().size() < dir.min_dir_objs + dir.max_dir_objs) {
+	if (dir.get().size() < dir.min_dir_objs + dir.max_dir_objs)
+	{
 		size = dir.get().size();
-	} else {
+	}
+ 	else
+ 	{
 		size = dir.min_dir_objs + dir.max_dir_objs;
 	}
 
-	if (dir.last_move == Directory::NONE) {
+	if (dir.last_move == Directory::NONE)
+	{
 		/* New directory, so everything needs to be cleared */
 		DirTextures.clear();
 		int buf_y = dir_box.y;
-		for (int i = dir.min_dir_objs; i < size; ++i) {
+		for (int i = dir.min_dir_objs; i < size; ++i)
+		{
 			auto color = determineColor(dir.get()[i]);
 			DirTextures.emplace_back(SDL2::makeTextTexture(font, dir.get()[i].name().c_str(), color, renderer));
 			DirTextures.back().pos.x = buf_x;
@@ -101,11 +125,14 @@ void Display::renderDirectory(Directory& dir) {
 
 			buf_y += text_box.h;
 		}
-	} else if (dir.last_move == Directory::UP) {
+	}
+	else if (dir.last_move == Directory::UP)
+	{
 		/* The selected DirObject isn't at the top
 		 * Redraw old selected item AND the new one
 		 */
-		if (dir.selected_at > 0 && (dir.selected_at - dir.min_dir_objs > 0) ){
+		if (dir.selected_at > 0 && (dir.selected_at - dir.min_dir_objs > 0))
+		{
 			unsigned int sel;
 			sel = dir.selected_at - dir.min_dir_objs;
 
@@ -119,7 +146,8 @@ void Display::renderDirectory(Directory& dir) {
 			DirTextures[--sel] = std::move(SDL2::makeTextTexture(font, redraw2.text.c_str(), white, renderer));
 			DirTextures[sel].pos = redraw2.pos;
 
-			for (auto& n : DirTextures) {
+			for (auto& n : DirTextures)
+			{
 				renderTextTexture(n);
 			}
 			--dir.selected_at;
@@ -129,7 +157,8 @@ void Display::renderDirectory(Directory& dir) {
 		 * Add one texture to the TOP/FRONT of the list
 		 * Remove one texture from the BOTTOM/END of the list
 		 */
-		else if (dir.selected_at > 0 && dir.selected_at - dir.min_dir_objs <= 0) {
+		else if (dir.selected_at > 0 && dir.selected_at - dir.min_dir_objs <= 0)
+	 	{
 			unsigned int sel;
 			sel = dir.selected_at - dir.min_dir_objs;
 
@@ -146,17 +175,20 @@ void Display::renderDirectory(Directory& dir) {
 			DirTextures.front().pos.y = redraw.pos.y;
 			DirTextures.front().pos.y -= text_box.h;
 
-			for (auto& n : DirTextures) {
+			for (auto& n : DirTextures)
+			{
 				n.pos.y += text_box.h;
 			}
 			dir.min_dir_objs--;
 		}
 	}
-	else if (dir.last_move == Directory::DOWN) {
+	else if (dir.last_move == Directory::DOWN)
+	{
 		/* The selected DirObject isn't at the bottom
 		 * Redraw the old selected item an new one
 		 */
-		if (dir.selected_at + 1 < dir.get().size() && (dir.selected_at - dir.min_dir_objs) < dir.max_dir_objs - 1 ) {
+		if (dir.selected_at + 1 < dir.get().size() && (dir.selected_at - dir.min_dir_objs) < dir.max_dir_objs - 1 )
+	 	{
 			unsigned int sel;
 			sel = dir.selected_at - dir.min_dir_objs;
 
@@ -176,7 +208,8 @@ void Display::renderDirectory(Directory& dir) {
 		 * Add one DirObject to the bottom/end of the list
 		 * Remove one DirObject to the top/front of the list
 		 */
-		else if (dir.selected_at + 1 < dir.get().size() && (dir.selected_at - dir.min_dir_objs) >= dir.max_dir_objs - 1) {
+		else if (dir.selected_at + 1 < dir.get().size() && (dir.selected_at - dir.min_dir_objs) >= dir.max_dir_objs - 1)
+		{
 			dir.min_dir_objs++;
 
 			auto redraw = std::move(DirTextures.back());
@@ -192,7 +225,8 @@ void Display::renderDirectory(Directory& dir) {
 			DirTextures.back().pos.y = redraw.pos.y;
 			DirTextures.back().pos.y += text_box.h;
 
-			for (auto& n : DirTextures) {
+			for (auto& n : DirTextures)
+			{
 				n.pos.y -= text_box.h;
 			}
 		}
@@ -201,12 +235,16 @@ void Display::renderDirectory(Directory& dir) {
 	/* Render the created/changed textures
 	 * AND the icons associated with their file type
 	 */
-	if (dir.get().size() < dir.min_dir_objs + dir.max_dir_objs) {
+	if (dir.get().size() < dir.min_dir_objs + dir.max_dir_objs)
+	{
 		size = dir.get().size();
-	} else {
+	}
+ 	else
+	{
 		size = dir.min_dir_objs + dir.max_dir_objs;
 	}
-	for (int i = dir.min_dir_objs; i < size; ++i) {
+	for (int i = dir.min_dir_objs; i < size; ++i)
+	{
 		renderIcon(dir.get()[i], DirTextures[i - dir.min_dir_objs].pos.y);
 		renderTextTexture(DirTextures[i-dir.min_dir_objs]);
 	}
@@ -218,7 +256,8 @@ void Display::renderDirectory(Directory& dir) {
 	*/
 }
 
-void Display::renderUI(ShortcutBar &bar) {
+void Display::renderUI(ShortcutBar &bar)
+{
 	SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
 	SDL_RenderDrawRect(renderer.get(), &dir_box);
 	SDL_RenderDrawRect(renderer.get(), &console_box);

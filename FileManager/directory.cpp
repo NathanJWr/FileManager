@@ -1,7 +1,8 @@
 #include "directory.h"
 #include <algorithm>
 #include <string>
-bool Directory::alpha_sort(const DirObject i, const DirObject j) {
+bool Directory::alpha_sort(const DirObject i, const DirObject j)
+{
 	std::string name1 = i.name();
 	std::string name2 = j.name();
 	transform(name1.begin(), name1.end(), name1.begin(), tolower);
@@ -9,7 +10,8 @@ bool Directory::alpha_sort(const DirObject i, const DirObject j) {
 	return (name1.compare(name2) < 0);
 }
 
-Directory::Directory(std::vector<DirObject> d, std::string p) {
+Directory::Directory(std::vector<DirObject> d, std::string p)
+{
 	dir = d;
 	_path = p;
 	if (!dir.empty()) {
@@ -22,21 +24,23 @@ Directory::Directory(std::vector<DirObject> d, std::string p) {
 	selected_at = 0;
 }
 
-DirObject& Directory::currentlySelected() {
-	//auto cur = findCurrentlySelected();
-	//return dir[cur];
+DirObject& Directory::currentlySelected()
+{
 	return dir[selected_at];
 }
 
-std::vector<DirObject>& Directory::get() {
+std::vector<DirObject>& Directory::get()
+{
 	return dir;
 }
 
-const std::string Directory::path() const {
+const std::string Directory::path() const
+{
 	return _path;
 }
 
-void Directory::add(DirObject obj) {
+void Directory::add(DirObject obj)
+{
 	currentlySelected().selected = false;
 	obj.selected = true;
 
@@ -45,22 +49,28 @@ void Directory::add(DirObject obj) {
 	selected_at = findCurrentlySelected();
 }
 
-void Directory::remove() {
-	if (selected_at > 0) {
+void Directory::remove()
+{
+	if (selected_at > 0)
+ 	{
 		dir[selected_at - 1].selected = true;
 		dir.erase(dir.begin() + selected_at);
 		selected_at--;
-	} else if (selected_at == 0) {
+	}
+ 	else if (selected_at == 0)
+ 	{
 		dir.erase(dir.begin() + selected_at);
 		dir[0].selected = true;
 		selected_at = 0;
 	}
 }
 
-void Directory::moveSelectedDown() {
+void Directory::moveSelectedDown()
+{
 	auto currently_selected = findCurrentlySelected();
 	std::cout << "Selected: " << currently_selected;
-	if (dir.size() - 1 > currently_selected) {
+	if (dir.size() - 1 > currently_selected)
+ 	{
 		dir[currently_selected].selected = false;
 		dir[currently_selected + 1].selected = true;
 		std::cout << "  Moved to: " << currently_selected + 1 << std::endl;
@@ -68,10 +78,12 @@ void Directory::moveSelectedDown() {
 	}
 }
 
-void Directory::moveSelectedUp() {
+void Directory::moveSelectedUp()
+{
 	auto currently_selected = findCurrentlySelected();
 	std::cout << "Selected: " << currently_selected;
-	if (currently_selected > 0) {
+	if (currently_selected > 0)
+	{
 		dir[currently_selected].selected = false;
 		dir[currently_selected - 1].selected = true;
 		std::cout << "  Moved to: " << currently_selected - 1 << std::endl;
@@ -79,10 +91,13 @@ void Directory::moveSelectedUp() {
 	}
 }
 
-unsigned int Directory::findCurrentlySelected() const {
+unsigned int Directory::findCurrentlySelected() const
+{
 	unsigned int currently_selected = 0;
-	for (unsigned int i = 0; i < dir.size(); i++) {
-		if (dir[i].selected) {
+	for (unsigned int i = 0; i < dir.size(); i++)
+	{
+		if (dir[i].selected)
+		{
 			currently_selected = i;
 		}
 	}

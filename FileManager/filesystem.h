@@ -5,7 +5,8 @@
 #include "filemanager.h"
 #include "config.h"
 #include <stack>
-class Filesystem {
+class Filesystem
+{
 public:
 	/* makes a list of dirs starting from current and moving back to root */
 	Filesystem();
@@ -28,7 +29,7 @@ public:
 	/* Delete the current DirObject */
 	void remove();
 	const std::string currentDirObjName();
-	
+
 	DirObject yanked;
 private:
 	void forwardDir();

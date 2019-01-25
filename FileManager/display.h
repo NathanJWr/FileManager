@@ -6,7 +6,8 @@
 #include "shortcut.h"
 #include <string>
 #include <deque>
-class Display {
+class Display
+{
 public:
 	Display(int width, int height);
 	/* put the Directory contents on screen */
@@ -61,8 +62,6 @@ private:
 	SDL2::ImgTexture cpp_icon;
 
 	std::string cur_path;
-
-
 };
 #endif // DISPLAY_H_
 

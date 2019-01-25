@@ -3,7 +3,8 @@
 #include "dirobject.h"
 #include <vector>
 #include <memory>
-class Directory {
+class Directory
+{
 public:
 	enum LastMove {UP, DOWN, NONE};
 	LastMove last_move;

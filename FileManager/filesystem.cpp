@@ -11,15 +11,19 @@
 #define EXECUTE(Path) std::string tmp = "xdg-open \"" + Path + "\""; FILE* file = popen(tmp.c_str(), "r"); pclose(file);
 #endif
 
-Filesystem::Filesystem() {
+Filesystem::Filesystem()
+{
 	std::stack<std::string> buff;
 	buff.push(fmanager.getCurrentDirectory());
-	while (fmanager.moveToParent()) {
+	while (fmanager.moveToParent())
+	{
 		buff.push(fmanager.getCurrentDirectory());
 		std::cout << buff.top() << std::endl;
 	}
-	while (!buff.empty()) {
-		if (fmanager.changeDirectory(buff.top())) {
+	while (!buff.empty())
+	{
+		if (fmanager.changeDirectory(buff.top()))
+		{
 			dirs.push(fmanager.listCurrentDirectory());
 			buff.pop();
 		}
@@ -27,21 +31,26 @@ Filesystem::Filesystem() {
 	yanked = std::move(DirObject());
 }
 
-Filesystem::Filesystem(std::string path) {
+Filesystem::Filesystem(std::string path)
+{
 	fmanager.changeDirectory(path);
 	*this = Filesystem();
 }
 
-void Filesystem::yank() {
+void Filesystem::yank()
+{
 	dirs.top().last_move = Directory::NONE;
 	yanked = dirs.top().currentlySelected();
 	std::cout << "Yanked: " << yanked << std::endl;
 }
 
-void Filesystem::paste() {
-	if (!yanked.path().empty()) {
+void Filesystem::paste()
+{
+	if (!yanked.path().empty())
+	{
 		std::string to = currentDir().path();
-		if (yanked.isFolder()) {
+		if (yanked.isFolder())
+		{
 			to += SLASH + yanked.name();
 			fmanager.createDirectory(to, yanked.path());
 		}
@@ -53,65 +62,81 @@ void Filesystem::paste() {
 	}
 }
 
-void Filesystem::remove() {
-	if (fmanager.remove(currentDir().currentlySelected())) {
+void Filesystem::remove()
+{
+	if (fmanager.remove(currentDir().currentlySelected()))
+	{
 		currentDir().remove();
 	}
 }
 
-const std::string Filesystem::currentDirObjName() {
+const std::string Filesystem::currentDirObjName()
+{
 	return currentDir().currentlySelected().name();
 }
 
-Directory& Filesystem::currentDir() {
+Directory& Filesystem::currentDir()
+{
 	return dirs.top();
 }
 
-void Filesystem::addCurrentDir() {
+void Filesystem::addCurrentDir()
+{
 	dirs.push(fmanager.listCurrentDirectory());
 }
 
-void Filesystem::back() {
+void Filesystem::back()
+{
 	/*
 	 * Since dirs should always contain the root directory
 	 * check to see if there is only one thing in the stack
 	 */
-	if (dirs.size() > 1) {
+	if (dirs.size() > 1)
+	{
 		dirs.pop();
 	}
 }
 
-void Filesystem::forward() {
+void Filesystem::forward()
+{
 	/* This is so the dir will be redrawn correctly when it is accessed again */
 	dirs.top().last_move = Directory::NONE;
-	if (currentDir().currentlySelected().isFolder()) {
+	if (currentDir().currentlySelected().isFolder())
+	{
 		forwardDir();
 	}
-	else if (currentDir().currentlySelected().isFile()) {
+	else if (currentDir().currentlySelected().isFile())
+	{
 		openFile();
 	}
 
 }
 
-void Filesystem::forwardDir() {
+void Filesystem::forwardDir()
+{
 	std::string name = currentDir().currentlySelected().name();
 	std::string buf;
-	if (currentDir().path() != ROOT) {
+	if (currentDir().path() != ROOT)
+	{
 		buf = currentDir().path() + SLASH + name;
 	}
-	else {
+	else
+	{
 		buf = currentDir().path() + name;
 	}
-	if (fmanager.changeDirectory(buf)) {
+	if (fmanager.changeDirectory(buf))
+	{
 		addCurrentDir();
 	}
 }
 
-void Filesystem::openFile() {
+void Filesystem::openFile()
+{
 	std::string path = currentDir().currentlySelected().path();
 	EXECUTE(path);
 }
 
-void Filesystem::toggleSortAlphabetically() {
+void Filesystem::toggleSortAlphabetically()
+{
 	fmanager.sort_alphabetically = !fmanager.sort_alphabetically;
 }
