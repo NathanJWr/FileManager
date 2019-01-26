@@ -21,6 +21,7 @@ public:
 	void copy(std::string from, std::string to);
 	bool remove(DirObject obj);
 	void createDirectory(std::string path, std::string oldpath);
+	void createDirectory(std::string path);
 	bool sort_alphabetically;
 private:
 	bool show_hidden_files;

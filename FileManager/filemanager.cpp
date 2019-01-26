@@ -138,3 +138,9 @@ void FileManager::createDirectory(std::string path, std::string oldpath)
 {
 	fs::create_directory(path, oldpath);
 }
+
+void FileManager::createDirectory(std::string path)
+{
+	std::cout << "Creating Directory: " << path;
+	fs::create_directory(path);
+}

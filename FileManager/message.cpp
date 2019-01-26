@@ -7,6 +7,10 @@ Message::Message(Type t)
  	{
 		_message = "Are you sure you want to quit? Y/N";
 	}
+	else if (t == CREATE_FOLDER)
+	{
+		_message = "Create Folder: ";
+	}
 }
 Message::Message(Type t, std::string file_name)
 {

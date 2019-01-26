@@ -70,6 +70,12 @@ void Filesystem::remove()
 	}
 }
 
+void Filesystem::reloadCurrentDir()
+{
+	dirs.pop();
+	addCurrentDir();
+}
+
 const std::string Filesystem::currentDirObjName()
 {
 	return currentDir().currentlySelected().name();
@@ -139,4 +145,10 @@ void Filesystem::openFile()
 void Filesystem::toggleSortAlphabetically()
 {
 	fmanager.sort_alphabetically = !fmanager.sort_alphabetically;
+}
+
+void Filesystem::createFolder(std::string name)
+{
+	std::string full_path = currentDir().path() + SLASH + name;
+	fmanager.createDirectory(full_path);
 }

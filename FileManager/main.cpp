@@ -10,7 +10,9 @@
 #ifdef _WIN32
 #include <SDL.h>
 #include <SDL_ttf.h>
+#include <windows.h>
 #define MAIN() wmain()
+#define SHELL_EXECUTE(cmd) 
 #endif
 
 #ifdef __unix__
@@ -32,6 +34,96 @@ public:
 
 enum HandleType {NONE, MESSAGE_CONSOLE, CONSOLE, SHELL};
 
+void drawAll(Display& display,
+	Filesystem& dirs,
+	ShortcutBar& shortcut_bar,
+	Context ctx,
+	bool new_message)
+{
+	display.renderDirectory(dirs.currentDir());
+	if (ctx.message)
+	{
+		dirs.currentDir().last_move = Directory::NONE;
+		display.renderUI(shortcut_bar, ctx.msg.message(), new_message);
+	}
+	else
+	{
+		display.renderUI(shortcut_bar);
+	}
+
+	display.update();
+}
+
+char to_lowercase(char c)
+{
+	if (c >= 'A' && c <= 'Z')
+		return c + 32;
+
+	return c;
+}
+
+std::string getKeyPress(SDL_Event& e)
+{
+	const uint8_t *state = SDL_GetKeyboardState(NULL);
+	std::string tmp;
+	std::string key;
+	tmp = SDL_GetKeyName(e.key.keysym.sym);
+	if (state[SDL_SCANCODE_LSHIFT] && e.key.keysym.sym != SDLK_LSHIFT)
+	{
+		key = tmp;
+	}
+	if (!state[SDL_SCANCODE_LSHIFT]) // Change to lowercase
+	{
+		for (char& c : tmp)
+		{
+			c = to_lowercase(c);
+		}
+		key = tmp;
+	}
+	if (state[SDL_SCANCODE_SPACE])
+	{
+		key = " ";
+	}
+	return key;
+}
+
+void handleTypingInput(std::string& command,
+	Context& ptx,
+	SDL_Event& e,
+	Display& display,
+	Filesystem& dirs,
+	ShortcutBar& bar)
+{
+	Context ctx;
+	while (1)//ctx.msg.message() != "return")
+	{
+		ctx = Context();
+		SDL_WaitEvent(&e);
+		ctx.message = true;
+		if (e.type == SDL_KEYDOWN)
+		{
+			ctx.msg = Message(getKeyPress(e));
+			if (ctx.msg.message() == "return") return;
+			std::cout << ctx.msg.message();
+			if (!ctx.msg.message().empty()
+				&& ctx.msg.message() != "shift"
+				&& ctx.msg.message() != "return")
+			{
+				if (ctx.msg.message() == "backspace")
+				{
+					display.popShellLetter();
+					if (command.size() > 0) command.pop_back();
+					drawAll(display, dirs, bar, ctx, false);
+					continue;
+				}
+				drawAll(display, dirs, bar, ctx, false);
+				command += ctx.msg.message();
+			}
+		}
+		SDL_PollEvent(&e);
+	}
+}
+
 HandleType handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message)
 {
 	switch (e.keysym.sym)
@@ -48,7 +140,7 @@ HandleType handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message)
 			break;
 		case SDLK_d:
 			message = Message(Message::REMOVE, dirs.currentDirObjName());
-			return CONSOLE;
+			return MESSAGE_CONSOLE;
 			break;
 		case SDLK_j:
 			dirs.currentDir().moveSelectedDown();
@@ -68,6 +160,10 @@ HandleType handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message)
 		case SDLK_s:
 			return SHELL;
 			break;
+		case SDLK_f:
+			message = Message(Message::CREATE_FOLDER);
+			return MESSAGE_CONSOLE;
+			break;
 		case SDLK_q:
 			message = Message(Message::QUIT);
 			return MESSAGE_CONSOLE;
@@ -79,23 +175,36 @@ HandleType handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message)
 	return NONE;
 }
 
-Context handleMessageResponse(SDL_KeyboardEvent &e, Filesystem &dirs, Message msg) {
+Context handleMessageResponse(SDL_Event &e, Display& display, Filesystem &dirs, ShortcutBar& bar, Message msg) {
 	Context ctx;
-	switch (e.keysym.sym) {
-	case SDLK_y:
-		switch (msg.type()) {
-			case Message::REMOVE:
-				dirs.remove();
-				ctx.redraw = true;
-				break;
-			case Message::QUIT:
-				ctx.exit = true;
-				break;
-		}
-		break;
-	case SDLK_n:
+	if (msg.type() == Message::CREATE_FOLDER)
+	{
+		std::string folder_name;
+		handleTypingInput(folder_name, ctx, e, display, dirs, bar);
+		display.clearShellLetters(); 
+		std::cout << "Creating folder: " << folder_name << std::endl;
+		dirs.createFolder(folder_name);
+		dirs.reloadCurrentDir();
 		ctx.redraw = true;
-		break;
+	}
+	else
+	{
+		switch (e.key.keysym.sym) {
+		case SDLK_y:
+			switch (msg.type()) {
+				case Message::REMOVE:
+					dirs.remove();
+					ctx.redraw = true;
+					break;
+				case Message::QUIT:
+					ctx.exit = true;
+					break;
+			}
+			break;
+		case SDLK_n:
+			ctx.redraw = true;
+			break;
+		}
 	}
 	return ctx;
 }
@@ -148,95 +257,20 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar)
 	return ctx;
 }
 
-void drawAll(Display& display,
-	 	Filesystem& dirs,
-	 	ShortcutBar& shortcut_bar,
-	 	Context ctx,
-	 	bool new_message)
-{
-	display.renderDirectory(dirs.currentDir());
-	if (ctx.message)
-	{
-		dirs.currentDir().last_move = Directory::NONE;
-		display.renderUI(shortcut_bar, ctx.msg.message(), new_message);
-	}
- 	else
- 	{
-		display.renderUI(shortcut_bar);
-	}
-
-	display.update();
-}
-
-char to_lowercase(char c)
-{
-	if (c >= 'A' && c <= 'Z')
-		return c + 32;
-
-	return c;
-}
-
-std::string getKeyPress(SDL_Event& e)
-{
-	const uint8_t *state = SDL_GetKeyboardState(NULL);
-	std::string tmp;
-	std::string key;
-	tmp = SDL_GetKeyName(e.key.keysym.sym);
-	if (state[SDL_SCANCODE_LSHIFT] && e.key.keysym.sym != SDLK_LSHIFT)
-	{
-		key = tmp;
-	}
-	if (!state[SDL_SCANCODE_LSHIFT]) // Change to lowercase
-	{
-		for (char& c : tmp)
-		{
-		c = to_lowercase(c);
-		}
-		key = tmp;
-	}
-	if (state[SDL_SCANCODE_SPACE])
-	{
-		key = " ";
-	}
-	return key;
-}
-
 void handleShellInput(SDL_Event& e,
 	 	Display& display,
 	 	Filesystem& dirs,
 	 	ShortcutBar& bar)
 {
-	Context shell;
 	std::string command;
-	while (shell.msg.message() != "return")
-	{
-		SDL_WaitEvent(&e);
-		shell.message = true;
-		if (e.type == SDL_KEYDOWN)
-		{
-			shell.msg = Message(getKeyPress(e));
-			if (!shell.msg.message().empty()
-					&& shell.msg.message() != "shift"
-					&& shell.msg.message() != "return")
-			{
-				if (shell.msg.message() == "backspace")
-				{
-					display.popShellLetter();
-					if (command.size() > 0) command.pop_back();
-					drawAll(display, dirs, bar, shell, false);
-					continue;
-				}
-				drawAll(display, dirs, bar, shell, false);
-				command += shell.msg.message();
-				std::cout << command << std::endl;
-			}
-		}
-		SDL_PollEvent(&e);
-	}
+	Context shell;
+	handleTypingInput(command, shell, e, display, dirs, bar);
 	std::cout << "Executing: " << command << std::endl;
 
-	FILE* file = popen(command.c_str(), "r");
-	pclose(file);
+	//FILE* file = popen(command.c_str(), "r");
+	//pclose(file);
+	//ShellExecute(NULL, "open", "cmd.exe", "/C del /P test", NULL, SW_SHOWNORMAL);
+
 	display.clearShellLetters();
 	drawAll(display, dirs, bar, shell, false);
 }
@@ -275,7 +309,7 @@ int MAIN()
 
 		if (handle_message)
 		{
-			ctx = handleMessageResponse(e.key, dirs, msg);
+			ctx = handleMessageResponse(e, display, dirs, shortcut_bar, msg);
 		}
 		else
 	 	{

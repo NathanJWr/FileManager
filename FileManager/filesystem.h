@@ -28,6 +28,10 @@ public:
 	void paste();
 	/* Delete the current DirObject */
 	void remove();
+	/* Create a Folder in the current path */
+	void createFolder(std::string name);
+
+	void reloadCurrentDir();
 	const std::string currentDirObjName();
 
 	DirObject yanked;

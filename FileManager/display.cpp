@@ -280,7 +280,6 @@ void Display::renderConsoleMessage(std::string message, bool new_message)
 		shell_letters.clear();
 		shell_letter_pos = 0;
 	}
-	std::cout << message << std::endl;
 	if (message != "backspace" && message != "return")
 	{
 		shell_letters.emplace_back(SDL2::makeTextTexture(font, message.c_str(), white, renderer));
