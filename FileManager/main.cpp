@@ -12,7 +12,7 @@
 #include <SDL_ttf.h>
 #include <windows.h>
 #define MAIN() wmain()
-#define SHELL_EXECUTE(cmd) 
+#define EXECUTE(Path) std::string tmp = "/C " + Path; ShellExecute(NULL, "open", "cmd.exe", tmp.c_str(), NULL, SW_SHOWNORMAL);	
 #endif
 
 #ifdef __unix__
@@ -87,7 +87,9 @@ std::string getKeyPress(SDL_Event& e)
 	return key;
 }
 
-void handleTypingInput(std::string& command,
+/* returns 0 on success
+	returns 1 on exit/esacpe command */
+int handleTypingInput(std::string& command,
 	Context& ptx,
 	SDL_Event& e,
 	Display& display,
@@ -103,12 +105,16 @@ void handleTypingInput(std::string& command,
 		if (e.type == SDL_KEYDOWN)
 		{
 			ctx.msg = Message(getKeyPress(e));
-			if (ctx.msg.message() == "return") return;
+			if (ctx.msg.message() == "return") return 0;
 			std::cout << ctx.msg.message();
 			if (!ctx.msg.message().empty()
 				&& ctx.msg.message() != "shift"
 				&& ctx.msg.message() != "return")
 			{
+				if (ctx.msg.message() == "escape")
+				{
+					return 1;
+				}
 				if (ctx.msg.message() == "backspace")
 				{
 					display.popShellLetter();
@@ -164,6 +170,10 @@ HandleType handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message)
 			message = Message(Message::CREATE_FOLDER);
 			return MESSAGE_CONSOLE;
 			break;
+		case SDLK_c:
+			message = Message(Message::CREATE_FILE);
+			return MESSAGE_CONSOLE;
+			break;
 		case SDLK_q:
 			message = Message(Message::QUIT);
 			return MESSAGE_CONSOLE;
@@ -180,11 +190,25 @@ Context handleMessageResponse(SDL_Event &e, Display& display, Filesystem &dirs, 
 	if (msg.type() == Message::CREATE_FOLDER)
 	{
 		std::string folder_name;
-		handleTypingInput(folder_name, ctx, e, display, dirs, bar);
+		if (handleTypingInput(folder_name, ctx, e, display, dirs, bar) == 0)
+		{
+			std::cout << "Creating folder: " << folder_name << std::endl;
+			dirs.createFolder(folder_name);
+			dirs.reloadCurrentDir();
+		}
 		display.clearShellLetters(); 
-		std::cout << "Creating folder: " << folder_name << std::endl;
-		dirs.createFolder(folder_name);
-		dirs.reloadCurrentDir();
+		ctx.redraw = true;
+	}
+	if (msg.type() == Message::CREATE_FILE)
+	{
+		std::string file_name;
+		if (handleTypingInput(file_name, ctx, e, display, dirs, bar) == 0)
+		{
+			std::cout << "Creating file: " << file_name << std::endl;
+			CreateFileA(file_name.c_str(), 0, 0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+			dirs.reloadCurrentDir();
+		}
+		display.clearShellLetters();
 		ctx.redraw = true;
 	}
 	else
@@ -264,14 +288,16 @@ void handleShellInput(SDL_Event& e,
 {
 	std::string command;
 	Context shell;
-	handleTypingInput(command, shell, e, display, dirs, bar);
-	std::cout << "Executing: " << command << std::endl;
-
-	//FILE* file = popen(command.c_str(), "r");
-	//pclose(file);
-	//ShellExecute(NULL, "open", "cmd.exe", "/C del /P test", NULL, SW_SHOWNORMAL);
-
+	if (handleTypingInput(command, shell, e, display, dirs, bar) == 0)
+	{
+		std::cout << "Executing: " << command << std::endl;
+		EXECUTE(command);
+		//FILE* file = popen(command.c_str(), "r");
+		//pclose(file);
+		//ShellExecute(NULL, "open", "cmd.exe", "/C del /P test", NULL, SW_SHOWNORMAL);	
+	}
 	display.clearShellLetters();
+	dirs.reloadCurrentDir();
 	drawAll(display, dirs, bar, shell, false);
 }
 

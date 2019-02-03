@@ -4,7 +4,7 @@
 class Message
 {
 public:
-	enum Type {REMOVE, QUIT, YANK, PASTE, SHELL, CREATE_FOLDER};
+	enum Type {REMOVE, QUIT, YANK, PASTE, SHELL, CREATE_FOLDER, CREATE_FILE};
 	Message();
 	Message(Type t);
 	Message(Type t, std::string file_name);
