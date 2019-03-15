@@ -41,9 +41,11 @@ const std::string Directory::path() const
 
 void Directory::add(DirObject obj)
 {
-	currentlySelected().selected = false;
+	if (!dir.empty())
+	{
+		currentlySelected().selected = false;
+	}
 	obj.selected = true;
-
 	dir.push_back(obj);
 	std::sort(dir.begin(), dir.end(), alpha_sort);
 	selected_at = findCurrentlySelected();
@@ -60,7 +62,10 @@ void Directory::remove()
  	else if (selected_at == 0)
  	{
 		dir.erase(dir.begin() + selected_at);
-		dir[0].selected = true;
+		if (!dir.empty())
+		{
+			dir[0].selected = true;
+		}
 		selected_at = 0;
 	}
 }

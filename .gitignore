@@ -1,0 +1,11 @@
+
+*.db
+*.exe
+*.ilk
+*.tlog
+*.idb
+*.log
+*.obj
+*.opendb
+*.pdb
+.vs/FileManager/v15/.suo
