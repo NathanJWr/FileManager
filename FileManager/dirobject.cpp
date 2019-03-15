@@ -3,7 +3,7 @@
 
 #ifdef _WIN32
 #include <Windows.h>
-#define Is_Hidden(Path, Name) (GetFileAttributes(Path.c_str()) & FILE_ATTRIBUTE_HIDDEN)
+#define Is_Hidden(Path, Name) (GetFileAttributes(Path.c_str()) & FILE_ATTRIBUTE_HIDDEN || Name.at(0) == '.' || Name.at(0) == '_')
 #endif
 
 #ifdef __unix__

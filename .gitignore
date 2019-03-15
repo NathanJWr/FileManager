@@ -9,3 +9,6 @@
 *.opendb
 *.pdb
 .vs/FileManager/v15/.suo
+Release
+Debug
+.vs
