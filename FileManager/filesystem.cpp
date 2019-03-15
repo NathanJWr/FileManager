@@ -1,10 +1,6 @@
 #include "filesystem.h"
 #include <stack>
-
-#ifdef _WIN32
-#include <windows.h>
-#define EXECUTE(Path) ShellExecute(0, 0, Path.c_str(), 0, 0, SW_SHOW);
-#endif
+#include "Win32PlatformLayer.h"
 
 #ifdef __unix__
 #include <stdio.h>
@@ -139,7 +135,7 @@ void Filesystem::forwardDir()
 void Filesystem::openFile()
 {
 	std::string path = currentDir().currentlySelected().path();
-	EXECUTE(path);
+	Execute(path);
 }
 
 void Filesystem::toggleSortAlphabetically()

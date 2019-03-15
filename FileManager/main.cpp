@@ -6,14 +6,7 @@
 #include <memory>
 #include <vector>
 #include <list>
-
-#ifdef _WIN32
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <windows.h>
-#define MAIN() wmain()
-#define EXECUTE(Path) std::string tmp = "/C " + Path; ShellExecute(NULL, "open", "cmd.exe", tmp.c_str(), NULL, SW_SHOWNORMAL);	
-#endif
+#include "Win32PlatformLayer.h"
 
 #ifdef __unix__
 #include <SDL2/SDL.h>

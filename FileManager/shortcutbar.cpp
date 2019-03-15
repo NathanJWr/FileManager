@@ -1,14 +1,6 @@
 #include "shortcutbar.h"
 #include "config.h"
-
-#ifdef _WIN32
-#include <windows.h>
-#include <Lmcons.h>
-#define USERNAME() \
-	TCHAR username[UNLEN + 1]; \
-	DWORD size = UNLEN + 1; \
-	GetUserName((TCHAR*)username, &size);
-#endif
+#include "Win32PlatformLayer.h"
 
 #ifdef __unix__
 #include <unistd.h>

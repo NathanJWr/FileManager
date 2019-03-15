@@ -1,10 +1,6 @@
 #include "dirobject.h"
 #include <iostream>
-
-#ifdef _WIN32
-#include <Windows.h>
-#define Is_Hidden(Path, Name) (GetFileAttributes(Path.c_str()) & FILE_ATTRIBUTE_HIDDEN || Name.at(0) == '.' || Name.at(0) == '_')
-#endif
+#include "Win32PlatformLayer.h"
 
 #ifdef __unix__
 #define Is_Hidden(Path, Name) Name.at(0) == '.';
@@ -45,7 +41,7 @@ bool DirObject::isFile() const
 
 bool DirObject::isHidden() const
 {
-	return Is_Hidden(path(), name());
+	return IsFileHidden(path(), name());
 }
 
 const std::string DirObject::name() const

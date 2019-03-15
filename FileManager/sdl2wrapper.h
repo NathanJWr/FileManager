@@ -1,8 +1,4 @@
-#ifdef _WIN32
-#include <SDL.h>
-#include <SDL_ttf.h>
-#include <SDL_image.h>
-#endif
+#include "Win32PlatformLayer.h"
 
 #ifdef __unix__
 #include <SDL2/SDL.h>

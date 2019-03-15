@@ -45,6 +45,9 @@
     <ClInclude Include="sdl2wrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Win32PlatformLayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dirobject.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="message.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32PlatformLayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

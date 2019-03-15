@@ -29,6 +29,7 @@
     <ClInclude Include="sdl2wrapper.h" />
     <ClInclude Include="shortcut.h" />
     <ClInclude Include="shortcutbar.h" />
+    <ClInclude Include="Win32PlatformLayer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="directory.cpp" />
@@ -40,6 +41,7 @@
     <ClCompile Include="message.cpp" />
     <ClCompile Include="shortcut.cpp" />
     <ClCompile Include="shortcutbar.cpp" />
+    <ClCompile Include="Win32PlatformLayer.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
