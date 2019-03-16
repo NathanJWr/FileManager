@@ -1,6 +1,6 @@
 #include "shortcutbar.h"
 #include "config.h"
-#include "Win32PlatformLayer.h"
+#include "platformlayer.h"
 
 #ifdef __unix__
 #include <unistd.h>
@@ -15,7 +15,7 @@
 ShortcutBar::ShortcutBar()
 {
 	/* Query the OS for username */
-	USERNAME();
+	std::string username = Platform::Username();
 
 	std::string desktop = ROOT + HOME + SLASH  + username + SLASH + "Desktop";
 	std::string documents = ROOT + HOME + SLASH + username + SLASH + "Documents";

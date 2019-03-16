@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 #include <list>
-#include "Win32PlatformLayer.h"
+#include "platformlayer.h"
 
 #ifdef __unix__
 #include <SDL2/SDL.h>
@@ -284,7 +284,7 @@ void handleShellInput(SDL_Event& e,
 	if (handleTypingInput(command, shell, e, display, dirs, bar) == 0)
 	{
 		std::cout << "Executing: " << command << std::endl;
-		EXECUTE(command);
+		Platform::CMDExecute(command);
 		//FILE* file = popen(command.c_str(), "r");
 		//pclose(file);
 		//ShellExecute(NULL, "open", "cmd.exe", "/C del /P test", NULL, SW_SHOWNORMAL);	

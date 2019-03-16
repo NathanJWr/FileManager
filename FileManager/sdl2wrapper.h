@@ -1,4 +1,4 @@
-#include "Win32PlatformLayer.h"
+#include "platformlayer.h"
 
 #ifdef __unix__
 #include <SDL2/SDL.h>

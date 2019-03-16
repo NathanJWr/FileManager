@@ -1,6 +1,6 @@
 #include "filesystem.h"
 #include <stack>
-#include "Win32PlatformLayer.h"
+#include "platformlayer.h"
 
 #ifdef __unix__
 #include <stdio.h>
@@ -135,7 +135,7 @@ void Filesystem::forwardDir()
 void Filesystem::openFile()
 {
 	std::string path = currentDir().currentlySelected().path();
-	Execute(path);
+	Platform::Execute(path);
 }
 
 void Filesystem::toggleSortAlphabetically()
