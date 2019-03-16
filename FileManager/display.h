@@ -10,6 +10,7 @@ class Display
 {
 public:
 	Display(int width, int height);
+	//~Display();
 	/* put the Directory contents on screen */
 	void renderDirectory(Directory&);
 	/* put all of the UI elements on the screen */
