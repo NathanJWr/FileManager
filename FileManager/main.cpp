@@ -241,20 +241,25 @@ void handleMouse(Filesystem &dirs, ShortcutBar &bar)
 	}
 }
 
-Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar)
+Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar, Display &display)
 {
 	Context ctx;
 	switch (e.type)
  	{
 		case SDL_QUIT:
+		{
 			ctx.exit = true;
 			break;
+		}
 		case SDL_MOUSEBUTTONDOWN:
+		{
 			ctx.redraw = true;
 			dirs.currentDir().last_move = Directory::NONE;
 			handleMouse(dirs, bar);
 			break;
+		}
 		case SDL_KEYDOWN:
+		{
 			ctx.redraw = true;
 			HandleType val = handleKeys(e.key, dirs, ctx.msg);
 			if (val == MESSAGE_CONSOLE)
@@ -271,6 +276,24 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar)
 			else if (val == SHELL)
 			{
 				ctx.shell_input = true;
+			}
+			break;
+		}
+		case SDL_WINDOWEVENT:
+			switch(e.window.event)
+			{
+				case SDL_WINDOWEVENT_SIZE_CHANGED:
+				{
+					display.resize();
+					drawAll(display, dirs, bar, ctx, false);
+				}
+				case SDL_WINDOWEVENT_FOCUS_GAINED:
+				case SDL_WINDOWEVENT_EXPOSED:
+				{
+					std::cout << "Focused Gained, redrawing window!\n";
+					drawAll(display, dirs, bar, ctx, false);
+					break;
+				}
 			}
 	}
 	return ctx;
@@ -342,7 +365,7 @@ int MAIN()
 			}
 			else
 			{
-				ctx = handleInput(e, dirs, shortcut_bar);
+				ctx = handleInput(e, dirs, shortcut_bar, display);
 			}
 
 			if (ctx.shell_input)
@@ -355,7 +378,10 @@ int MAIN()
 				if (ctx.message) msg = ctx.msg; // This msg is sent to handleMessageRespnse
 				if (ctx.response) handle_message = true; // Need to be set to handle message response
 				else handle_message = false;
-				std::cout << "Message: " << msg.message() << std::endl;
+				if (!msg.message().empty())
+				{
+					std::cout << "Message: " << msg.message() << std::endl;
+				}
 				drawAll(display, dirs, shortcut_bar, ctx, true);
 			}
 

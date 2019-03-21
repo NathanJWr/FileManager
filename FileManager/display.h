@@ -20,6 +20,8 @@ public:
 	/* display the screen */
 	void update();
 
+	void resize();
+
 	void popShellLetter();
 	void clearShellLetters();
 
