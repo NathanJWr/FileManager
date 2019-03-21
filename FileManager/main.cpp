@@ -189,7 +189,7 @@ Context handleMessageResponse(SDL_Event &e, Display& display, Filesystem &dirs, 
 			dirs.createFolder(folder_name);
 			dirs.reloadCurrentDir();
 		}
-		display.clearShellLetters(); 
+		display.clearShellLetters();
 		ctx.redraw = true;
 	}
 	if (msg.type() == Message::CREATE_FILE)
@@ -198,7 +198,9 @@ Context handleMessageResponse(SDL_Event &e, Display& display, Filesystem &dirs, 
 		if (handleTypingInput(file_name, ctx, e, display, dirs, bar) == 0)
 		{
 			std::cout << "Creating file: " << file_name << std::endl;
+#ifdef _WIN32
 			CreateFileA(file_name.c_str(), 0, 0, 0, CREATE_NEW, FILE_ATTRIBUTE_NORMAL, NULL);
+#endif
 			dirs.reloadCurrentDir();
 		}
 		display.clearShellLetters();
@@ -287,7 +289,7 @@ void handleShellInput(SDL_Event& e,
 		Platform::CMDExecute(command);
 		//FILE* file = popen(command.c_str(), "r");
 		//pclose(file);
-		//ShellExecute(NULL, "open", "cmd.exe", "/C del /P test", NULL, SW_SHOWNORMAL);	
+		//ShellExecute(NULL, "open", "cmd.exe", "/C del /P test", NULL, SW_SHOWNORMAL);
 	}
 	display.clearShellLetters();
 	dirs.reloadCurrentDir();

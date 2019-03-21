@@ -7,6 +7,12 @@
 #define MAIN() wmain()
 #endif
 
+#ifdef __unix__
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
+#endif
+
 #ifndef _PLATFORM_LAYER
 #define _PLATFORM_LAYER
 #include <string>

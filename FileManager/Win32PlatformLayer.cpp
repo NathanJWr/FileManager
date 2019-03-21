@@ -1,5 +1,5 @@
-#include "platformlayer.h"
 #ifdef _WIN32
+#include "platformlayer.h"
 bool Platform::IsFileHidden(std::string Path, std::string Name)
 {
 	return (GetFileAttributes(Path.c_str()) & FILE_ATTRIBUTE_HIDDEN || Name.at(0) == '.' || Name.at(0) == '_');

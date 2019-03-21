@@ -1,11 +1,6 @@
 #include "dirobject.h"
 #include <iostream>
 #include "platformlayer.h"
-
-#ifdef __unix__
-#define Is_Hidden(Path, Name) Name.at(0) == '.';
-#endif
-
 DirObject::DirObject(std::string n, std::string p, Type t)
 {
 	_name = n;

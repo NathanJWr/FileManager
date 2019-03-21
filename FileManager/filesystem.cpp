@@ -1,12 +1,6 @@
 #include "filesystem.h"
 #include <stack>
 #include "platformlayer.h"
-
-#ifdef __unix__
-#include <stdio.h>
-#define EXECUTE(Path) std::string tmp = "xdg-open \"" + Path + "\""; FILE* file = popen(tmp.c_str(), "r"); pclose(file);
-#endif
-
 Filesystem::Filesystem()
 {
 	std::stack<std::string> buff;

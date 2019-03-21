@@ -1,11 +1,5 @@
 #include "platformlayer.h"
 
-#ifdef __unix__
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_image.h>
-#endif
-
 #ifndef SDLWRAP_H_
 #define SDLWRAP_H_
 #include <utility>
