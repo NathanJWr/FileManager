@@ -19,10 +19,10 @@
 #include <string>
 namespace Platform
 {
-	bool IsFileHidden(std::string Path, std::string Name);
-	void Execute(std::string Path);
-	void CMDExecute(std::string Path);
-	std::string Username();
+    bool IsFileHidden(std::string Path, std::string Name);
+    void Execute(std::string Path);
+    void CMDExecute(std::string Path);
+    std::string Username();
 };
 #endif
 
