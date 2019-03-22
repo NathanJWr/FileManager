@@ -1,43 +1,18 @@
 #include "display.h"
 #include "config.h"
-Display::Display(int width, int height) :
+Display::Display(int width, int height, int font_size) :
 	/* These need to be in the initializer list since they don't have default constructors */
 	window(SDL2::makeWindow("FileManager", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE)),
 	renderer(SDL2::makeRenderer(window, -1, SDL_RENDERER_ACCELERATED)),
-	font(SDL2::makeFont("assets/Ubuntu.ttf", 32)),
+	font(SDL2::makeFont("assets/Ubuntu.ttf", font_size)),
 	folder_icon(SDL2::makeIMGTexture("assets/folder.png", renderer)),
 	image_icon(SDL2::makeIMGTexture("assets/image.png", renderer)),
 	text_icon(SDL2::makeIMGTexture("assets/text.png", renderer)),
 	cpp_icon(SDL2::makeIMGTexture("assets/c++src.png", renderer)),
 	script_icon(SDL2::makeIMGTexture("assets/script.png", renderer))
 {
-
-	SCREEN_W = width;
-	SCREEN_H = height;
-
-	int dir_x = static_cast<int>(width / 5.5);
-	int dir_y = static_cast<int>(height / 25);
-	int dir_w = SCREEN_W;
-	int dir_h = static_cast<int>(height / 1.2);
-
-	/* figure out the height and width of a text_box */
-	auto temp_buff = SDL2::makeTextSurface(font, "text", white);
-	text_box.w = temp_buff.get()->w;
-	text_box.h = temp_buff.get()->h;
-
-	int icon_size = text_box.w / 2;
-
-	folder_icon.pos = {dir_x, 0, icon_size, icon_size};
-	image_icon.pos = {dir_x, 0, icon_size, icon_size};
-	text_icon.pos = {dir_x, 0, icon_size, icon_size};
-	cpp_icon.pos = {dir_x, 0, icon_size, icon_size};
-	script_icon.pos = {dir_x, 0, icon_size, icon_size};
-
-	dir_box = {dir_x, dir_y, dir_w, dir_h};
-	console_box = { dir_x, dir_y + dir_h, SCREEN_W, SCREEN_H};
-
-	shortcut_box = {0, 0, dir_x, height};
-	shell_letter_pos = 0;
+	FontSize = font_size;
+	resize();
 }
 
 void Display::update()
@@ -50,18 +25,20 @@ void Display::update()
 
 void Display::resize()
 {
-
 	SDL_GetWindowSize(window.get(), &SCREEN_W, &SCREEN_H);
-
-	int dir_x = static_cast<int>(SCREEN_W / 5.5);
-	int dir_y = static_cast<int>(SCREEN_H / 25);
-	int dir_w = SCREEN_W;
-	int dir_h = static_cast<int>(SCREEN_H / 1.2);
 
 	/* figure out the height and width of a text_box */
 	auto temp_buff = SDL2::makeTextSurface(font, "text", white);
 	text_box.w = temp_buff.get()->w;
 	text_box.h = temp_buff.get()->h;
+
+	//int dir_x = static_cast<int>(SCREEN_W / 5.5);
+	int buffer = 7;
+	int dir_x = FontSize * buffer;
+	int dir_y = static_cast<int>(SCREEN_H / 25);
+	int dir_w = SCREEN_W;
+	int dir_h = static_cast<int>(SCREEN_H / 1.2);
+
 
 	int icon_size = text_box.w / 2;
 
@@ -77,6 +54,23 @@ void Display::resize()
 	shortcut_box = {0, 0, dir_x, SCREEN_H};
 	shell_letter_pos = 0;
 }
+
+void Display::increaseFont()
+{
+	FontSize++;
+	font = nullptr;
+	font = SDL2::makeFont("assets/Ubuntu.ttf", FontSize);
+	resize();
+}
+
+void Display::decreaseFont()
+{
+	FontSize--;
+	font = nullptr;
+	font = SDL2::makeFont("assets/Ubuntu.ttf", FontSize);
+	resize();
+}
+
 
 SDL_Color Display::determineColor(DirObject obj)
 {

@@ -123,7 +123,7 @@ int handleTypingInput(std::string& command,
 	}
 }
 
-HandleType handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message)
+HandleType handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message, Display &display)
 {
 	switch (e.keysym.sym)
  	{
@@ -170,6 +170,12 @@ HandleType handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message)
 		case SDLK_q:
 			message = Message(Message::QUIT);
 			return MESSAGE_CONSOLE;
+			break;
+		case SDLK_RIGHTBRACKET:
+			display.increaseFont();
+			break;
+		case SDLK_LEFTBRACKET:
+			display.decreaseFont();
 			break;
 		default:
 			dirs.currentDir().last_move = Directory::NONE;
@@ -261,7 +267,7 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar, Display &d
 		case SDL_KEYDOWN:
 		{
 			ctx.redraw = true;
-			HandleType val = handleKeys(e.key, dirs, ctx.msg);
+			HandleType val = handleKeys(e.key, dirs, ctx.msg, display);
 			if (val == MESSAGE_CONSOLE)
 		 	{
 				ctx.message = true;
@@ -341,7 +347,7 @@ int MAIN()
 	{
 		Filesystem dirs;
 		ShortcutBar shortcut_bar;
-		Display display(1280, 800);
+		Display display(1280, 800, 32);
 
 		/* initial render */
 		display.update();

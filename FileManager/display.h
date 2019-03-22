@@ -9,7 +9,7 @@
 class Display
 {
 public:
-	Display(int width, int height);
+	Display(int width, int height, int font_size);
 	//~Display();
 	/* put the Directory contents on screen */
 	void renderDirectory(Directory&);
@@ -21,6 +21,9 @@ public:
 	void update();
 
 	void resize();
+
+	void increaseFont();
+	void decreaseFont();
 
 	void popShellLetter();
 	void clearShellLetters();
@@ -52,6 +55,7 @@ private:
 
 	int SCREEN_W;
 	int SCREEN_H;
+	int FontSize;
 
 	SDL_Rect dir_box;
 	SDL_Rect shortcut_box;
