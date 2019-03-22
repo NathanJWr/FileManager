@@ -2,16 +2,6 @@
 #include "config.h"
 #include "platformlayer.h"
 
-#ifdef __unix__
-#include <unistd.h>
-#include <sys/types.h>
-#include <pwd.h>
-#define USERNAME() \
-	std::string username; uid_t uid = geteuid(); \
-	struct passwd *pw = getpwuid(uid); \
-	if (pw) username = pw->pw_name;
-#endif
-
 ShortcutBar::ShortcutBar()
 {
 	/* Query the OS for username */

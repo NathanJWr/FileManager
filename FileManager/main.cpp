@@ -2,17 +2,12 @@
 #include "filesystem.h"
 #include "shortcutbar.h"
 #include "message.h"
+#include "platformlayer.h"
+
 #include <iostream>
 #include <memory>
 #include <vector>
 #include <list>
-#include "platformlayer.h"
-
-#ifdef __unix__
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
-#define MAIN() main()
-#endif
 
 class Context {
 public:
