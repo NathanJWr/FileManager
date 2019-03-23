@@ -53,6 +53,8 @@ void Display::resize()
 
     shortcut_box = {0, 0, dir_x, SCREEN_H};
     shell_letter_pos = 0;
+
+    resized = true;
 }
 
 void Display::increaseFont()
@@ -125,7 +127,13 @@ void Display::renderDirectory(Directory& dir)
     int buf_x = dir_box.x + folder_icon.pos.w;
 
     int size = 0;;
-    if (dir.max_dir_objs == 0) dir.max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);
+    std::cout << "dir_box.h: " << dir_box.h << std::endl;
+    /* TODO: This breaks on resize when you are scrolled down */
+    if (dir.max_dir_objs == 0 || resized) 
+    {
+        dir.max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);
+        resized = false;
+    }
     if (dir.get().size() < dir.min_dir_objs + dir.max_dir_objs)
     {
         size = dir.get().size();
@@ -133,6 +141,11 @@ void Display::renderDirectory(Directory& dir)
     else
     {
         size = dir.min_dir_objs + dir.max_dir_objs;
+    }
+    std::cout << "Size: " << size << " Textures: " << DirTextures.size() << std::endl;
+    while (size < DirTextures.size())
+    {
+        DirTextures.pop_back();
     }
 
     if (dir.last_move == Directory::NONE)

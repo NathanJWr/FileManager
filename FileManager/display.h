@@ -56,6 +56,7 @@ private:
     int SCREEN_W;
     int SCREEN_H;
     int FontSize;
+    bool resized;
 
     SDL_Rect dir_box;
     SDL_Rect shortcut_box;
