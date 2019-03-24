@@ -269,13 +269,29 @@ void Display::replaceTexturesUp(Directory& dir, int size)
     }
 }
 
+void Display::repositionTexturesOnResize(Directory& dir, int size)
+{
+    if (dir.max_dir_objs < DirTextures.size())
+    {
+        if (!dir.get()[size].selected)
+        {
+            DirTextures.pop_back();
+        }
+        else
+        {
+            DirTextures.pop_front();
+            dir.min_dir_objs++;
+            dir.max_dir_objs--;
+        }
+    }
+}
+
 void Display::renderDirectory(Directory& dir)
 {
     cur_path = dir.path();
     int buf_x = dir_box.x + folder_icon.pos.w;
 
     int size = 0;;
-    std::cout << "dir_box.h: " << dir_box.h << std::endl;
     /* TODO: This breaks on resize when you are scrolled down */
     if (dir.max_dir_objs == 0 || resized) 
     {
@@ -290,20 +306,9 @@ void Display::renderDirectory(Directory& dir)
     {
         size = dir.min_dir_objs + dir.max_dir_objs;
     }
-    std::cout << "MaxDirObjs: " << dir.max_dir_objs << " Textures: " << DirTextures.size() << std::endl;
 
-    /* TODO: Make this work properly */
-    while (dir.max_dir_objs < DirTextures.size())
-    {
-        if (!dir.get()[size].selected)
-        {
-            DirTextures.pop_back();
-        }
-        else
-        {
-            DirTextures.pop_front();
-        }
-    }
+
+    repositionTexturesOnResize(dir, size);
 
     if (dir.last_move == Directory::NONE)
     {

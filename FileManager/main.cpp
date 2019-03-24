@@ -298,7 +298,6 @@ Context handleInput(SDL_Event &e, Filesystem &dirs, ShortcutBar &bar, Display &d
                 case SDL_WINDOWEVENT_EXPOSED:
                 {
                     dirs.currentDir().last_move = Directory::NONE;
-                    std::cout << "Focused Gained, redrawing window!\n";
                     drawAll(display, dirs, bar, ctx, false);
                     break;
                 }

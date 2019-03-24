@@ -37,6 +37,7 @@ private:
     void renderShortcuts(ShortcutBar &bar);
 
     void createNewDirectoryTextures(Directory& dir, int size);
+    void repositionTexturesOnResize(Directory& dir, int size);
 
     void replaceTexturesUp(Directory& dir, int size);
     void popBackAndMakeNewFront(Directory& dir, int size);
