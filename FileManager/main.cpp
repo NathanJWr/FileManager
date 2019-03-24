@@ -163,13 +163,16 @@ HandleType handleKeys(SDL_KeyboardEvent &e, Filesystem &dirs, Message &message, 
             return MESSAGE_CONSOLE;
             break;
         case SDLK_q:
+            dirs.currentDir().last_move = Directory::NONE;
             message = Message(Message::QUIT);
             return MESSAGE_CONSOLE;
             break;
         case SDLK_RIGHTBRACKET:
+            dirs.currentDir().last_move = Directory::NONE;
             display.increaseFont();
             break;
         case SDLK_LEFTBRACKET:
+            dirs.currentDir().last_move = Directory::NONE;
             display.decreaseFont();
             break;
         default:

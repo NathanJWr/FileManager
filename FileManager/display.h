@@ -35,6 +35,17 @@ private:
     void renderIcon(DirObject obj, int y);
     void renderCurrentPath();
     void renderShortcuts(ShortcutBar &bar);
+
+    void createNewDirectoryTextures(Directory& dir, int size);
+
+    void replaceTexturesUp(Directory& dir, int size);
+    void popBackAndMakeNewFront(Directory& dir, int size);
+    void remakeOldSelectedAndNewUp(Directory& dir, int size); 
+
+    void replaceTexturesDown(Directory& dir, int size);
+    void popFrontAndMakeNewBack(Directory& dir, int size);
+    void remakeOldSelectedAndNewDown(Directory& dir, int size); 
+
     SDL_Color determineColor(DirObject obj);
 
     SDL2::window_ptr window;
