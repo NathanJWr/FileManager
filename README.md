@@ -9,5 +9,15 @@ Use normal "h", "j", "k", and "l" vim keys to move up, down, left, and right thr
 Use "y" to yank a file or folder and "p" to paste
 Use "d" to delete a file or folder
 
+#Create new files/folders
+Use "f" to create a new folder. You will be asked for a folder name which will then be placed in your current directory.
+
+Use "c" to create a new file. You will be asked for a file name which will then be placed in your current directory.
+
+#Increase/Decrease font size
+Use "[" to decrease font size
+
+Use "]" to increase font size
+
 # Shortcuts
 Double click shortcuts on the lefthand sidebar to jump to commonly used directories such (Examples: Documents, Desktop, etc.)
