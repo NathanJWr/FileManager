@@ -18,6 +18,25 @@ Display::Display(int width, int height, int font_size) :
     resize();
 }
 
+void Display::drawAll(Filesystem& dirs,
+                      ShortcutBar& shortcut_bar,
+                      Context ctx,
+                      bool new_message)
+{
+    renderDirectory(dirs.currentDir());
+    if (ctx.message)
+    {
+        dirs.currentDir().last_move = Directory::NONE;
+        renderUI(shortcut_bar, ctx.msg.message(), new_message);
+    }
+    else
+    {
+        renderUI(shortcut_bar);
+    }
+
+    update();
+}
+
 void Display::update()
 {
     SDL_SetRenderDrawColor(renderer.get(), 0, 43, 54, 255);
@@ -134,7 +153,9 @@ void Display::createNewDirectoryTextures(Directory& dir, int size)
     for (int i = dir.min_dir_objs; i < size; ++i)
     {
         auto color = determineColor(dir.get()[i]);
-        DirTextures.emplace_back(SDL2::makeTextTexture(font, dir.get()[i].name().c_str(), color, renderer));
+        DirTextures.emplace_back(SDL2::makeTextTexture(font,
+                                 dir.get()[i].name().c_str(),
+                                 color, renderer));
         DirTextures.back().pos.x = buf_x;
         DirTextures.back().pos.y = buf_y;
 
@@ -151,10 +172,14 @@ void Display::remakeOldSelectedAndNewUp(Directory& dir, int size)
     auto redraw2 = std::move(DirTextures[sel - 1]);
 
     SDL_Color color = determineColor(dir.get()[dir.selected_at]);
-    DirTextures[sel] = std::move(SDL2::makeTextTexture(font, redraw1.text.c_str(), color, renderer));
+    DirTextures[sel] = std::move(SDL2::makeTextTexture(font,
+                                 redraw1.text.c_str(),
+                                 color, renderer));
     DirTextures[sel].pos = redraw1.pos;
 
-    DirTextures[--sel] = std::move(SDL2::makeTextTexture(font, redraw2.text.c_str(), white, renderer));
+    DirTextures[--sel] = std::move(SDL2::makeTextTexture(font,
+                                   redraw2.text.c_str(),
+                                   white, renderer));
     DirTextures[sel].pos = redraw2.pos;
 
     for (auto& n : DirTextures)
@@ -271,6 +296,10 @@ void Display::replaceTexturesUp(Directory& dir, int size)
 
 void Display::repositionTexturesOnResize(Directory& dir, int size)
 {
+    std::cout << "MaxDirObjs: " << dir.max_dir_objs
+            << " MinDirObjs: " << dir.min_dir_objs
+            << " Size: " << size
+            << " DirTextures: " << DirTextures.size() << std::endl;
     if (dir.max_dir_objs < DirTextures.size())
     {
         if (!dir.get()[size].selected)
@@ -293,7 +322,7 @@ void Display::renderDirectory(Directory& dir)
 
     int size = 0;;
     /* TODO: This breaks on resize when you are scrolled down */
-    if (dir.max_dir_objs == 0 || resized) 
+    if (dir.max_dir_objs == 0 || resized)
     {
         dir.max_dir_objs = static_cast<unsigned int>(dir_box.h / text_box.h);
         resized = false;
@@ -356,7 +385,9 @@ void Display::renderUI(ShortcutBar &bar)
     renderCurrentPath();
 }
 
-void Display::renderUI(ShortcutBar &bar, std::string console_message, bool new_message)
+void Display::renderUI(ShortcutBar &bar,
+                       std::string console_message,
+                       bool new_message)
 {
     renderUI(bar);
     renderConsoleMessage(console_message, new_message);
@@ -364,7 +395,9 @@ void Display::renderUI(ShortcutBar &bar, std::string console_message, bool new_m
 
 void Display::renderConsoleMessage(std::string message, bool new_message)
 {
-    SDL2::TextTexture text = SDL2::makeTextTexture(font, message.c_str(), white, renderer);
+    SDL2::TextTexture text = SDL2::makeTextTexture(font,
+                             message.c_str(),
+                             white, renderer);
 
     if (new_message)
     {
@@ -373,7 +406,9 @@ void Display::renderConsoleMessage(std::string message, bool new_message)
     }
     if (message != "backspace" && message != "return")
     {
-        shell_letters.emplace_back(SDL2::makeTextTexture(font, message.c_str(), white, renderer));
+        shell_letters.emplace_back(SDL2::makeTextTexture(font,
+                                   message.c_str(),
+                                   white, renderer));
         shell_letters.back().pos.x = console_box.x + shell_letter_pos;
         shell_letter_pos += shell_letters.back().pos.w;
         shell_letters.back().pos.y = console_box.y;
@@ -402,7 +437,9 @@ void Display::renderShortcuts(ShortcutBar &bar)
         {
             color = shortcut;
         }
-        SDL2::TextTexture text = SDL2::makeTextTexture(font, n.name().c_str(), color, renderer);
+        SDL2::TextTexture text = SDL2::makeTextTexture(font,
+                                 n.name().c_str(),
+                                 color, renderer);
         text.pos.y = buf;
         buf += text_box.h;
         n.pos = text.pos;

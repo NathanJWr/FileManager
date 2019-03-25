@@ -4,6 +4,8 @@
 #include "directory.h"
 #include "shortcutbar.h"
 #include "shortcut.h"
+#include "filesystem.h"
+#include "context.h"
 #include <string>
 #include <deque>
 class Display
@@ -16,9 +18,16 @@ public:
     /* put all of the UI elements on the screen */
     void renderUI(ShortcutBar &bar);
     /* message will be displayed in the console box */
-    void renderUI(ShortcutBar &bar, std::string message, bool new_message);
+    void renderUI(ShortcutBar &bar,
+                  std::string message,
+                  bool new_message);
     /* display the screen */
     void update();
+    void drawAll(Filesystem& dirs,
+                 ShortcutBar& shortcut_bar,
+                 Context ctx,
+                 bool new_message);
+
 
     void resize();
 
@@ -41,11 +50,11 @@ private:
 
     void replaceTexturesUp(Directory& dir, int size);
     void popBackAndMakeNewFront(Directory& dir, int size);
-    void remakeOldSelectedAndNewUp(Directory& dir, int size); 
+    void remakeOldSelectedAndNewUp(Directory& dir, int size);
 
     void replaceTexturesDown(Directory& dir, int size);
     void popFrontAndMakeNewBack(Directory& dir, int size);
-    void remakeOldSelectedAndNewDown(Directory& dir, int size); 
+    void remakeOldSelectedAndNewDown(Directory& dir, int size);
 
     SDL_Color determineColor(DirObject obj);
 

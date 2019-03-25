@@ -17,7 +17,8 @@ void Platform::Execute(std::string Path)
 
 void Platform::CMDExecute(std::string Path)
 {
-
+    FILE* file = popen(Path.c_str(), "r");
+    pclose(file);
 }
 
 std::string Platform::Username()
