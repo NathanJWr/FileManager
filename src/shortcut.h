@@ -1,9 +1,5 @@
 #ifndef SHORTCUT_H_
 #define SHORTCUT_H_
-
-#ifdef _WIN32
-#include <SDL.h>
-#endif
 class Shortcut
 {
 public:

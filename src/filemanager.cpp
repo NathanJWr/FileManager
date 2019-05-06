@@ -62,10 +62,6 @@ Directory FileManager::listCurrentDirectory()
 
 bool FileManager::changeDirectory(std::string path)
 {
-    /*
-     * TODO: This throws a filesystem error
-     * maybe try catching it if needed?
-     */
     try
     {
         fs::current_path(path);
@@ -86,14 +82,19 @@ bool FileManager::moveToParent()
     }
     else if (path.parent_path().string() == ROOT)
     {
-        fs::current_path(path.parent_path());
-        touched_root = true;
-        return true;
+		if (changeDirectory(path.parent_path()))
+		{
+			touched_root = true;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
     }
     else
     {
-        fs::current_path(path.parent_path());
-        return true;
+		return changeDirectory(path.parent_path());
     }
 }
 
@@ -103,9 +104,17 @@ void FileManager::createDirObject(std::string name)
     file.close();
 }
 
-void FileManager::copy(std::string from, std::string to)
+bool FileManager::copy(std::string from, std::string to)
 {
-    fs::copy(from, to, fs::copy_options::recursive);
+	try
+	{
+    	fs::copy(from, to, fs::copy_options::recursive);
+	}
+	catch (fs::filesystem_error)
+	{
+		return false;
+	}
+	return true;
 }
 
 bool FileManager::remove(DirObject obj)
