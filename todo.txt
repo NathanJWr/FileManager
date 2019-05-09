@@ -1,0 +1,1 @@
+1. Bug in increase/decrease font. The path to the ttf file is the suspect

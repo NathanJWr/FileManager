@@ -258,6 +258,7 @@ Context handleInput(SDL_Event &e,
                 case SDL_WINDOWEVENT_EXPOSED:
                 {
                     dirs.currentDir().last_move = Directory::NONE;
+                    display.resize();
                     display.drawAll(dirs, bar, ctx, false);
                     break;
                 }

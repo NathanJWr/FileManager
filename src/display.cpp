@@ -6,7 +6,7 @@ Display::Display(int width, int height, int font_size) :
                             width, height,
                             SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE)),
     renderer(SDL2::makeRenderer(window, -1, SDL_RENDERER_ACCELERATED)),
-    font(SDL2::makeFont("assets/Ubuntu.ttf", font_size)),
+    font(SDL2::makeFont(FONT, font_size)),
     folder_icon(SDL2::makeIMGTexture("assets/folder.png", renderer)),
     image_icon(SDL2::makeIMGTexture("assets/image.png", renderer)),
     text_icon(SDL2::makeIMGTexture("assets/text.png", renderer)),
@@ -82,7 +82,7 @@ void Display::increaseFont()
 {
     FontSize++;
     font = nullptr;
-    font = SDL2::makeFont("assets/Ubuntu.ttf", FontSize);
+    font = SDL2::makeFont(FONT, FontSize);
     resize();
 }
 
@@ -90,7 +90,7 @@ void Display::decreaseFont()
 {
     FontSize--;
     font = nullptr;
-    font = SDL2::makeFont("assets/Ubuntu.ttf", FontSize);
+    font = SDL2::makeFont(FONT, FontSize);
     resize();
 }
 

@@ -52,9 +52,9 @@ namespace SDL2 {
         return  make_resource(SDL_CreateWindow, SDL_DestroyWindow, title, x, y, w, h, flags);
     }
 
-    inline font_ptr makeFont(const char* path, const int size)
+    inline font_ptr makeFont(const std::string path, const int size)
     {
-        return make_resource(TTF_OpenFont, TTF_CloseFont, path, size);
+        return make_resource(TTF_OpenFont, TTF_CloseFont, path.c_str(), size);
     }
 
     inline surface makeTextSurface(font_ptr& f, const char* t, SDL_Color c)

@@ -10,6 +10,7 @@ const std::string HOME = "Users";
 const std::string ROOT = "/";
 const std::string SLASH = "/";
 const std::string HOME  = "home";
+const std::string FONT = "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf";
 #endif
 
 
