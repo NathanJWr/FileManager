@@ -5,15 +5,17 @@ Message::Message(Type t)
     _type = t;
     switch (t)
     {
-    case QUIT:
-        _message = "Are you sure you want to quit? Y/N";
-        break;
-    case CREATE_FOLDER:
-        _message = "Create Folder: ";
-        break;
-    case CREATE_FILE:
-        _message = "Create File: ";
-        break;
+		case QUIT:
+			_message = "Are you sure you want to quit? Y/N";
+			break;
+		case CREATE_FOLDER:
+			_message = "Create Folder: ";
+			break;
+		case CREATE_FILE:
+			_message = "Create File: ";
+			break;
+		default:
+			break;
     }
 }
 Message::Message(Type t, std::string file_name)

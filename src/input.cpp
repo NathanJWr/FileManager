@@ -179,6 +179,8 @@ Context handleMessageResponse(SDL_Event &e,
                 case Message::QUIT:
                     ctx.exit = true;
                     break;
+				default:
+					break;
             }
             break;
         case SDLK_n:

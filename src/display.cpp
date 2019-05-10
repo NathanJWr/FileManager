@@ -190,9 +190,6 @@ void Display::remakeOldSelectedAndNewUp(Directory& dir, int size)
 
 void Display::popBackAndMakeNewFront(Directory& dir, int size)
 {
-    unsigned int sel;
-    sel = dir.selected_at - dir.min_dir_objs;
-
     auto redraw = std::move(DirTextures.front());
     SDL_Color color1 = determineColor(dir.get()[dir.selected_at]);
     DirTextures.front() = std::move(SDL2::makeTextTexture(font, redraw.text.c_str(), color1, renderer));
@@ -317,7 +314,6 @@ void Display::repositionTexturesOnResize(Directory& dir, int size)
 void Display::renderDirectory(Directory& dir)
 {
     cur_path = dir.path();
-    int buf_x = dir_box.x + folder_icon.pos.w;
 
     int size = 0;;
     /* TODO: This breaks on resize when you are scrolled down */

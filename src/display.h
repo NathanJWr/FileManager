@@ -79,8 +79,8 @@ private:
     SDL2::ImgTexture folder_icon;
     SDL2::ImgTexture image_icon;
     SDL2::ImgTexture text_icon;
-    SDL2::ImgTexture script_icon;
     SDL2::ImgTexture cpp_icon;
+    SDL2::ImgTexture script_icon;
 
     std::string cur_path;
 };

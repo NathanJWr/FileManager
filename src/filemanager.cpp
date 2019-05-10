@@ -44,7 +44,7 @@ Directory FileManager::listCurrentDirectory()
                 type = DirObject::FILE;
             }
         }
-        catch (fs::filesystem_error)
+        catch (fs::filesystem_error &)
         {
             /*
              * Skips the file/folder that the user
@@ -66,7 +66,7 @@ bool FileManager::changeDirectory(std::string path)
     {
         fs::current_path(path);
     }
-    catch (fs::filesystem_error)
+    catch (fs::filesystem_error &)
     {
         return false;
     }
@@ -110,7 +110,7 @@ bool FileManager::copy(std::string from, std::string to)
 	{
     	fs::copy(from, to, fs::copy_options::recursive);
 	}
-	catch (fs::filesystem_error)
+	catch (fs::filesystem_error &)
 	{
 		return false;
 	}
